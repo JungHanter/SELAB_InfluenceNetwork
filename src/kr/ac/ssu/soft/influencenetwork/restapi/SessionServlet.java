@@ -22,6 +22,7 @@ import jdk.nashorn.api.scripting.JSObject;
 
 import kr.ac.ssu.soft.influencenetwork.User;
 import kr.ac.ssu.soft.influencenetwork.db.DBManager;
+import kr.ac.ssu.soft.influencenetwork.db.UserDAO;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -31,6 +32,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -44,17 +46,7 @@ import static java.lang.System.out;
 public class SessionServlet extends HttpServlet {
 
     private User user;
-
-    private Connection conn = null;
-    private PreparedStatement pstmt = null;
-    private Statement stmt = null;
-    private ResultSet resultSet = null;
-
-    public static int SUCCESS = 0;
-    public static int ERROR_CONNECTION = 1;
-    public static int ERROR_DUPLICATION = 2;
-    public static int ERROR_UNKNOWN = 9;
-    public static int UNVALID_VALUE = 10;
+    private UserDAO userDAO = new UserDAO();
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -95,12 +87,26 @@ public class SessionServlet extends HttpServlet {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+        String action = jsonObject.get("action").toString();
+        if(action.equals("login")) {
+            String email = jsonObject.get("email").toString();
+            String pw = jsonObject.get("pw").toString();
+            JSONObject result = null;
 
-        int num1 = Integer.parseInt(jsonObject.get("num1").toString());
-        int num2 = Integer.parseInt(jsonObject.get("num2").toString());
-        int result = num1 + num2;
-        System.out.println(num1 + num2);
-        out.print(result);
+            result = login(email, pw, request);
+
+            out.write(result.toJSONString());
+            out.close();
+        }
+        else if(action.equals("logout")) {
+            logout(request);
+        }
+
+//        int num1 = Integer.parseInt(jsonObject.get("num1").toString());
+//        int num2 = Integer.parseInt(jsonObject.get("num2").toString());
+//        int result = num1 + num2;
+//        System.out.println(num1 + num2);
+//        out.print(result);
 
 
 //        //2. initiate jackson mapper
@@ -120,36 +126,28 @@ public class SessionServlet extends HttpServlet {
 //        mapper.writeValue(response.getOutputStream(), user);
     }
 
-    public JSONObject login(String email, String pw) {
-        conn = DBManager.getConnection();
-        String sql = "SELECT email, pw, name FROM user WHERE email=? AND pw=?";
+    public JSONObject login(String email, String pw, HttpServletRequest request) {
         JSONObject result = new JSONObject();
+        user = userDAO.getUser(email, pw);
 
+        if (user != null) {
+            JSONObject userJson = new JSONObject();
+            userJson.put("email", user.getEmail());
+            userJson.put("name", user.getName());
+            result.put("user", userJson);
+            result.put("result", "success");
 
-        try {
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, email);
-            pstmt.setString(2, pw);
-            resultSet = pstmt.executeQuery();
-            if (resultSet != null && resultSet.next()) {
-               String savedEmail = resultSet.getString(1);
-               String savedPw = resultSet.getString(2);
-               String savedName = resultSet.getString(3);
-
-               /* Success Login */
-               if (email.equals(savedEmail) && pw.equals(savedPw)) {
-                   JSONObject user = new JSONObject();
-                   user.put("email", savedEmail);
-                   user.put("name", savedName);
-                   result.put("user", user);
-
-               }
-            }
-        } catch (SQLException e) {
-
+            HttpSession session = request.getSession();
+            session.setAttribute(email, user);
         }
-
-
+        else {
+            result.put("result", "fail");
+            result.put("message", "wrong id or pw");
+        }
+        return result;
     }
-
+    public void logout(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        session.invalidate();
+    }
 }
