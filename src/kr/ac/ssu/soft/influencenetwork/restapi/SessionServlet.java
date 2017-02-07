@@ -141,7 +141,8 @@ public class SessionServlet extends HttpServlet {
     }
     public JSONObject logout(HttpServletRequest request) {
         JSONObject result = new JSONObject();
-        if(request.getSession(false) != null) {
+        User user = (User)request.getSession().getAttribute("user");
+        if(user != null) {
         HttpSession session = request.getSession();
         session.invalidate();
         result.put("result", "success");
@@ -153,8 +154,8 @@ public class SessionServlet extends HttpServlet {
     }
     public JSONObject getSession(HttpServletRequest request) {
         JSONObject resultJson = new JSONObject();
-        if(request.getSession(false) != null) {
-            User user = (User)request.getSession().getAttribute("user");
+        User user = (User)request.getSession().getAttribute("user");
+        if(user != null) {
             JSONObject userJson = new JSONObject();
             userJson.put("email", user.getEmail());
             userJson.put("name", user.getName());
