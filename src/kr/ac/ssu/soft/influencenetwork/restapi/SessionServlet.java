@@ -14,14 +14,7 @@ package kr.ac.ssu.soft.influencenetwork.restapi;
 //import java.io.InputStreamReader;
 
 
-
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.util.JSONPObject;
-import jdk.nashorn.api.scripting.JSObject;
-
 import kr.ac.ssu.soft.influencenetwork.User;
-import kr.ac.ssu.soft.influencenetwork.db.DBManager;
 import kr.ac.ssu.soft.influencenetwork.db.UserDAO;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -38,9 +31,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.sql.*;
-
-import static java.lang.System.out;
 
 @WebServlet(description = "Login, Logout", urlPatterns = { "/session" })
 public class SessionServlet extends HttpServlet {
@@ -51,22 +41,25 @@ public class SessionServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 
-        String num1 = request.getParameter("num1");
-        String num2 = request.getParameter("num2");
+//        String num1 = request.getParameter("num1");
+//        String num2 = request.getParameter("num2");
 
 //        response.setContentType("text/plain; charset=UTF-8");
-        PrintWriter out = response.getWriter();
+//        PrintWriter out = response.getWriter();
 //        int result = Integer.parseInt(num1) + Integer.parseInt(num2);
 //        String jsonString = "{ \"result\" : " + result + "}";
 //        System.out.print(jsonString);
 //        out.print(jsonString);
 //        response.setContentType("application/json; charset=UTF-8");
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("result", 1234);
-        String result = jsonObject.toJSONString();
-        System.out.println(result);
-        out.write(result);
+//        JSONObject jsonObject = new JSONObject();
+//        jsonObject.put("result", 1234);
+//        String result = jsonObject.toJSONString();
+//        System.out.println(result);
+//        out.write(result);
 
+        JSONObject jsonObject = getSession(request);
+        PrintWriter out = response.getWriter();
+        out.write(jsonObject.toJSONString());
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -82,6 +75,8 @@ public class SessionServlet extends HttpServlet {
 
         JSONParser parser = new JSONParser();
         JSONObject jsonObject = null;
+        JSONObject result = null;
+
         try {
             jsonObject = (JSONObject) parser.parse(json);
         } catch (ParseException e) {
@@ -91,16 +86,14 @@ public class SessionServlet extends HttpServlet {
         if(action.equals("login")) {
             String email = jsonObject.get("email").toString();
             String pw = jsonObject.get("pw").toString();
-            JSONObject result = null;
-
             result = login(email, pw, request);
-
-            out.write(result.toJSONString());
-            out.close();
         }
         else if(action.equals("logout")) {
-            logout(request);
+            result = logout(request);
         }
+
+        out.write(result.toJSONString());
+        out.close();
 
 //        int num1 = Integer.parseInt(jsonObject.get("num1").toString());
 //        int num2 = Integer.parseInt(jsonObject.get("num2").toString());
@@ -138,7 +131,7 @@ public class SessionServlet extends HttpServlet {
             result.put("result", "success");
 
             HttpSession session = request.getSession();
-            session.setAttribute(email, user);
+            session.setAttribute("user", user);
         }
         else {
             result.put("result", "fail");
@@ -146,8 +139,31 @@ public class SessionServlet extends HttpServlet {
         }
         return result;
     }
-    public void logout(HttpServletRequest request) {
+    public JSONObject logout(HttpServletRequest request) {
+        JSONObject result = new JSONObject();
+        if(request.getSession(false) != null) {
         HttpSession session = request.getSession();
         session.invalidate();
+        result.put("result", "success");
+        }
+        else {
+            result.put("result", "fail");
+        }
+        return result;
+    }
+    public JSONObject getSession(HttpServletRequest request) {
+        JSONObject resultJson = new JSONObject();
+        if(request.getSession(false) != null) {
+            User user = (User)request.getSession().getAttribute("user");
+            JSONObject userJson = new JSONObject();
+            userJson.put("email", user.getEmail());
+            userJson.put("name", user.getName());
+            resultJson.put("result", "success");
+            resultJson.put("user", userJson);
+        }
+        else {
+            resultJson.put("result", "fail");
+        }
+        return resultJson;
     }
 }
