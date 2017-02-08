@@ -3,7 +3,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Influence Network Analytics</title>
+  <title>Influence Network Analyzer</title>
 
   <link rel="stylesheet" type="text/css" href="lib/bootstrap/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="css/bootstrap-custom.css">
@@ -12,22 +12,23 @@
 </head>
 
 <body>
-
 <nav class="navbar navbar-dark menu-group">
-  <div class="container-fluid top-menu main-menu">
+  <div class="container-fluid top-menu">
     <div class="collapse navbar-collapse">
-      <ul class="nav navbar-nav">
+      <ul class="nav navbar-nav main-menu">
         <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">File</a>
-          <ul class="dropdown-menu">
-            <li><a class="menuNew" href="#">New</a></li>
-            <li><a class="menuLoad" href="#">Load</a></li>
+          <a href="#" class="dropdown-toggle dropdown-default " data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">File</a>
+          <ul class="dropdown-menu dropdown-menu-file">
+            <li><a class="menuNew menuDefault" href="#">New</a></li>
+            <li><a class="menuOpen menuDefault" href="#">Open</a></li>
+            <li><a class="menuClose" href="#">Close</a></li>
             <li role="separator" class="divider"></li>
             <li><a class="menuSave" href="#">Save</a></li>
             <li><a class="menuSaveAs" href="#">Save-As</a></li>
             <li role="separator" class="divider"></li>
-            <li><a class="menuDelete" href="#">Delete</a></li>
             <li><a class="menuPrint" href="#">Print</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a class="menuAbout menuDefault" href="#">About</a></li>
           </ul>
         </li>
         <li class="dropdown">
@@ -44,26 +45,74 @@
           </ul>
         </li>
         <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Find</a>
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">View</a>
           <ul class="dropdown-menu">
-            <li><a id="menuFindPathSet" href="#">Find Path Set</a></li>
-            <li><a id="menuFindMaxInfluencePath" href="#">Find Max Influence Path</a></li>
+            <li><a id="" href="#">Graphical View</a></li>
+            <li><a id="" href="#">Table View</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a id="" href="#">Zoom-In</a></li>
+            <li><a id="" href="#">Zoom-Out</a></li>
           </ul>
         </li>
         <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Option</a>
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Analyze</a>
           <ul class="dropdown-menu">
-            <li><a id="menuSetting" href="#">Setting</a></li>
+            <li><a id="menuSummary" href="#">Summary</a></li>
+            <li><a id="menuStatistics" href="#">Statistics</a></li>
             <li role="separator" class="divider"></li>
-            <li><a id="menuHelp" href="#">Help</a></li>
+            <li><a id="menuMaxInfluence" href="#">Max Influence</a></li>
+          </ul>
+        </li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle dropdown-default" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Resource</a>
+          <ul class="dropdown-menu">
+            <li><a id="" href="#">News</a></li>
+            <li><a id="" href="#">Events</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a id="" href="#">Sites</a></li>
+            <li><a id="" href="#">Resources</a></li>
           </ul>
         </li>
       </ul>
+
+      <ul class="nav navbar-nav navbar-right" id="menuUser" style="display: none">
+        <li class="dropdown">
+          <a href="#" id="menuUserWelcome" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Welcome John!</a>
+          <ul class="dropdown-menu">
+            <li><a id="menuSignout" href="#">Sign out</a></li>
+          </ul>
+        </li>
+      </ul>
+      <div class="nav navbar-nav navbar-right" id="menuSignin">
+        <form id="signinForm" class="form-signin" name="signinForm" accept-charset="UTF-8" method="POST">
+          <input type="email" id="signinEmail" name="email" maxlength="20" class="form-control"
+                 placeholder="Email" required autofocus>
+          <input type="password" id="signinPassword" name="pw" maxlength="20" class="form-control"
+                 placeholder="Password" required>
+          <div id="checkboxRemember" class="checkbox">
+            <label>
+              <input id="checkRemember" type="checkbox" value="remember"> Remember Me
+            </label>
+          </div>
+          <button id="btnSignin" class="btn btn-dark btn-block" type="submit">Sign in</button>
+        </form>
+        <div class="signin-more">
+          <a href="#">Forgot your password?</a>
+          <a href="#" class="pull-right">Create new account?</a>
+        </div>
+      </div>
     </div>
   </div>
 
   <div class="container-fluid top-menu sub-menu-container">
     <ul id="subMenuNode" class="nav navbar-nav">
+      <div class="sub-menu-name">
+        <span>Domain ID : </span>
+      </div>
+      <div class="sub-menu-field">
+        <input id="subMenuDomainId" type="text" class="form-control" placeholder="Domain ID">
+      </div>
+      <div class="sub-menu-divider"></div>
       <div class="sub-menu-name">
         <span>Name : </span>
       </div>
@@ -136,7 +185,7 @@
   </div>
 </nav>
 
-<%--<div class="zoom-menu">--%>
+<%--<div class="zoom-menu">#}--%>
   <%--<button type="button" class="btn btn-dark zoom-menu-button">+</button>--%>
   <%--<button type="button" class="btn btn-dark zoom-menu-button">-</button>--%>
   <%--<span class="glyphicon glyphicon-search zoom-menu-icon" aria-hidden="true"></span>--%>
@@ -146,17 +195,126 @@
 
 <div class="content">
   <nav class="side-menu">
-    <button type="button" class="btn btn-dark side-menu-button menuNewNode">NN<span class="tooltip-text">New Node</span></button>
-    <button type="button" class="btn btn-dark side-menu-button menuDeleteNode">DN<span class="tooltip-text">Delete Node</span></button>
-    <button type="button" class="btn btn-dark side-menu-button menuNewEdge">NE<span class="tooltip-text">New Edge</span></button>
-    <button type="button" class="btn btn-dark side-menu-button menuDeleteEdge">DE<span class="tooltip-text">Delete Edge</span></button>
+    <div class="side-menu-container">
+      <div class="side-menu-list side-menu-nodes">
+        <div class="side-menu-list-header">
+          <h5>Node List</h5>
+          <div class="btn-group" role="group">
+            <a class="btn btn-dark btn-xs menuDeleteNode" aria-label="Delete Node">
+              <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+            </a>
+            <a class="btn btn-dark btn-xs menuNewNode" aria-label="Add Node">
+              <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+            </a>
+          </div>
+        </div>
+        <ul id="sideMenuNodeList">
+          <li><a><span>New Node 1</span></a></li>
+          <li><a><span>New Node 2</span></a></li>
+          <li><a><span>New Node 3</span></a></li>
+          <li><a><span>New Node 4</span></a></li>
+        </ul>
+      </div>
+
+      <div class="side-menu-list side-menu-edges">
+        <div class="side-menu-list-header">
+          <h5>Edge List</h5>
+          <div class="btn-group" role="group">
+            <a class="btn btn-dark btn-xs menuDeleteEdge" aria-label="Delete Edge">
+              <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+            </a>
+            <a class="btn btn-dark btn-xs menuNewEdge" aria-label="Add Edge">
+              <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+            </a>
+          </div>
+        </div>
+        <ul id="sideMenuEdgeList">
+          <li><a><span class="edge-source">Node A</span>
+            <span class="edge-pointer">-></span>
+            <span class="edge-target">Node B</span></a></li>
+          <li><a><span class="edge-source">Node B</span>
+            <span class="edge-pointer">-></span>
+            <span class="edge-target">Node A</span></a></li>
+          <li><a><span class="edge-source">Node A</span>
+            <span class="edge-pointer">-></span>
+            <span class="edge-target">Node C</span></a></li>
+        </ul>
+      </div>
+    </div>
   </nav>
+
   <div class="graph-area">
+    <div class="graph-title"><span id="graphName">New Graph</span></div>
     <div id="graph"></div>
+  </div>
+
+  <div class="graph-close-overlay">
+    <h4>Please load a graph or create new graph first.</h4>
   </div>
 </div>
 
-<div id="newEdgeModal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="false">
+<div class="welcome-overlay">
+  <h2>Welcome to Influence Network Analyzer!</h2>
+</div>
+
+
+<!-- Modals -->
+<div id="signupModal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Sign Up for Influence Network</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-xs-12">
+            <form id="signupForm" class="form-signup"  name="signupForm" accept-charset="UTF-8">
+              <div class="form-group">
+                <label for="inputEmail" >Email Address</label>
+                <input type="email" id="inputEmail" name="email" maxlength="100"
+                       class="form-control form-control-input valid"
+                       placeholder="Email">
+                <button type="button" id="btnCheckEmail" class="btn btn-dark btn-block
+                                                                                        form-control form-control-button">
+                  Check
+                </button>
+              </div>
+              <div class="form-group">
+                <label for="inputPw">Password</label>
+                <input type="password" id="inputPw" name="pw" maxlength="20" class="form-control invalid"
+                       placeholder="Password">
+              </div>
+              <div class="form-group">
+                <label for="inputPw">Password Confirm</label>
+                <input type="password" id="inputPwConfirm" maxlength="20" name="pwConfirm" class="form-control"
+                       placeholder="Password Confirm">
+              </div>
+              <div class="form-group">
+                <label for="inputName" >Name</label>
+                <input type="text" id="inputName" name="inputName" maxlength="40" class="form-control valid"
+                       placeholder="Name">
+              </div>
+              <div class="row">
+                <div class="col-xs-6">
+                  <button id="btnSignupCancel" data-dismiss="modal"
+                          class="btn btn-default btn-block" type="submit">Cancel</button>
+                </div>
+                <div class="col-xs-6">
+                  <button id="btnSignup" class="btn btn-dark btn-block" type="submit">Sign up</button>
+                </div>
+              </div>
+            </form>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div id="newEdgeModal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -205,7 +363,7 @@
   </div>
 </div>
 
-<div id="manageNodeTypeModal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="false">
+<div id="manageNodeTypeModal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -265,14 +423,12 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <%--<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>--%>
-        <%--<button type="button" id="btnManageNodeTypeModalConfirm" class="btn btn-dark">Confirm</button>--%>
       </div>
     </div>
   </div>
 </div>
 
-<div id="manageConfidenceModal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="false">
+<div id="manageConfidenceModal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -324,8 +480,107 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <%--<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>--%>
-        <%--<button type="button" id="btnManageConfidenceModalConfirm" class="btn btn-dark">Confirm</button>--%>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="newGraphModal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">New Graph</h4>
+      </div>
+      <div class="modal-body">
+        <div>
+          <h5>Graph Name: </h5>
+          <input type="text" id="newGraphName" class="form-control" placeholder="New Graph Name">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="button" id="btnNewGraph" class="btn btn-dark">Create</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="openGraphModal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Open Graph</h4>
+      </div>
+      <div class="modal-body">
+        <div>
+          <h5>Influence Graph List</h5>
+          <div id="graphList" class="list-group">
+            <a href="#" class="list-group-item active">Type 1</a>
+            <a href="#" class="list-group-item">Type 2</a>
+          </div>
+          <span class="unfocusor" style="display: none;">&nbsp;</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="button" id="btnOpenGraph" class="btn btn-dark" >Open</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="saveAsGraphModal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Save As</h4>
+      </div>
+      <div class="modal-body">
+        <div>
+          <h5>Graph Name: </h5>
+          <input type="text" id="saveAsGraphName" class="form-control" placeholder="Graph Name">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="button" id="btnSaveAsGraph" class="btn btn-dark">Save As</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="findMaxInfluencePathModal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Alert</h4>
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-dark" data-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="confirmModal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 id="confirmModalTitle" class="modal-title">Alert</h4>
+      </div>
+      <div class="modal-body">
+        <p id="confirmModalMsg">message</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button id="btnConfirmModal" type="button" class="btn btn-dark" data-dismiss="modal">Confirm</button>
       </div>
     </div>
   </div>
@@ -350,6 +605,7 @@
 
 
 <script src="lib/jquery/jquery-3.1.1.min.js"></script>
+<script src="lib/jquery/plugin/loadingoverlay.min.js"></script>
 <script src="js/jquery_extends.js"></script>
 <script src="lib/bootstrap/js/bootstrap.min.js"></script>
 <%--<script src="lib/d3/d3.min.js"></script>--%>

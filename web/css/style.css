@@ -18,15 +18,64 @@ body {
     padding-left: 10px !important;
 }
 
-.menu-group .dropdown > a
-{
+/*prevent collapse*/
+.navbar > .top-menu {
+    width: 100%;
+    min-width: 996px;
+}
+.top-menu .navbar-nav {
+    float: left;
+    margin: 0;
+}
+.top-menu .navbar-right {
+    float: left !important;
+}
+@media (min-width:996px) {
+    .top-menu .navbar-right {
+        float: right !important;
+    }
+}
+.container-fluid.top-menu > .navbar-collapse {
+    margin-right: 0;
+    margin-left: 0;
+}
+.top-menu .navbar-collapse.collapse {
+    display: block!important;
+    height: auto!important;
+    padding-bottom: 0;
+    overflow: visible!important;
+}
+.top-menu .navbar-collapse {
+    width: auto;
+    border-top: 0;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+.top-menu .navbar-nav>li {
+    float: left;
+}
+.top-menu .navbar-nav .open .dropdown-menu {
+    position: absolute;
+    float: left;
+    width: inherit;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0,0,0,.15);
+    margin-top: 0;
+    border-radius: 0 0 4px 4px;
+    -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    box-shadow: 0 6px 12px rgba(0,0,0,.175)
+}
+.top-menu .navbar-nav .open .dropdown-menu>li>a {
+    line-height: 1.42857143;
+    padding: 3px 20px;
+}
+
+.menu-group .dropdown > a {
     padding: 5px 15px;
 }
-
-.menu-group > .container-fluid, .edit-menu > .container-fluid{
+.menu-group > .container-fluid, .edit-menu > .container-fluid {
     padding-left: 0px;
 }
-
 .btn-group{
     padding-top: 5px;
 }
@@ -49,15 +98,16 @@ body {
 }
 .navbar .sub-menu-container .nav.navbar-nav .btn-group .btn-selection {
     min-width: 120px;
+    max-width: 240px;
 }
 .navbar .sub-menu-container .nav.navbar-nav .btn-group .btn-selection.unselected {
     color: #9e9e9e;
 }
 .navbar .sub-menu-container .nav.navbar-nav .btn-group .btn-selection.long-length {
-    min-width: 240px;
+    width: 240px;
 }
 .navbar .sub-menu-container .nav.navbar-nav input {
-    min-width: 120px;
+    width: 120px;
 }
 .navbar .sub-menu-container .nav.navbar-nav .sub-menu-divider {
     float : left;
@@ -67,13 +117,90 @@ body {
 }
 
 .side-menu {
-    width: 54px;
+    width: 240px;
     min-height: 1600px;
     height: 100%;
     overflow: hidden;
     display: inline-block;
     background-color: #424242;
     border-right: solid 1px #212121;
+}
+.side-menu-container {
+    padding: 10px;
+}
+.side-menu-container .side-menu-list {
+    background-color: #616161;
+    border: solid 1px #212121;
+    border-radius: 4px;
+    color: white;
+    margin-bottom: 10px;
+}
+.side-menu-list .side-menu-list-header {
+    padding: 0 10px;
+    border-bottom: solid 1px #212121;
+}
+.side-menu-list .side-menu-list-header h5 {
+    display: inline-block;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+.side-menu-list .side-menu-list-header .btn-group {
+    display: inline-block;
+    float: right;
+    padding-top: 6px;
+}
+.side-menu-list ul {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    min-height: 240px;
+    max-height: 320px;
+    padding: 5px 0;
+    margin-bottom: 0;
+    list-style-type: none;
+}
+.side-menu-list ul li {
+}
+.side-menu-list ul li > a {
+    display: block;
+    padding: 0px 10px;
+    color: white;
+    width: 100%;
+    height: 20px;
+    overflow: hidden;
+    -ms-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    text-overflow-mode: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+    user-drag: none;
+}
+.side-menu-list ul li > a:hover,
+.side-menu-list ul li > a:focus {
+    background-color: #757575;
+    text-decoration: none;
+}
+.side-menu-list ul li > a.active,
+.side-menu-list ul li > a.active:hover,
+.side-menu-list ul li > a.active:focus {
+    background-color: #9e9e9e;
+    text-decoration: none;
+}
+.side-menu-list.side-menu-edges ul li > a .edge-source,
+.side-menu-list.side-menu-edges ul li > a .edge-target {
+    display: inline-block;
+    width: 45%;
+    overflow: hidden;
+    -ms-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    text-overflow-mode: ellipsis;
+    white-space: nowrap;
+}
+.side-menu-list.side-menu-edges ul li > a .edge-pointer {
+    display: inline-block;
+    width: 10%;
+    overflow: hidden;
+    text-align: center;
 }
 
 .side-menu-button {
@@ -125,21 +252,48 @@ body {
     width : 63px;
 }
 
-.content {
-    width: auto;
-    height: auto;
+.graph-title {
+    width: 100%;
+    height: 31px;
+    margin: 0;
+    padding: 0 15px;
+    color: white;
+    background-color: #616161;
+    border-bottom: 1px solid #212121;
+}
+.graph-title span {
+    display: inline-block;
+    height: 30px;
+    padding: 5px 0;
 }
 
 .graph-area {
-    /*margin-top: 74px;*/
-    /*margin-left: 55px;*/
-    width: calc(100% - 55px);
+    width: calc(100% - 240px);
     height: 100%;
     display: inline-block;
     float: right;
-    /*min-width: 640px;*/
-    /*min-height: 480px;*/
     background-color: white;
+}
+.graph-close-overlay {
+    width: calc(100% - 240px);
+    height: 100%;
+    display: inline-block;
+    float: right;
+    background-color: #e0e0e0;
+    text-align: center;
+}
+
+.content {
+    display: none;
+    width: auto;
+    height: auto;
+}
+.welcome-overlay {
+    /*display: none;*/
+    background: white;
+    color: black;
+    text-align: center;
+    height: 100%;
 }
 
 #subMenuNodeType .nodeTypeColor,
@@ -200,6 +354,9 @@ body {
 }
 #manageNodeTypeList .typeId {
     display: none;
+}
+#manageNodeTypeList .list-group-item {
+    min-height: 42px;
 }
 #manageNodeTypeList .list-group-item.active,
 #manageNodeTypeList .list-group-item.active:hover,
@@ -278,8 +435,99 @@ body {
 }
 
 
+/*signin form*/
+#menuSignin {
+    background: #616161;
+    color: white;
+    border-left: 1px solid #212121;
+    border-bottom: 1px solid #212121;
+    width: 360px;
+    height: 190px;
+    padding: 15px;
+    position: absolute;
+    z-index: 100;
+    right: 0;
+    top: 0;
+}
+#menuSignin #checkboxRemember {
+    display: inline-block;
+}
+#menuSignin #btnSignin {
+    display: inline-block;
+    float: right;
+    width: 140px !important;
+}
+#menuSignin .signin-more {
+    margin-top: 10px;
+}
+.form-signin {}
+.form-signin .checkbox {
+    font-weight: normal;
+}
+.form-signin .form-control {
+    position: relative;
+    height: auto;
+    -webkit-box-sizing: border-box;
+         -moz-box-sizing: border-box;
+                    box-sizing: border-box;
+    padding: 10px;
+}
+.form-signin .form-control:focus {
+    z-index: 2;
+}
+.form-signin input[type="email"] {
+    margin-bottom: -1px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+}
+.form-signin input[type="password"] {
+    margin-bottom: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+/* signup form */
+#signupModal .modal-dialog {
+    width:400px;
+}
+/* form group for signin/up */
+.modal-body .form-group label {
+    display: block;
+}
+.modal-body .form-group .form-control-input {
+    display: inline-block;
+    width: 80%;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.modal-body .form-group .form-control-button {
+    display: inline-block;
+    width: 20%;
+    float: right;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
 
 
+/* open graph */
+#openGraphModal .modal-body .list-group {
+    max-height: 300px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+#graphList .list-group-item.active,
+#graphList .list-group-item.active:hover,
+#graphList .list-group-item.active:focus,
+#graphList .list-group-item.active,
+#graphList .list-group-item.active:hover,
+#graphList .list-group-item.active:focus {
+    background-color: #616161;
+    border-color: #424242;
+    color: white;
+}
+
+
+/* colors */
 .type-color-bg.type-color-red { background-color: #f44336 !important; }
 .type-color-text.type-color-red { color: white !important; }
 .type-color-bg.type-color-pink { background-color: #e91e63 !important; }

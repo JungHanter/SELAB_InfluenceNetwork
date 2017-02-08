@@ -1,8 +1,8 @@
 var global_consts = {
     defaultTitle: "New Node",
     defaultEdgeValue: 0.5,
-    graphSvgStartX: 54,
-    graphSvgStartY: 76
+    graphSvgStartX: 240,
+    graphSvgStartY: 107
 };
 var global_settings = {
     appendElSpec: "#graph"
@@ -27,7 +27,8 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         thisGraph.onNodeSelected = function(d3Node, nodeData){};
         thisGraph.onEdgeSelected = function(d3PathG, edgeData){};
         thisGraph.onUnselected = function(){};
-        thisGraph.onNodeCreated = function(nodeData){};
+        thisGraph.onNodeChanged = function(event, nodeData){};
+        thisGraph.onEdgeChanged = function(event, nodeData){};
 
         thisGraph.state = {
             selectedNode: null,
@@ -164,7 +165,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
 
     GraphCreator.prototype.deleteGraph = function(skipPrompt){
         var thisGraph = this,
-                doDelete = true;
+            doDelete = true;
         if (!skipPrompt){
             doDelete = window.confirm("Press OK to delete this graph");
         }
@@ -401,6 +402,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                 if (thisGraph.state.selectedNode == d) {
                     thisGraph.onNodeSelected(d3node, d);
                 }
+                thisGraph.onNodeChanged('updated', d);
             });
         return d3txt;
     };
@@ -457,6 +459,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                 if (thisGraph.state.selectedEdge == d) {
                     thisGraph.onEdgeSelected(d3pathG, d);
                 }
+                thisGraph.onEdgeChanged('updated', d);
             });
         return d3txt;
     };
@@ -517,7 +520,8 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         if (mouseDownNode !== d){
             // we're in a different node: create new edge for mousedown edge and add to graph
             // TODO here is to create edge!!!
-            this.createEdge(mouseDownNode, d, 0.5, true);
+            var newEdge = this.createEdge(mouseDownNode, d, 0.5, true);
+            thisGraph.onEdgeChanged('created', newEdge);
         } else{
             // we're in the same node
             if (state.justDragged) {
@@ -570,7 +574,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                                type: null, x: xycoords[0], y: xycoords[1]};
             thisGraph.nodes.push(newNodeData);
             thisGraph.updateGraph();
-            thisGraph.onNodeCreated(newNodeData);
+            thisGraph.onNodeChanged('created', newNodeData);
             // make title of text immediately editable
             var d3txt = thisGraph.changeTextOfNode(thisGraph.circles.filter(function(dval){
                 return dval.id === newNodeData.id;
@@ -606,14 +610,18 @@ document.onload = (function(d3, saveAs, Blob, undefined){
             if (focusedTag == 'BODY' || focusedTag == 'SVG' || focusedTag == 'G') {
                 d3.event.preventDefault();
                 if (selectedNode){
+                    var deletedNode = state.selectedNode;
                     thisGraph.nodes.splice(thisGraph.nodes.indexOf(selectedNode), 1);
                     thisGraph.spliceLinksForNode(selectedNode);
                     state.selectedNode = null;
                     thisGraph.updateGraph();
+                    thisGraph.onNodeChanged('deleted', deletedNode);
                 } else if (selectedEdge){
+                    var deletedEdge = state.selectedEdge;
                     thisGraph.edges.splice(thisGraph.edges.indexOf(selectedEdge), 1);
                     state.selectedEdge = null;
                     thisGraph.updateGraph();
+                    thisGraph.onEdgeChanged('deleted', deletedEdge);
                 }
                 thisGraph.onUnselected();
             }
@@ -792,11 +800,12 @@ document.onload = (function(d3, saveAs, Blob, undefined){
     };
 
     GraphCreator.prototype.setCallbacks
-            = function(onNodeSelected, onEdgeSelected, onUnselected, onNodeCreated) {
+            = function(onNodeSelected, onEdgeSelected, onUnselected, onNodeChanged, onEdgeChanged) {
         this.onNodeSelected = onNodeSelected;
         this.onEdgeSelected = onEdgeSelected;
         this.onUnselected = onUnselected;
-        this.onNodeCreated = onNodeCreated;
+        this.onNodeChanged = onNodeChanged;
+        this.onEdgeChanged = onEdgeChanged;
     };
 
     GraphCreator.prototype.changeNodeTitle = function(d3node, title) {
@@ -809,7 +818,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         this.insertEdgeName(d3pathG, edgeData);
     }
 
-    GraphCreator.prototype.createNode = function() {
+    GraphCreator.prototype.createNode = function(updating=true) {
         var thisGraph = this;
 
         var gGraph = thisGraph.svg.select("g.graph");
@@ -833,13 +842,24 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         var newNodeData = {id: thisGraph.idct++, title: global_consts.defaultTitle,
                            type: null, x: pX, y: pY};
         thisGraph.nodes.push(newNodeData);
-        thisGraph.updateGraph();
 
-        var d3Node = thisGraph.circles.filter(function(cd) {
-            return cd.id === newNodeData.id;
-        });
-        thisGraph.replaceSelectNode(d3Node, newNodeData);
-        thisGraph.onNodeSelected(d3Node, newNodeData);
+        if (updating==undefined || updating==null)
+            updating = true;
+        if (updating) thisGraph.updateGraph();
+
+        // var d3Node = thisGraph.circles.filter(function(cd) {
+        //     return cd.id === newNodeData.id;
+        // });
+        // thisGraph.replaceSelectNode(d3Node, newNodeData);
+
+        return newNodeData;
+    }
+
+    GraphCreator.prototype.insertNode = function(newNodeData) {
+        var thisGraph = this;
+        newNodeData.id = thisGraph.idct++;
+        thisGraph.nodes.push(newNodeData);
+        return newNodeData;
     }
 
     GraphCreator.prototype.createEdge = function(sourceNode, targetNode, name, editable=false) {
@@ -861,12 +881,75 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                 thisGraph.selectElementContents(txtEdge);
                 txtEdge.focus();
             }
+            return newEdge;
+        }
+        return null;
+    }
+
+    GraphCreator.prototype.selectNode = function(id) {
+        var thisGraph = this;
+        var nodeData = thisGraph.getNodeById(id);
+        if (nodeData != null) {
+            var d3Node = thisGraph.circles.filter(function(cd) {
+                return cd.id === nodeData.id;
+            });
+            if (d3Node == null || d3Node.length < 0) return false;
+
+            if (thisGraph.state.selectedEdge) {
+                thisGraph.removeSelectFromEdge();
+            }
+            thisGraph.replaceSelectNode(d3Node, nodeData);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    GraphCreator.prototype.selectEdge = function(sourceId, targetId) {
+        var thisGraph = this;
+        var edgeData = thisGraph.getEdgeByNodesId(sourceId, targetId);
+        if (edgeData != null) {
+            var d3PathG = thisGraph.paths.filter(function(d) {
+                return edgeData == d;
+            });
+            if (d3PathG == null || d3PathG.length < 0) return false;
+
+            if (thisGraph.state.selectedNode) {
+                thisGraph.removeSelectFromNode();
+            }
+            thisGraph.replaceSelectEdge(d3PathG.selectAll("path"), edgeData);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    GraphCreator.prototype.unselect = function() {
+        if (this.state.selectedNode) {
+            this.removeSelectFromNode();
+            return true;
+        } else if (this.state.selectedEdge) {
+            this.removeSelectFromEdge();
+            return true;
+        } else {
+            return false;
         }
     }
 
     GraphCreator.prototype.getNodeById = function(id) {
         for (var i=0; i<this.nodes.length; i++) {
             if (this.nodes[i].id == id) return this.nodes[i];
+        }
+        return null;
+    }
+
+    GraphCreator.prototype.getEdgeByNodesId = function(sourceId, targetId) {
+        var source = this.getNodeById(sourceId),
+            target = this.getNodeById(targetId);
+        if (source == null || target == null) return null;
+        for (var i=0; i<this.edges.length; i++) {
+            if (this.edges[i].source == source &&
+                    this.edges[i].target == target) return this.edges[i];
         }
         return null;
     }
