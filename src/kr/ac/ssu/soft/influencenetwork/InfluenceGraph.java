@@ -128,27 +128,35 @@ public class InfluenceGraph {
     }
 
     public boolean deleteNodeType(int nodeTypeId) {
+//        Set<NodeType> deleteNodeTypeSet = new TreeSet<>();
         for (NodeType nt : nodeTypeSet) {
             if(nt.getId() == nodeTypeId) {
-                if (nodeTypeSet.remove(nt)) {
+                if (nodeTypeSet.contains(nt)) {
+
+                    /* set nodetype of node to null*/
                     Set<Node> updatedNodeSet = new TreeSet<>();
                     for (Node n : nodeSet) {
-                        if (n.getNodeType().getId() == nodeTypeId) {
-                            updatedNodeSet.add(n);
-                            n.setNodeType(null);
+                        NodeType nodeType = n.getNodeType();
+                        if(nodeType != null) {
+                            if (nodeType.getId() == nodeTypeId){
+                                updatedNodeSet.add(n);
+                                n.setNodeType(null);
+                            }
                         }
                     }
+
                     Set<Confidence> deletedConfidenceSet = new TreeSet<Confidence>();
                     for (Confidence c : confidenceSet) {
                         if((c.getOrigin().getId() == nodeTypeId) || (c.getDestination().getId() == nodeTypeId)) {
                             deletedConfidenceSet.add(c);
-//                            confidenceSet.remove(c);
                         }
                     }
                     confidenceSet.removeAll(deletedConfidenceSet);
                     if (nodeTypeDAO.deleteNodeType(nodeTypeId)) {
+                        nodeTypeSet.remove(nt);
                         return true;
                     } else {
+
                         /* Revert deleted nodetype, node and confidences */
                         nodeTypeSet.add(nt);
                         for (Node n : updatedNodeSet) {

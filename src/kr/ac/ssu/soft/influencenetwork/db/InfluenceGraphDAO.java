@@ -82,6 +82,7 @@ public class InfluenceGraphDAO {
 				String name = rs.getString(2);
 				InfluenceGraph temp_influencegraph = new InfluenceGraph(name);
 				temp_influencegraph.setId(id);
+				temp_influencegraph.load();
 				return temp_influencegraph;
 			}
 			return null;
