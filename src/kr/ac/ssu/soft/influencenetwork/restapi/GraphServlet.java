@@ -1,6 +1,7 @@
 package kr.ac.ssu.soft.influencenetwork.restapi;
 
 import kr.ac.ssu.soft.influencenetwork.*;
+import kr.ac.ssu.soft.influencenetwork.db.ConfidenceDAO;
 import kr.ac.ssu.soft.influencenetwork.db.InfluenceGraphDAO;
 import kr.ac.ssu.soft.influencenetwork.db.NodeDAO;
 import kr.ac.ssu.soft.influencenetwork.db.NodeTypeDAO;
@@ -30,6 +31,7 @@ public class GraphServlet extends HttpServlet {
     InfluenceGraphDAO influenceGraphDAO = new InfluenceGraphDAO();
     NodeTypeDAO nodeTypeDAO = new NodeTypeDAO();
     NodeDAO nodeDAO = new  NodeDAO();
+    ConfidenceDAO confidenceDAO = new ConfidenceDAO();
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -221,7 +223,6 @@ public class GraphServlet extends HttpServlet {
                 }
                 break;
             case "save" :
-
                 JSONObject graph = (JSONObject)jsonObject.get("graph");
                 int graphid = Integer.parseInt(graph.get("graph_id").toString());
                 System.out.println(graph.toJSONString());
@@ -290,7 +291,7 @@ public class GraphServlet extends HttpServlet {
                         currentGraph.deleteNodeType(nt.getId());
                     }
 
-//                    JSONArray clientIdNodetypeJsonArray = new JSONArray();
+                    /* NodeType clientid : nodetypeid JSONobject*/
                     JSONObject clientIdNodetypeJsonObject = new JSONObject();
                     for (Integer i : clientIdNodetypeMap.keySet()) {
                         clientIdNodetypeJsonObject.put(i, clientIdNodetypeMap.get(i).getId());
@@ -298,6 +299,183 @@ public class GraphServlet extends HttpServlet {
                     }
                     System.out.println(clientIdNodetypeJsonObject.toJSONString());
                     result.put("nodetype_id_map", clientIdNodetypeJsonObject);
+
+                    /**
+                     *  confidence
+                     */
+                    JSONArray confidenceJsonArray = (JSONArray) graph.get("confidence_set");
+                    HashSet<Confidence> confidenceRecievedSet = new HashSet<>();
+
+                    for (Object o : confidenceJsonArray) {
+                        boolean hasN1Id = false, hasN2Id = false;
+                        int n1typeClientId = 0, n2typeClientId = 0;
+                        int n1typeId = 0, n2typeId = 0;
+                        float confidenceValue = 0;
+                        JSONObject confidenceJsonObject = (JSONObject) o;
+                        System.out.println(confidenceJsonObject.toJSONString());
+
+                        if (confidenceJsonObject.containsKey("n1_type_id")) {
+                            n1typeId = Integer.parseInt(confidenceJsonObject.get("n1_type_id").toString());
+                            hasN1Id = true;
+                        } else {
+                            n1typeClientId = Integer.parseInt(confidenceJsonObject.get("n1_type_client_id").toString());
+                        }
+                        if (confidenceJsonObject.containsKey("n2_type_id")) {
+                            n2typeId = Integer.parseInt(confidenceJsonObject.get("n2_type_id").toString());
+                            hasN2Id = true;
+                        } else {
+                            n2typeClientId = Integer.parseInt(confidenceJsonObject.get("n2_type_client_id").toString());
+                        }
+                        confidenceValue = Float.parseFloat(confidenceJsonObject.get("confidence_value").toString());
+
+
+                        Confidence confidence = null;
+                        if (hasN1Id && hasN2Id) {
+                            confidence = currentGraph.getConfidence(currentGraph.getNodeType(n1typeId), currentGraph.getNodeType(n2typeId));
+
+                            if (confidence.getConfidenceValue() != confidenceValue) {
+
+                            /* update confidence*/
+                                confidence.setConfidenceValue(confidenceValue);
+
+                                confidenceDAO.updateConfidence(currentGraph.getNodeType(n1typeId), currentGraph.getNodeType(n2typeId), confidenceValue);
+                            } else {
+                                //pass
+                            }
+                        } else {
+                            NodeType nt1=null, nt2=null;
+                            if(hasN1Id)
+                                nt1 = currentGraph.getNodeType(n1typeId);
+                            else
+                                nt1 = clientIdNodetypeMap.get(n1typeClientId);
+
+                            if(hasN2Id)
+                                nt2 = currentGraph.getNodeType(n2typeId);
+                            else
+                                nt2 = clientIdNodetypeMap.get(n2typeClientId);
+
+
+                            /* create confidence */
+                            confidence = new Confidence(nt1, nt2, confidenceValue);
+
+                            /* save node type(both memory and DB) */
+                            currentGraph.addConfidence(confidence); //add exception handling when update node type error.
+                        }
+
+                        confidenceRecievedSet.add(confidence);
+                    }
+
+                    /* delete nodetype in momory */
+                    Set<Confidence> confidenceSet = currentGraph.getConfidenceSet();
+                    HashSet<Confidence> deletingConfidenceSet = new HashSet<>();
+                    deletingConfidenceSet.addAll(confidenceSet);
+                    deletingConfidenceSet.removeAll(confidenceRecievedSet);
+
+                    for (Confidence c : deletingConfidenceSet) {
+                        currentGraph.deleteConfidence(c.getOrigin(), c.getDestination());
+                    }
+
+                    /**
+                     *  Node
+                     */
+                    JSONArray nodeJsonArray = (JSONArray) graph.get("node_set");
+                    HashSet<Node> nodeRecievedSet = new HashSet<>();
+
+                    for (Object o : nodeJsonArray) {
+                        boolean hasId = false, hasTypeId = false;
+                        int id = 0, clientId = 0;
+                        String domainId = null, name = null;
+                        int nodetypeId = 0, nodetypeClientId = 0;
+                        float x = 0, y = 0;
+
+                        JSONObject nodeJsonObject = (JSONObject) o;
+                        System.out.println(nodeJsonObject.toJSONString());
+
+                        if (nodeJsonObject.containsKey("node_id")) {
+                            id = Integer.parseInt(nodeJsonObject.get("node_id").toString());
+                            hasId = true;
+                        } else {
+                            clientId = Integer.parseInt(nodeJsonObject.get("node_client_id").toString());
+                        }
+                        if (nodeJsonObject.containsKey("node_type_id")) {
+                            nodetypeClientId = Integer.parseInt(nodeJsonObject.get("node_type_id").toString());
+                            hasTypeId = true;
+                        } else {
+                            nodetypeClientId = Integer.parseInt(nodeJsonObject.get("node_type_client_id").toString());
+                        }
+                        if(nodeJsonObject.get("domain_id") != null) {
+                            domainId = nodeJsonObject.get("domain_id").toString();
+                        } else {
+                            domainId = null;
+                        }
+                        name = nodeJsonObject.get("node_name").toString();
+                        x = Float.parseFloat(nodeJsonObject.get("x").toString());
+                        y = Float.parseFloat(nodeJsonObject.get("y").toString());
+
+                        Node node = null;
+                        if (hasId && hasTypeId) {
+
+                            /* Update */
+                            boolean isUpdated = false;
+                            node = currentGraph.getNode(id);
+
+                            if(domainId != null) {
+                                if (!domainId.equals(node.getDomainId())) {
+                                    node.setDomainId(domainId);
+                                    isUpdated = true;
+                                }
+                            } else {
+                                if(node.getDomainId() != null) {
+                                    node.setDomainId(domainId);
+                                    isUpdated = true;
+                                }
+                            }
+                            if (!name.equals(node.getName())) {
+                                node.setName(name);
+                                isUpdated = true;
+                            }
+                            if (x != node.getX()) {
+                                node.setX(x);
+                                isUpdated = true;
+                            }
+                            if (y != node.getY()) {
+                                node.setY(y);
+                                isUpdated = true;
+                            }
+                            if (isUpdated) {
+                                nodeDAO.updateNode(node);
+                            }
+                        } else {
+                            NodeType nodeType = null;
+
+                            if(hasTypeId) { //node(x) = clientId
+                                nodeType = currentGraph.getNodeType(nodetypeId);
+                                nodeDAO.saveNode(domainId, name, nodeType.getId(), x, y, graphid);
+                            }
+                            else { //node type (x)
+                                nodeType = clientIdNodetypeMap.get(nodetypeClientId);
+                                if (hasId) {
+                                    node = currentGraph.getNode(id);
+                                    node.setNodeType(nodeType);
+                                    nodeDAO.updateNode(node);
+                                }
+                                else { //node type (x), node (x)
+                                    nodeDAO.saveNode(domainId, name, nodeType.getId(), x, y, graphid);
+                                }
+                            }
+                        }
+                        nodeRecievedSet.add(node);
+                    }
+
+                    /* delete nodetype in momory */
+                    Set<Node> nodeSet = currentGraph.getNodeSet();
+                    HashSet<Node> deletingNodeSet = new HashSet<>();
+                    deletingNodeSet.addAll(nodeSet);
+                    deletingNodeSet.removeAll(nodeRecievedSet);
+
+                    for (Node n : deletingNodeSet) {
+                        currentGraph.deleteNode(n.getId());
+                    }
                     result.put("result", "success");
                 } catch (Exception e) {
                     e.printStackTrace();

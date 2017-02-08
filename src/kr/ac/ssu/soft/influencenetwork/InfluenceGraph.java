@@ -592,74 +592,74 @@ public class InfluenceGraph {
 		a.addNodeType(Communistic);
 		a.addNodeType(Neutral);
 
-        A = new Node(Democracy, "A",(float)240,(float)200);
-		B = new Node(Neutral, "B",(float)200,(float)220);
-		C = new Node(Democracy, "C",(float)250,(float)500);
-		D = new Node(Communistic, "D",(float)270,(float)320);
-		E = new Node(Democracy, "E",(float)320,(float)500);
-		F = new Node(Communistic, "F",(float)380,(float)400);
-		G = new Node(Communistic, "G",(float)450,(float)350);
-        H = new Node(Neutral, "H",(float)500,(float)250);
-		I = new Node(Democracy, "I",(float)650,(float)200);
-		J = new Node(Democracy, "J",(float)700,(float)250);
-		K = new Node(Democracy, "K",(float)400,(float)500);
-		L = new Node(Neutral, "L",(float)550,(float)250);
-
-		a.addNode(A);
-		a.addNode(B);
-		a.addNode(C);
-		a.addNode(D);
-		a.addNode(E);
-		a.addNode(F);
-		a.addNode(G);
-		a.addNode(H);
-		a.addNode(I);
-		a.addNode(J);
-		a.addNode(K);
-		a.addNode(L);
-
-		a.addEdge(new Edge(A,B,(float)0.5));
-		a.addEdge(new Edge(A,C,(float)0.9));
-		a.addEdge(new Edge(A,D,(float)0.6));
-		a.addEdge(new Edge(B,A,(float)0.4));
-		a.addEdge(new Edge(B,C,(float)0.85));
-		a.addEdge(new Edge(B,E,(float)0.85));
-		a.addEdge(new Edge(B,F,(float)0.95));
-		a.addEdge(new Edge(C,A,(float)0.95));
-		a.addEdge(new Edge(C,B,(float)0.85));
-		a.addEdge(new Edge(C,D,(float)0.7));
-		a.addEdge(new Edge(C,F,(float)0.4));
-		a.addEdge(new Edge(C,H,(float)0.45));
-		a.addEdge(new Edge(C,J,(float)0.3));
-		a.addEdge(new Edge(D,C,(float)0.8));
-		a.addEdge(new Edge(D,H,(float)0.85));
-		a.addEdge(new Edge(E,B,(float)0.3));
-		a.addEdge(new Edge(E,I,(float)0.95));
-		a.addEdge(new Edge(F,B,(float)0.8));
-		a.addEdge(new Edge(F,C,(float)0.3));
-		a.addEdge(new Edge(F,E,(float)0.55));
-		a.addEdge(new Edge(F,G,(float)0.3));
-		a.addEdge(new Edge(F,J,(float)0.4));
-		a.addEdge(new Edge(G,C,(float)0.75));
-		a.addEdge(new Edge(G,J,(float)0.4));
-		a.addEdge(new Edge(G,L,(float)0.6));
-		a.addEdge(new Edge(H,C,(float)0.45));
-		a.addEdge(new Edge(H,D,(float)0.7));
-		a.addEdge(new Edge(H,G,(float)0.7));
-		a.addEdge(new Edge(H,J,(float)0.75));
-		a.addEdge(new Edge(H,K,(float)0.6));
-		a.addEdge(new Edge(I,E,(float)0.7));
-		a.addEdge(new Edge(I,F,(float)0.9));
-		a.addEdge(new Edge(I,J,(float)0.8));
-		a.addEdge(new Edge(J,F,(float)0.6));
-		a.addEdge(new Edge(J,H,(float)0.9));
-		a.addEdge(new Edge(J,I,(float)0.7));
-		a.addEdge(new Edge(J,L,(float)0.3));
-		a.addEdge(new Edge(K,H,(float)0.4));
-		a.addEdge(new Edge(K,L,(float)1));
-		a.addEdge(new Edge(L,J,(float)0.3));
-		a.addEdge(new Edge(L,K,(float)1));
-
+//        A = new Node(Democracy, "A",(float)240,(float)200);
+//		B = new Node(Neutral, "B",(float)200,(float)220);
+//		C = new Node(Democracy, "C",(float)250,(float)500);
+//		D = new Node(Communistic, "D",(float)270,(float)320);
+//		E = new Node(Democracy, "E",(float)320,(float)500);
+//		F = new Node(Communistic, "F",(float)380,(float)400);
+//		G = new Node(Communistic, "G",(float)450,(float)350);
+//        H = new Node(Neutral, "H",(float)500,(float)250);
+//		I = new Node(Democracy, "I",(float)650,(float)200);
+//		J = new Node(Democracy, "J",(float)700,(float)250);
+//		K = new Node(Democracy, "K",(float)400,(float)500);
+//		L = new Node(Neutral, "L",(float)550,(float)250);
+//
+//		a.addNode(A);
+//		a.addNode(B);
+//		a.addNode(C);
+//		a.addNode(D);
+//		a.addNode(E);
+//		a.addNode(F);
+//		a.addNode(G);
+//		a.addNode(H);
+//		a.addNode(I);
+//		a.addNode(J);
+//		a.addNode(K);
+//		a.addNode(L);
+//
+//		a.addEdge(new Edge(A,B,(float)0.5));
+//		a.addEdge(new Edge(A,C,(float)0.9));
+//		a.addEdge(new Edge(A,D,(float)0.6));
+//		a.addEdge(new Edge(B,A,(float)0.4));
+//		a.addEdge(new Edge(B,C,(float)0.85));
+//		a.addEdge(new Edge(B,E,(float)0.85));
+//		a.addEdge(new Edge(B,F,(float)0.95));
+//		a.addEdge(new Edge(C,A,(float)0.95));
+//		a.addEdge(new Edge(C,B,(float)0.85));
+//		a.addEdge(new Edge(C,D,(float)0.7));
+//		a.addEdge(new Edge(C,F,(float)0.4));
+//		a.addEdge(new Edge(C,H,(float)0.45));
+//		a.addEdge(new Edge(C,J,(float)0.3));
+//		a.addEdge(new Edge(D,C,(float)0.8));
+//		a.addEdge(new Edge(D,H,(float)0.85));
+//		a.addEdge(new Edge(E,B,(float)0.3));
+//		a.addEdge(new Edge(E,I,(float)0.95));
+//		a.addEdge(new Edge(F,B,(float)0.8));
+//		a.addEdge(new Edge(F,C,(float)0.3));
+//		a.addEdge(new Edge(F,E,(float)0.55));
+//		a.addEdge(new Edge(F,G,(float)0.3));
+//		a.addEdge(new Edge(F,J,(float)0.4));
+//		a.addEdge(new Edge(G,C,(float)0.75));
+//		a.addEdge(new Edge(G,J,(float)0.4));
+//		a.addEdge(new Edge(G,L,(float)0.6));
+//		a.addEdge(new Edge(H,C,(float)0.45));
+//		a.addEdge(new Edge(H,D,(float)0.7));
+//		a.addEdge(new Edge(H,G,(float)0.7));
+//		a.addEdge(new Edge(H,J,(float)0.75));
+//		a.addEdge(new Edge(H,K,(float)0.6));
+//		a.addEdge(new Edge(I,E,(float)0.7));
+//		a.addEdge(new Edge(I,F,(float)0.9));
+//		a.addEdge(new Edge(I,J,(float)0.8));
+//		a.addEdge(new Edge(J,F,(float)0.6));
+//		a.addEdge(new Edge(J,H,(float)0.9));
+//		a.addEdge(new Edge(J,I,(float)0.7));
+//		a.addEdge(new Edge(J,L,(float)0.3));
+//		a.addEdge(new Edge(K,H,(float)0.4));
+//		a.addEdge(new Edge(K,L,(float)1));
+//		a.addEdge(new Edge(L,J,(float)0.3));
+//		a.addEdge(new Edge(L,K,(float)1));
+//
 		a.addConfidence(new Confidence(Democracy, Communistic, (float)0.5));
 		a.addConfidence(new Confidence(Democracy, Neutral, (float)0.6));
 		a.addConfidence(new Confidence(Communistic, Democracy, (float)0.7));
@@ -673,21 +673,21 @@ public class InfluenceGraph {
 //        a.updateInfluenceValue(a.getNode(86), a.getNode(85), (float)0.9);
 //        a.deleteNode(44);
 
-        a.printGraph();
-
-        System.out.println("");
-        System.out.println("Path List");
-        ArrayList<Path> paths;
-        paths = a.pathSet(a.getNode(75), a.getNode(83));
-        for (int i = 0; i < paths.size(); i++) {
-            a.printPath(paths.get(i));
-            System.out.println(a.influence(paths.get(i)));
-        }
-
-        System.out.println('\n' + "Max Influence Path");
-        Path path = a.maxInfluencePath(a.getNode(75), a.getNode(83));
-        a.printPath(path);
-        System.out.println(a.influence(path));
-        System.out.println("");
+//        a.printGraph();
+//
+//        System.out.println("");
+//        System.out.println("Path List");
+//        ArrayList<Path> paths;
+//        paths = a.pathSet(a.getNode(75), a.getNode(83));
+//        for (int i = 0; i < paths.size(); i++) {
+//            a.printPath(paths.get(i));
+//            System.out.println(a.influence(paths.get(i)));
+//        }
+//
+//        System.out.println('\n' + "Max Influence Path");
+//        Path path = a.maxInfluencePath(a.getNode(75), a.getNode(83));
+//        a.printPath(path);
+//        System.out.println(a.influence(path));
+//        System.out.println("");
     }
 }
