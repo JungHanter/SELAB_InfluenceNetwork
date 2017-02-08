@@ -51,21 +51,22 @@ public class NodeTypeDAO {
 		}
 	}
 
-	public Set<NodeType> getNodeTypeSet(int graph_id) {
+	public Set<NodeType> getNodeTypeSet(int graphId) {
 
 		conn = DBManager.getConnection();
 
 		Set<NodeType> NodeTypeSet = new TreeSet<>();
-		String sql = "select id, name, color from nodetype where nodetype.graph_id=" + graph_id;
+		String sql = "select id, name, color from nodetype where nodetype.graph_id=" + graphId;
 		
 		try {
 			stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
 			while (rs.next()) {
 				int id = rs.getInt(1);
-				String nodetype_name = rs.getString(2);
-				String nodetype_color = rs.getString(3);
-				NodeType nodetype = new NodeType(id, nodetype_color, nodetype_name);
+				String nodetypeName = rs.getString(2);
+				String nodetypeColor = rs.getString(3);
+				NodeType nodetype = new NodeType(nodetypeColor, nodetypeName);
+				nodetype.setId(id);
 				NodeTypeSet.add(nodetype);
 			}
 			DBManager.closeConnection(conn, stmt);
@@ -77,41 +78,27 @@ public class NodeTypeDAO {
 		}
 	}
 
-	public int updateNodeType(int nodeTypeId, String name, String color) {
+	public boolean updateNodeType(NodeType nodeType) {
 		conn = DBManager.getConnection();
-		String sql_name = "UPDATE nodetype SET name=? Where id=?";
-		String sql_color = "UPDATE nodetype SET color=? Where id=?";
+		String sql = "UPDATE nodetype SET name = ?, color = ? WHERE id = ?";
 
 		try {
-			if (name != null) {
-				pstmt = conn.prepareStatement(sql_name);
-				pstmt.setString(1, name);
-				pstmt.setInt(2, nodeTypeId);
-				pstmt.executeUpdate();
-			}
-			if (color != null) {
-				pstmt = conn.prepareStatement(sql_color);
-				pstmt.setString(1, color);
-				pstmt.setInt(2, nodeTypeId);
-				pstmt.executeUpdate();
-			}
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, nodeType.getName());
+			pstmt.setString(2, nodeType.getColor());
+			pstmt.setInt(3, nodeType.getId());
+			pstmt.executeUpdate();
 			DBManager.closeConnection(conn, pstmt);
-			return SUCCESS;
+			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println(e.getErrorCode() +" " + e.getMessage());
 			DBManager.closeConnection(conn, pstmt);
-			switch (e.getErrorCode()) {
-			case 1129 :
-				return ERROR_CONNECTION;
-			case 1169 :
-				return ERROR_DUPLICATION;
-			default:
-				return ERROR_UNKNOWN;
-			}
+			return false;
 		}
 	}
-	public int deleteNodeType(int nodeTypeId) {
+
+	public boolean deleteNodeType(int nodeTypeId) {
 		String sql = "DELETE FROM nodetype where id=?";
 		
 		conn = DBManager.getConnection();
@@ -121,20 +108,12 @@ public class NodeTypeDAO {
 			pstmt.setInt(1, nodeTypeId);
 			pstmt.executeUpdate();
 			DBManager.closeConnection(conn,pstmt);
-			return SUCCESS;
+			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			DBManager.closeConnection(conn, pstmt);
 			System.out.println(e.getErrorCode() + " " + e.getMessage());
-			switch (e.getErrorCode()) {
-			case 1129 :
-				return ERROR_CONNECTION;
-			case 1169 :
-				return ERROR_DUPLICATION;
-			default:
-				return ERROR_UNKNOWN;
-			}
+			return false;
 		}
-
 	}
 }

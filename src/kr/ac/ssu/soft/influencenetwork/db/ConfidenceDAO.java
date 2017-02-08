@@ -45,6 +45,7 @@ public class ConfidenceDAO {
 			}
 		}
 	}
+
 	public Set<Confidence> getConfidenceSet(int graph_id, Set<NodeType> nodeTypeSet) {
 		Set<Confidence> ConfidenceSet = new TreeSet<>();
 		
@@ -79,9 +80,10 @@ public class ConfidenceDAO {
 			return null;
 		}
 	}
-	public int updateConfidence(NodeType nt1, NodeType nt2, float confidenceValue) {
+
+	public boolean updateConfidence(NodeType nt1, NodeType nt2, float confidenceValue) {
 		if(confidenceValue < 0 && confidenceValue > 1)
-			return UNVALID_VALUE;
+			return false;
 
 		conn = DBManager.getConnection();
 		String sql = "UPDATE confidence SET confidenceValue = ? WHERE n1_type_id=? AND n2_type_id=?";
@@ -93,22 +95,15 @@ public class ConfidenceDAO {
 			pstmt.setInt(3, nt2.getId());
 			pstmt.executeUpdate();
 			DBManager.closeConnection(conn, pstmt);
-			return SUCCESS;
+			return true;
 		} catch(SQLException e) {
 			e.printStackTrace();
 			System.out.println(e.getErrorCode() +" " + e.getMessage());
 			DBManager.closeConnection(conn, pstmt);
-			switch (e.getErrorCode()) {
-				case 1129 :
-					return ERROR_CONNECTION;
-				case 1169 :
-					return ERROR_DUPLICATION;
-				default:
-					return ERROR_UNKNOWN;
-			}
+			return false;
 		}
 	}
-	public int deleteConfidence(NodeType nt1, NodeType nt2){
+	public boolean deleteConfidence(NodeType nt1, NodeType nt2){
 		conn = DBManager.getConnection();
 		String sql = "DELETE FROM confidence WHERE n1_type_id=? and n2_type_id=?";
 		
@@ -118,19 +113,12 @@ public class ConfidenceDAO {
 			pstmt.setInt(2, nt2.getId());
 			pstmt.executeUpdate();
 			DBManager.closeConnection(conn, pstmt);
-			return SUCCESS;
+			return true;
 		} catch (SQLException e){
 			e.printStackTrace();
 			DBManager.closeConnection(conn, pstmt);
 			System.out.println(e.getErrorCode() + " " + e.getMessage());
-			switch (e.getErrorCode()) {
-				case 1129 :
-					return ERROR_CONNECTION;
-				case 1169 :
-					return ERROR_DUPLICATION;
-				default:
-					return ERROR_UNKNOWN;
-			}
+			return false;
 		}		
 	}
 }

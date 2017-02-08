@@ -9,31 +9,41 @@ import java.util.Set;
 import java.util.*;
 
 public class InfluenceGraph {
-    private String name;
     private int id;
+    private String name;
+    private String userEmail;
 
-    private Set<NodeType> nodeTypeSet;
-    private Set<Node> nodeSet;
-    private Set<Edge> edgeSet;
-    private Set<Confidence> confidenceSet;
+    private Set<NodeType> nodeTypeSet = new TreeSet<NodeType>();
+    private Set<Node> nodeSet = new TreeSet<Node>();
+    private Set<Edge> edgeSet = new TreeSet<Edge>();
+    private Set<Confidence> confidenceSet = new TreeSet<Confidence>();
 
-    private NodeTypeDAO nodeTypeDAO;
-    private NodeDAO nodeDAO;
-    private EdgeDAO edgeDAO;
-    private ConfidenceDAO confidenceDAO;
+    private NodeTypeDAO nodeTypeDAO = new NodeTypeDAO();
+    private NodeDAO nodeDAO = new NodeDAO();
+    private EdgeDAO edgeDAO = new EdgeDAO();
+    private ConfidenceDAO confidenceDAO = new ConfidenceDAO();
 
     public InfluenceGraph(String name) {
         this.name = name;
+    }
 
-        confidenceSet = new TreeSet<Confidence>();
-        nodeSet = new TreeSet<Node>();
-        edgeSet = new TreeSet<Edge>();
-        nodeTypeSet = new TreeSet<NodeType>();
+    public InfluenceGraph(String name, String userEmail) {
+        this.name = name;
+        this.userEmail = userEmail;
+    }
 
-        nodeTypeDAO = new NodeTypeDAO();
-        nodeDAO = new NodeDAO();
-        edgeDAO = new EdgeDAO();
-        confidenceDAO = new ConfidenceDAO();
+    public InfluenceGraph(int id, String name, String userEmail) {
+        this.id = id;
+        this.name = name;
+        this.userEmail = userEmail;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -44,12 +54,12 @@ public class InfluenceGraph {
         this.name = name;
     }
 
-    public int getId() {
-        return id;
+    public String getUserEmail() {
+        return userEmail;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
     }
 
     /**
@@ -85,6 +95,11 @@ public class InfluenceGraph {
         return null;
     }
 
+    public Set<NodeType> getNodeTypeSet() {
+        return nodeTypeSet;
+    }
+
+    /* need to revise */
     public boolean updateNodeType(int nodeTypeId, String name, String color) {
         if (name == null && color == null)
             return false;
@@ -100,7 +115,7 @@ public class InfluenceGraph {
                 if (color != null)
                     nt.setColor(color);
 
-                if (nodeTypeDAO.updateNodeType(nodeTypeId, name, color) == 0)
+                if (nodeTypeDAO.updateNodeType(nt))
                     return true;   // Successfully Update NodeType in DB
 
                 /* revert nodetype in nodeTypeSet to previous state */
@@ -116,22 +131,13 @@ public class InfluenceGraph {
         for (NodeType nt : nodeTypeSet) {
             if(nt.getId() == nodeTypeId) {
                 if (nodeTypeSet.remove(nt)) {
-                    Set<Node> deletedNodeSet = new TreeSet<Node>();
+                    Set<Node> updatedNodeSet = new TreeSet<>();
                     for (Node n : nodeSet) {
                         if (n.getNodeType().getId() == nodeTypeId) {
-                            deletedNodeSet.add(n);
-//                            nodeSet.remove(n);
+                            updatedNodeSet.add(n);
+                            n.setNodeType(null);
                         }
                     }
-                    nodeSet.removeAll(deletedNodeSet);
-                    Set<Edge> deletedEdgeSet = new TreeSet<Edge>();
-                    for (Edge e : edgeSet) {
-                        if ((e.getOrigin().getNodeType().getId() == nodeTypeId) || (e.getDestination().getNodeType().getId() == nodeTypeId)) {
-                            deletedEdgeSet.add(e);
-//                            edgeSet.remove(e);
-                        }
-                    }
-                    edgeSet.removeAll(deletedEdgeSet);
                     Set<Confidence> deletedConfidenceSet = new TreeSet<Confidence>();
                     for (Confidence c : confidenceSet) {
                         if((c.getOrigin().getId() == nodeTypeId) || (c.getDestination().getId() == nodeTypeId)) {
@@ -140,15 +146,16 @@ public class InfluenceGraph {
                         }
                     }
                     confidenceSet.removeAll(deletedConfidenceSet);
-                    if (nodeTypeDAO.deleteNodeType(nodeTypeId) == 0) {
+                    if (nodeTypeDAO.deleteNodeType(nodeTypeId)) {
                         return true;
+                    } else {
+                        /* Revert deleted nodetype, node and confidences */
+                        nodeTypeSet.add(nt);
+                        for (Node n : updatedNodeSet) {
+                            n.setNodeType(nt);
+                        }
+                        confidenceSet.addAll(deletedConfidenceSet);
                     }
-
-                    /* Revert deleted nodetype, node, edges and confidences */
-                    nodeTypeSet.add(nt);
-                    nodeSet.addAll(deletedNodeSet);
-                    edgeSet.addAll(deletedEdgeSet);
-                    confidenceSet.addAll(deletedConfidenceSet);
                 }
                 return false;
             }
@@ -193,24 +200,29 @@ public class InfluenceGraph {
         return null;
     }
 
-    public boolean updateNode(int nodeId, String name, NodeType nodeType) {
+    /* need to revise */
+    public boolean updateNode(int nodeId, String domainId, String name, NodeType nodeType, float x, float y) {
         if (name == null && nodeType == null)
             return false;
         for (Node n : nodeSet) {
             if (n.getId() == nodeId) {
 
                 /** a backup of n attributes for DB update failure. */
+                String previousDomainId = n.getDomainId();
                 String previousName = n.getName();
                 NodeType previousNodeType = n.getNodeType();
 
+                if (domainId != null)
+                    n.setDomainId(domainId);
                 if (name != null)
                    n.setName(name);
                 if (nodeType != null)
                    n.setNodeType(nodeType);
 
-                if (nodeDAO.updateNode(nodeId, name, nodeType) == 0)
+                if (nodeDAO.updateNode(n))
                     return true;
 
+                n.setDomainId(previousDomainId);
                 n.setName(previousName);
                 n.setNodeType(previousNodeType);
                 return false;
@@ -239,7 +251,7 @@ public class InfluenceGraph {
                     /* Delete edges connected with deleted node */
                     edgeSet.removeAll(deletedEdgeSet);
 
-                    if (nodeDAO.deleteNode(nodeId) == 0) {
+                    if (nodeDAO.deleteNode(nodeId)) {
                         return true;
                     }
 
@@ -293,7 +305,7 @@ public class InfluenceGraph {
                 float previousInfluenceValue = e.getInfluenceValue();
 
                 e.setInfluenceValue(influenceValue);
-                if (edgeDAO.updateEdge(n1, n2, influenceValue) == 0) {
+                if (edgeDAO.updateEdge(n1, n2, influenceValue)) {
                     return true;
                 }
                 e.setInfluenceValue(previousInfluenceValue);
@@ -307,7 +319,7 @@ public class InfluenceGraph {
         for (Edge e : edgeSet) {
             if((e.getOrigin().getId() == n1.getId()) && (e.getDestination().getId() == n2.getId())) {
                 if (edgeSet.remove(e)) {
-                    if (edgeDAO.deleteEdge(n1, n2) == 0) {
+                    if (edgeDAO.deleteEdge(n1, n2)) {
                         return true;
                     }
                     edgeSet.add(e);
@@ -358,7 +370,7 @@ public class InfluenceGraph {
                 float previousConfidenceValue = c.getConfidenceValue();
 
                 c.setConfidenceValue(confidenceValue);
-                if (confidenceDAO.updateConfidence(nt1, nt2, confidenceValue) == 0) {
+                if (confidenceDAO.updateConfidence(nt1, nt2, confidenceValue)) {
                     return true;
                 }
                 c.setConfidenceValue(previousConfidenceValue);
@@ -372,7 +384,7 @@ public class InfluenceGraph {
         for (Confidence c : confidenceSet) {
             if((c.getOrigin().getId() == nt1.getId()) && (c.getDestination().getId() == nt2.getId())) {
                 if (confidenceSet.remove(c)) {
-                    if (confidenceDAO.deleteConfidence(nt1, nt2) == 0) {
+                    if (confidenceDAO.deleteConfidence(nt1, nt2)) {
                         return true;
                     }
                     confidenceSet.add(c);
@@ -562,96 +574,95 @@ public class InfluenceGraph {
 
         InfluenceGraph a = new InfluenceGraph("graph2");
         a.setId(1);
-        a.load();
-//        Node A, B, C, D, E, F, G, H, I, J, K, L;
-//        NodeType Democracy, Communistic, Neutral;
-//        Democracy = new NodeType("blue", "Democracy");
-//		Communistic = new NodeType("red", "Communistic");
-//        Neutral = new NodeType("yellow", "Neutral");
-//		a.addNodeType(Democracy);
-//		a.addNodeType(Communistic);
-//		a.addNodeType(Neutral);
-//
-//        A = new Node(Democracy, "A");
-//		B = new Node(Neutral, "B");
-//		C = new Node(Democracy, "C");
-//		D = new Node(Communistic, "D");
-//		E = new Node(Democracy, "E");
-//		F = new Node(Communistic, "F");
-//		G = new Node(Communistic, "G");
-//        H = new Node(Neutral, "H");
-//		I = new Node(Democracy, "I");
-//		J = new Node(Democracy, "J");
-//		K = new Node(Democracy, "K");
-//		L = new Node(Neutral, "L");
-//
-//		a.addNode(A);
-//		a.addNode(B);
-//		a.addNode(C);
-//		a.addNode(D);
-//		a.addNode(E);
-//		a.addNode(F);
-//		a.addNode(G);
-//		a.addNode(H);
-//		a.addNode(I);
-//		a.addNode(J);
-//		a.addNode(K);
-//		a.addNode(L);
-//
-//		ArrayList<Edge> edges;
-//		a.addEdge(new Edge(A,B,(float)0.5));
-//		a.addEdge(new Edge(A,C,(float)0.9));
-//		a.addEdge(new Edge(A,D,(float)0.6));
-//		a.addEdge(new Edge(B,A,(float)0.4));
-//		a.addEdge(new Edge(B,C,(float)0.85));
-//		a.addEdge(new Edge(B,E,(float)0.85));
-//		a.addEdge(new Edge(B,F,(float)0.95));
-//		a.addEdge(new Edge(C,A,(float)0.95));
-//		a.addEdge(new Edge(C,B,(float)0.85));
-//		a.addEdge(new Edge(C,D,(float)0.7));
-//		a.addEdge(new Edge(C,F,(float)0.4));
-//		a.addEdge(new Edge(C,H,(float)0.45));
-//		a.addEdge(new Edge(C,J,(float)0.3));
-//		a.addEdge(new Edge(D,C,(float)0.8));
-//		a.addEdge(new Edge(D,H,(float)0.85));
-//		a.addEdge(new Edge(E,B,(float)0.3));
-//		a.addEdge(new Edge(E,I,(float)0.95));
-//		a.addEdge(new Edge(F,B,(float)0.8));
-//		a.addEdge(new Edge(F,C,(float)0.3));
-//		a.addEdge(new Edge(F,E,(float)0.55));
-//		a.addEdge(new Edge(F,G,(float)0.3));
-//		a.addEdge(new Edge(F,J,(float)0.4));
-//		a.addEdge(new Edge(G,C,(float)0.75));
-//		a.addEdge(new Edge(G,J,(float)0.4));
-//		a.addEdge(new Edge(G,L,(float)0.6));
-//		a.addEdge(new Edge(H,C,(float)0.45));
-//		a.addEdge(new Edge(H,D,(float)0.7));
-//		a.addEdge(new Edge(H,G,(float)0.7));
-//		a.addEdge(new Edge(H,J,(float)0.75));
-//		a.addEdge(new Edge(H,K,(float)0.6));
-//		a.addEdge(new Edge(I,E,(float)0.7));
-//		a.addEdge(new Edge(I,F,(float)0.9));
-//		a.addEdge(new Edge(I,J,(float)0.8));
-//		a.addEdge(new Edge(J,F,(float)0.6));
-//		a.addEdge(new Edge(J,H,(float)0.9));
-//		a.addEdge(new Edge(J,I,(float)0.7));
-//		a.addEdge(new Edge(J,L,(float)0.3));
-//		a.addEdge(new Edge(K,H,(float)0.4));
-//		a.addEdge(new Edge(K,L,(float)1));
-//		a.addEdge(new Edge(L,J,(float)0.3));
-//		a.addEdge(new Edge(L,K,(float)1));
-//
-//		a.addConfidence(new Confidence(Democracy, Communistic, (float)0.5));
-//		a.addConfidence(new Confidence(Democracy, Neutral, (float)0.6));
-//		a.addConfidence(new Confidence(Communistic, Democracy, (float)0.7));
-//		a.addConfidence(new Confidence(Communistic, Neutral, (float)0.4));
-//		a.addConfidence(new Confidence(Neutral, Democracy, (float)0.6));
-//		a.addConfidence(new Confidence(Neutral, Communistic, (float)0.8));
+//        a.load();
+        Node A, B, C, D, E, F, G, H, I, J, K, L;
+        NodeType Democracy, Communistic, Neutral;
+        Democracy = new NodeType("blue", "Democracy");
+		Communistic = new NodeType("red", "Communistic");
+        Neutral = new NodeType("yellow", "Neutral");
+		a.addNodeType(Democracy);
+		a.addNodeType(Communistic);
+		a.addNodeType(Neutral);
+
+        A = new Node(Democracy, "A",(float)240,(float)200);
+		B = new Node(Neutral, "B",(float)200,(float)220);
+		C = new Node(Democracy, "C",(float)250,(float)500);
+		D = new Node(Communistic, "D",(float)270,(float)320);
+		E = new Node(Democracy, "E",(float)320,(float)500);
+		F = new Node(Communistic, "F",(float)380,(float)400);
+		G = new Node(Communistic, "G",(float)450,(float)350);
+        H = new Node(Neutral, "H",(float)500,(float)250);
+		I = new Node(Democracy, "I",(float)650,(float)200);
+		J = new Node(Democracy, "J",(float)700,(float)250);
+		K = new Node(Democracy, "K",(float)400,(float)500);
+		L = new Node(Neutral, "L",(float)550,(float)250);
+
+		a.addNode(A);
+		a.addNode(B);
+		a.addNode(C);
+		a.addNode(D);
+		a.addNode(E);
+		a.addNode(F);
+		a.addNode(G);
+		a.addNode(H);
+		a.addNode(I);
+		a.addNode(J);
+		a.addNode(K);
+		a.addNode(L);
+
+		a.addEdge(new Edge(A,B,(float)0.5));
+		a.addEdge(new Edge(A,C,(float)0.9));
+		a.addEdge(new Edge(A,D,(float)0.6));
+		a.addEdge(new Edge(B,A,(float)0.4));
+		a.addEdge(new Edge(B,C,(float)0.85));
+		a.addEdge(new Edge(B,E,(float)0.85));
+		a.addEdge(new Edge(B,F,(float)0.95));
+		a.addEdge(new Edge(C,A,(float)0.95));
+		a.addEdge(new Edge(C,B,(float)0.85));
+		a.addEdge(new Edge(C,D,(float)0.7));
+		a.addEdge(new Edge(C,F,(float)0.4));
+		a.addEdge(new Edge(C,H,(float)0.45));
+		a.addEdge(new Edge(C,J,(float)0.3));
+		a.addEdge(new Edge(D,C,(float)0.8));
+		a.addEdge(new Edge(D,H,(float)0.85));
+		a.addEdge(new Edge(E,B,(float)0.3));
+		a.addEdge(new Edge(E,I,(float)0.95));
+		a.addEdge(new Edge(F,B,(float)0.8));
+		a.addEdge(new Edge(F,C,(float)0.3));
+		a.addEdge(new Edge(F,E,(float)0.55));
+		a.addEdge(new Edge(F,G,(float)0.3));
+		a.addEdge(new Edge(F,J,(float)0.4));
+		a.addEdge(new Edge(G,C,(float)0.75));
+		a.addEdge(new Edge(G,J,(float)0.4));
+		a.addEdge(new Edge(G,L,(float)0.6));
+		a.addEdge(new Edge(H,C,(float)0.45));
+		a.addEdge(new Edge(H,D,(float)0.7));
+		a.addEdge(new Edge(H,G,(float)0.7));
+		a.addEdge(new Edge(H,J,(float)0.75));
+		a.addEdge(new Edge(H,K,(float)0.6));
+		a.addEdge(new Edge(I,E,(float)0.7));
+		a.addEdge(new Edge(I,F,(float)0.9));
+		a.addEdge(new Edge(I,J,(float)0.8));
+		a.addEdge(new Edge(J,F,(float)0.6));
+		a.addEdge(new Edge(J,H,(float)0.9));
+		a.addEdge(new Edge(J,I,(float)0.7));
+		a.addEdge(new Edge(J,L,(float)0.3));
+		a.addEdge(new Edge(K,H,(float)0.4));
+		a.addEdge(new Edge(K,L,(float)1));
+		a.addEdge(new Edge(L,J,(float)0.3));
+		a.addEdge(new Edge(L,K,(float)1));
+
+		a.addConfidence(new Confidence(Democracy, Communistic, (float)0.5));
+		a.addConfidence(new Confidence(Democracy, Neutral, (float)0.6));
+		a.addConfidence(new Confidence(Communistic, Democracy, (float)0.7));
+		a.addConfidence(new Confidence(Communistic, Neutral, (float)0.4));
+		a.addConfidence(new Confidence(Neutral, Democracy, (float)0.6));
+		a.addConfidence(new Confidence(Neutral, Communistic, (float)0.8));
 
 //        a.deleteNodeType(33);
 //        a.updateNode(45, "asd", null);
 //        a.updateNode(75,null, a.getNodeType(43));
-        a.updateInfluenceValue(a.getNode(86), a.getNode(85), (float)0.9);
+//        a.updateInfluenceValue(a.getNode(86), a.getNode(85), (float)0.9);
 //        a.deleteNode(44);
 
         a.printGraph();

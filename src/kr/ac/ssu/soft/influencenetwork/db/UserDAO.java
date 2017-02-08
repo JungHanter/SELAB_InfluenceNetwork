@@ -55,9 +55,9 @@ public class UserDAO {
             rs = pstmt.executeQuery();
             if (rs != null && rs.next()) {
                 String savedName = null, savedEmail = null, savedPw = null;
-                savedName = rs.getString(1);
+                savedEmail = rs.getString(1);
                 savedPw = rs.getString(2);
-                savedEmail = rs.getString(3);
+                savedName = rs.getString(3);
                 User user = new User(savedEmail, savedPw, savedName);
                 DBManager.closeConnection(conn,pstmt);
                 return user;

@@ -6,6 +6,7 @@ import java.util.*;
 
 public class InfluenceGraphDAO {
 	private Connection conn = null;
+	private PreparedStatement pstmt = null;
 	private Statement stmt = null;
 	private ResultSet rs = null;
 
@@ -18,22 +19,24 @@ public class InfluenceGraphDAO {
 	public int saveInfluenceGraph(InfluenceGraph ig) {
 		
 		conn = DBManager.getConnection();
-		String sql = "insert into influencegraph(name) values(\""+ ig.getName() +"\")";
+		String sql = "insert into influencegraph(name, user_email) values(?,?)";
 		
 		try {
-			stmt = conn.createStatement();
-			stmt.executeUpdate(sql);
-			rs = stmt.getGeneratedKeys();
+			pstmt = conn.prepareStatement(sql, Statement. RETURN_GENERATED_KEYS);
+			pstmt.setString(1, ig.getName());
+			pstmt.setString(2, ig.getUserEmail());
+			pstmt.executeUpdate();
+			rs = pstmt.getGeneratedKeys();
 			if(rs != null && rs.next()){
 				int id = rs.getInt(1);
 				ig.setId(id);
 			}
-			DBManager.closeConnection(conn,stmt);
+			DBManager.closeConnection(conn, pstmt);
 			return SUCCESS;
 		} catch(SQLException e) {
 			e.printStackTrace();
 			System.out.println(e.getErrorCode() + " " + e.getMessage());
-			DBManager.closeConnection(conn, stmt);
+			DBManager.closeConnection(conn, pstmt);
 			switch (e.getErrorCode()) {
 				case 1129 :
 					return ERROR_CONNECTION;
@@ -44,31 +47,33 @@ public class InfluenceGraphDAO {
 			}
 		}
 	}
-	public Set<InfluenceGraph> getInfluenceGraphSet(){
-		Set<InfluenceGraph> influencegraph = new TreeSet<>();
+
+	public ArrayList<InfluenceGraph> getInfluenceGraphList(String userEmail){
+		ArrayList<InfluenceGraph> influencegraph = new ArrayList<>();
 		conn = DBManager.getConnection();
-		String sql = "select id, name from influencegraph";
+		String sql = "SELECT id, name, user_email FROM influencegraph WHERE user_email=? ORDER BY name";
 		try{
-			stmt = conn.createStatement();
-			rs = stmt.executeQuery(sql);
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, userEmail);
+			rs = pstmt.executeQuery();
 			while(rs.next()) {
 				int id = rs.getInt(1);
 				String name = rs.getString(2);
-				InfluenceGraph temp_influencegraph = new InfluenceGraph(name);
-				temp_influencegraph.setId(id);
+				String email = rs.getString(3);
+				InfluenceGraph temp_influencegraph = new InfluenceGraph(id, name, email);
 				influencegraph.add(temp_influencegraph);
 			}
 			return influencegraph;
 		}catch(SQLException e) {
 			e.printStackTrace();
-			System.out.println(e.getErrorCode() +" " + e.getMessage());
+			System.out.println(e.getErrorCode() + " " + e.getMessage());
 			DBManager.closeConnection(conn, stmt);
-			return null;
 		}
+		return null;
 	}
-	public InfluenceGraph getInfluenceGraph(int graph_id) {
+	public InfluenceGraph getInfluenceGraph(int graphId) {
 		conn = DBManager.getConnection();
-		String sql = "SELECT id, name FROM influencegraph WHERE id="+graph_id;
+		String sql = "SELECT id, name FROM influencegraph WHERE id="+graphId;
 		try {
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(sql);
@@ -109,17 +114,27 @@ public class InfluenceGraphDAO {
 			}
 		}
 	}
-	public void deleteInfluenceGraph(InfluenceGraph ig) {
+	public int deleteInfluenceGraph(int graphId) {
 		
 		conn = DBManager.getConnection();
-		String sql = "DELETE FROM influencegraph WHERE id=" + ig.getId();
+		String sql = "DELETE FROM influencegraph WHERE id=" + graphId;
 		
 		try{
 			stmt = conn.createStatement();
 			stmt.executeUpdate(sql);
+			DBManager.closeConnection(conn,stmt);
+			return SUCCESS;
 		} catch(SQLException e) {
 			e.printStackTrace();
+			DBManager.closeConnection(conn,stmt);
+			switch (e.getErrorCode()) {
+				case 1129 :
+					return ERROR_CONNECTION;
+				case 1169 :
+					return ERROR_DUPLICATION;
+				default:
+					return ERROR_UNKNOWN;
+			}
 		}
-		DBManager.closeConnection(conn,stmt);
 	}
 }

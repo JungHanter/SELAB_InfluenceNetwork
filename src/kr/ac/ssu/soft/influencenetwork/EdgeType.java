@@ -1,11 +1,11 @@
 package kr.ac.ssu.soft.influencenetwork;
 
-public class NodeType implements Comparable<NodeType> {
+public class EdgeType implements Comparable<EdgeType> {
 	private int id;
 	private String color;
 	private String name;
-	
-	public NodeType(String color, String name) {
+
+	public EdgeType(String color, String name) {
 		this.color = color;
 		this.name = name;
 	}
@@ -35,7 +35,7 @@ public class NodeType implements Comparable<NodeType> {
 	}
 
 	@Override
-	public int compareTo(NodeType o) {
+	public int compareTo(EdgeType o) {
 		if (this==o) return 0;
 		return id - o.getId();
 	}
