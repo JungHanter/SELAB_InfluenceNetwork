@@ -1313,7 +1313,7 @@ function menuSaveGraph() {
             if (res['result'] == 'success') {
                 //save done
                 nodeTypeMap = res['nodetype_id_map'];
-                for (nodeTypeId in nodeTypes) {
+                for (nodeTypeId in nodeTypeMap) {
                     nodeTypes[nodeTypeId].serverId = nodeTypeMap[nodeTypeId];
                 }
             } else {
