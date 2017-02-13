@@ -16,13 +16,14 @@ document.onload = (function(d3, saveAs, Blob, undefined){
     // TODO add user settings
 
     // define graphcreator object
-    var GraphCreator = function(svg, nodes, edges, types){
+    var GraphCreator = function(svg, nodes, edges, nodeTypes, edgeTypes){
         var thisGraph = this;
         thisGraph.idct = 0;
 
         thisGraph.nodes = nodes || [];
         thisGraph.edges = edges || [];
-        thisGraph.types = types || {};
+        thisGraph.nodeTypes = nodeTypes || {};
+        thisGraph.edgeTypes = edgeTypes || {};
 
         thisGraph.onNodeSelected = function(d3Node, nodeData){};
         thisGraph.onEdgeSelected = function(d3PathG, edgeData){};
@@ -762,8 +763,8 @@ document.onload = (function(d3, saveAs, Blob, undefined){
             //add color
             if (d.type != undefined && d.type != null && /\S/.test(d.type)) {
                // this.classed(thisGraph.consts.typeColorHead + d.type, true);
-                if (d.type in thisGraph.types) {
-                    $(this).addClass(thisGraph.consts.typeColorHead + thisGraph.types[d.type]['color']);
+                if (d.type in thisGraph.nodeTypes) {
+                    $(this).addClass(thisGraph.consts.typeColorHead + thisGraph.nodeTypes[d.type]['color']);
                 } else {    // if existed type is deleted
                     d.type = null;
                 }
@@ -776,7 +777,28 @@ document.onload = (function(d3, saveAs, Blob, undefined){
 
     GraphCreator.prototype.updateEdges = function () {
         //pass
-    }
+    };
+
+    GraphCreator.prototype.updateEdgeType = function(gs){
+        var thisGraph = this;
+        gs.each(function(d) {
+            //remove color
+            $(this).removeClass(function(index, className) {
+                return (className.match (/(^|\s)type-color-\S+/g) || []).join(' ');
+            });
+            //add color
+            if (d.type != undefined && d.type != null && /\S/.test(d.type)) {
+                if (d.type in thisGraph.edgeTypes) {
+                    $(this).addClass(thisGraph.consts.typeColorHead + thisGraph.edgeTypes[d.type]['color']);
+                } else {    // if existed type is deleted
+                    d.type = null;
+                }
+            } else {
+                d.type = null;
+            }
+        });
+        // if (type != undefin/this.consts.typeColorHead + type, true);
+    };
 
     GraphCreator.prototype.zoomed = function(){
         this.state.justScaleTransGraph = true;
@@ -786,7 +808,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
 
     GraphCreator.prototype.focus = function(focus) {
         this.state.graphFocus = focus;
-    }
+    };
 
     GraphCreator.prototype.updateWindow = function(svg){
         var docEl = document.documentElement,
@@ -974,12 +996,17 @@ document.onload = (function(d3, saveAs, Blob, undefined){
             thisGraph.updateGraph();
         }
 
-    }
+    };
 
-    GraphCreator.prototype.setTypes = function(types) {
-        this.types = types;
+    GraphCreator.prototype.setNodeTypes = function(types) {
+        this.nodeTypes = types;
         this.updateNodeType(this.circles);
-    }
+    };
+
+    GraphCreator.prototype.setEdgeTypes = function(types) {
+        this.edgeTypes = types;
+        this.updateEdgeType(this.paths);
+    };
 
 
 
@@ -1028,7 +1055,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                 .attr("height", winHeight - global_consts.graphSvgStartY);
     // networkGraph = new GraphCreator(svg, nodes, edges, types);
     // networkGraph.setIdCt(3);
-    networkGraph = new GraphCreator(svg, [], [], {});
+    networkGraph = new GraphCreator(svg, [], [], {}, {});
     networkGraph.updateGraph();
 
 })(window.d3, window.saveAs, window.Blob);

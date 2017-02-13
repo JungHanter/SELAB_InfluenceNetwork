@@ -23,7 +23,7 @@ var nodeConfidences = {
     }, 2: {
         0: 0.5, 1: 0.7
     }
-}
+};
 
 var edgeTypes = {
     0: {name: "P", color: "indigo"},
@@ -49,7 +49,7 @@ function updateNodeTypes() {
         $('#subMenuNodeType').removeClass('unselected').html(selItem.html());
     });
 
-    networkGraph.setTypes(nodeTypes);
+    networkGraph.setNodeTypes(nodeTypes);
     updateNodeList();
     networkGraph.updateGraph();
 }
@@ -192,7 +192,7 @@ function updateEdgeTypes() {
     });
 
     //TODO edge set type
-    networkGraph.setTypes(edgeTypes);
+    networkGraph.setEdgeTypes(edgeTypes);
     updateEdgeList();
     networkGraph.updateGraph();
 }
