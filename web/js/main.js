@@ -1319,13 +1319,14 @@ function initControllers() {
                 } else {
                     openConfirmModal("Are you sure to create new graph? \nIf you didn't save the current graph, any unsaved changes will be discarded.",
                             "Create Graph Confirm", function() {
-                        $('#openGraphModal').modal('hide');
+                        $('#newGraphModal').modal('hide');
                         newGraph(newGraphName);
                     });
                 }
             }
         } else openAlertModal("Please input a graph name.", "Create Error");
     });
+
     $('#btnOpenGraph').click(function() {
         var selectedGraphId = parseInt($('#graphList .list-group-item.active').data('graphid'));
         if (!isNaN(selectedGraphId) && isFinite(selectedGraphId))  {
@@ -1340,6 +1341,16 @@ function initControllers() {
                 });
             }
         } else openAlertModal("Please select a graph.", "Open Error");
+    });
+
+    $('#btnSaveAsGraph').click(function() {
+        var graphName = $('#saveAsGraphName').val();
+        if(/\S/.text(graphName)) {
+            $('#saveAsGraphModal').modal('hide');
+            saveAs(graphName);
+        } else {
+            openAlertModal("Graph name is empty!", "Save As Failure");
+        }
     });
 }
 
@@ -1440,7 +1451,7 @@ function signout() {
         $('.content').hide();
         $('.main-menu > .dropdown > .dropdown-toggle').attr('disabled', true)
             .addClass('disabled');
-    }
+    };
 
     $.LoadingOverlay('show');
     $.ajax("/session", {
@@ -1562,6 +1573,7 @@ function menuCloseGraph() {
 function closeGraph() {
     setUnselected();
     networkGraph.deleteGraph(true);
+    networkGraph.resetTransform();
     setGraphUIEnable(false);
     nowGraphInfo = null;
     nodeTypes = {};
@@ -1593,10 +1605,7 @@ function menuSaveGraph() {
             $.LoadingOverlay('hide');
             if (res['result'] == 'success') {
                 //save done
-                nodeTypeMap = res['nodetype_id_map'];
-                for (nodeTypeId in nodeTypeMap) {
-                    nodeTypes[nodeTypeId].serverId = nodeTypeMap[nodeTypeId];
-                }
+                assignSaveIdMaps(res);
             } else {
                 openAlertModal(res['message'], 'Save Graph Failure');
             }
@@ -1606,13 +1615,59 @@ function menuSaveGraph() {
         }
     });
 }
-
 function menuSaveAsGraph() {
     if ($(this).hasClass('disabled') || $(this).attr('disabled')) return;
 
+    $('#saveAsGraphName').val('');
     $('#saveAsGraphModal').modal();
-    // console.log(JSON.stringify(generateSaveGraphJson()));
-    console.log(generateSaveGraphJson(true));
+}
+function saveAs(graphName) {
+    $.LoadingOverlay('show');
+    var graphJson = generateSaveGraphJson(true);
+    console.log(graphJson);
+    $.ajax("/graph", {
+        method: 'POST',
+        dataType: 'json',
+        data: JSON.stringify({
+            action: 'saveas',
+            email: user.email,
+            graph_name: graphName,
+            graph: graphJson
+        }),
+        success: function (res) {
+            console.log(res);
+            $.LoadingOverlay('hide');
+            if (res['result'] == 'success') {
+                //save done
+                nowGraphInfo.graphId = res['graph_id'];
+                nowGraphInfo.graphName = graphName;
+                assignSaveIdMaps(res);
+            } else {
+                openAlertModal(res['message'], 'Save As Graph Failure');
+            }
+        }, error: function (xhr, status, error) {
+            $.LoadingOverlay('hide');
+            openAlertModal(xhr.statusText, 'Save As Graph Failure');
+        }
+    });
+}
+function assignSaveIdMaps(res) {
+    var nodeTypeMap = res['node_type_id_map'];
+    for (var nodeTypeId in nodeTypeMap) {
+        nodeTypes[nodeTypeId].serverId = nodeTypeMap[nodeTypeId];
+    }
+    var edgeTypeMap = res['node_type_id_map'];
+    for (var edgeTypeId in edgeTypeMap) {
+        edgeTypes[edgeTypeId].serverId = edgeTypeMap[edgeTypeId];
+    }
+    var nodeMap = res['node_type_id_map'];
+    for (var nodeId in nodeMap) {
+        for (var node in networkGraph.nodes) {
+            if (node.id == nodeId) {
+                node.serverId = nodeMap[nodeId];
+            }
+        }
+    }
 }
 
 function menuPrintGraph() {

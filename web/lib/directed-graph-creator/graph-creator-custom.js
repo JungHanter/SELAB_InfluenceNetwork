@@ -1008,6 +1008,10 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         this.updateEdgeType(this.paths);
     };
 
+    GraphCreator.prototype.resetTransform = function() {
+        this.svgG.attr('transform', '');
+    };
+
 
 
 
