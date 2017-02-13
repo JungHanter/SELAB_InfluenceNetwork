@@ -398,7 +398,8 @@ public class GraphServlet extends HttpServlet {
                             clientId = Integer.parseInt(nodeJsonObject.get("node_client_id").toString());
                         }
                         if (nodeJsonObject.containsKey("node_type_id")) {
-                            nodetypeClientId = Integer.parseInt(nodeJsonObject.get("node_type_id").toString());
+                            if(nodeJsonObject.get("node_type_id") != null)
+                                nodetypeId = Integer.parseInt(nodeJsonObject.get("node_type_id").toString());
                             hasTypeId = true;
                         } else {
                             nodetypeClientId = Integer.parseInt(nodeJsonObject.get("node_type_client_id").toString());

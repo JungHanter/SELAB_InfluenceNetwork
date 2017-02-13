@@ -64,8 +64,14 @@ public class NodeDAO {
 
 		try{
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, domainId);
-			pstmt.setString(2, name);
+			if(domainId == null)
+				pstmt.setNull(1, Types.VARCHAR);
+			else
+				pstmt.setString(1, domainId);
+			if(name == null)
+				pstmt.setNull(2, Types.VARCHAR);
+			else
+				pstmt.setString(2, name);
 			pstmt.setInt(3, graphId);
 			pstmt.setInt(4, typeId);
 			pstmt.setFloat(5, x);
