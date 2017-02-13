@@ -1367,7 +1367,7 @@ function loadGraph(graphData) {
     }
     updateManageConfidenceUI();
 
-    var nodeServerIds = {}
+    var nodeServerIds = {};
     for (var i=0; i<graphData['node_set'].length; i++) {
         var json = graphData['node_set'][i];
         var newNodeData = {};
@@ -1462,6 +1462,9 @@ function generateSaveGraphJson(saveAs=false) {
         graphData['node_set'].push(json);
     }
 
+    graphData['edge_type_set'] = [];
+    //TODO need to implement
+
     graphData['edge_set'] = [];
     for (var i=0; i<networkGraph.edges.length; i++) {
         var edgeData = networkGraph.edges[i];
@@ -1472,6 +1475,7 @@ function generateSaveGraphJson(saveAs=false) {
         if (!saveAs && 'serverId' in edgeData.target) {
             json['n2_id'] = edgeData.target.serverId;
         } else json['n2_client_id'] = edgeData.target.id;
+        json['edge_type_id'] = null;    //TODO need to implement
         json['influence_value'] = parseFloat(edgeData.name);
         graphData['edge_set'].push(json);
     }
