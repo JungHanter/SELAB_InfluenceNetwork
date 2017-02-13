@@ -589,7 +589,7 @@ public class GraphServlet extends HttpServlet {
                     HashSet<Edge> edgeRecievedSet = new HashSet<>();
 
                     for (Object o : edgeJsonArray) {
-                        boolean hasN1Id = false, hasN2Id = false, hasEdgeTypeId = false;
+                        boolean hasN1Id = false, hasN2Id = false, hasEdgeTypeId = false, isInEdgeSet = false;
                         int n1ClientId = 0, n2ClientId = 0, edgeTypeClientId = 0;
                         int n1Id = 0, n2Id = 0, edgeTypeId = -1;
                         float influenceValue = 0;
@@ -608,18 +608,23 @@ public class GraphServlet extends HttpServlet {
                         } else {
                             n2ClientId = Integer.parseInt(edgeJsonObject.get("n2_client_id").toString());
                         }
+                        if(hasN1Id && hasN2Id) {
+                            if(currentGraph.getEdge(currentGraph.getNode(n1Id), currentGraph.getNode(n2Id)) != null)
+                                isInEdgeSet = true;
+                        }
                         if (edgeJsonObject.containsKey("edge_type_id")) {
-                            edgeTypeId = Integer.parseInt(edgeJsonObject.get("edge_type_id").toString());
+                            if(edgeJsonObject.get("edge_type_id") != null) {
+                                edgeTypeId = Integer.parseInt(edgeJsonObject.get("edge_type_id").toString());
+                            } else
+                                edgeTypeId = -1;
                             hasEdgeTypeId = true;
                         } else {
                             edgeTypeClientId = Integer.parseInt(edgeJsonObject.get("edge_type_client_id").toString());
                         }
-
                         influenceValue = Float.parseFloat(edgeJsonObject.get("influence_value").toString());
 
-
                         Edge edge = null;
-                        if (hasN1Id && hasN2Id && hasEdgeTypeId) {
+                        if (hasN1Id && hasN2Id && hasEdgeTypeId && isInEdgeSet) {
 
                             /* update Edge*/
                             edge = currentGraph.getEdge(currentGraph.getNode(n1Id), currentGraph.getNode(n2Id));
