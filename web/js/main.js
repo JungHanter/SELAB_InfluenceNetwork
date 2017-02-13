@@ -1345,7 +1345,7 @@ function initControllers() {
 
     $('#btnSaveAsGraph').click(function() {
         var graphName = $('#saveAsGraphName').val();
-        if(/\S/.text(graphName)) {
+        if(/\S/.test(graphName)) {
             $('#saveAsGraphModal').modal('hide');
             saveAs(graphName);
         } else {
