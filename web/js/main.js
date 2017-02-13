@@ -1578,13 +1578,15 @@ function closeGraph() {
 function menuSaveGraph() {
     if ($(this).hasClass('disabled') || $(this).attr('disabled')) return;
     $.LoadingOverlay('show');
+    var graphJson = generateSaveGraphJson();
+    console.log(graphJson);
     $.ajax("/graph", {
         method: 'POST',
         dataType: 'json',
         data: JSON.stringify({
             action: 'save',
             email: user.email,
-            graph: generateSaveGraphJson()
+            graph: graphJson()
         }),
         success: function (res) {
             console.log(res);
@@ -1610,7 +1612,7 @@ function menuSaveAsGraph() {
 
     $('#saveAsGraphModal').modal();
     // console.log(JSON.stringify(generateSaveGraphJson()));
-    console.log(s(true));
+    console.log(generateSaveGraphJson(true));
 }
 
 function menuPrintGraph() {
@@ -1622,7 +1624,7 @@ function menuAbout() {
 function loadGraph(graphData) {
     nodeTypes = {};
     nodeTypeCnt = 0;
-    var nodeTypeServerIds = {}
+    var nodeTypeServerIds = {};
     for (var i=0; i<graphData['node_type_set'].length; i++) {
         var json = graphData['node_type_set'][i];
         var nodeType = {name: json['node_type_name'],
@@ -1725,7 +1727,7 @@ function generateSaveGraphJson(saveAs=false) {
         }
     }
 
-    nodeServerIds = {};
+    var nodeServerIds = {};
     graphData['node_set'] = [];
     for (var i=0; i<networkGraph.nodes.length; i++) {
         var nodeData = networkGraph.nodes[i];
