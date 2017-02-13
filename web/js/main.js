@@ -1562,6 +1562,7 @@ function menuCloseGraph() {
 function closeGraph() {
     setUnselected();
     networkGraph.deleteGraph(true);
+    networkGraph.resetTransform();
     setGraphUIEnable(false);
     nowGraphInfo = null;
     nodeTypes = {};
