@@ -234,6 +234,10 @@ public class GraphServlet extends HttpServlet {
                     /* add error Message */
                         break;
                     }
+
+                    /**
+                     * NodeType
+                     */
                     HashMap<Integer, NodeType> clientIdNodetypeMap = new HashMap<>();
                     JSONArray nodetypeJsonArray = (JSONArray) graph.get("node_type_set");
                     HashSet<NodeType> nodeTypeRecievedSet = new HashSet<>();
@@ -264,7 +268,8 @@ public class GraphServlet extends HttpServlet {
                                 nodeType.setColor(color);
                                 nodeType.setName(name);
 
-                                nodeTypeDAO.updateNodeType(nodeType);
+//                                nodeTypeDAO.updateNodeType(nodeType);
+                                currentGraph.updateNodeType(nodeType);
                             } else {
                                 //pass
                             }
@@ -288,7 +293,7 @@ public class GraphServlet extends HttpServlet {
                     deletingNodetypeSet.removeAll(nodeTypeRecievedSet);
 
                     for (NodeType nt : deletingNodetypeSet) {
-                        currentGraph.deleteNodeType(nt.getId());
+                        currentGraph.deleteNodeType(nt);
                     }
 
                     /* NodeType clientid : nodetypeid JSONobject*/
@@ -332,16 +337,14 @@ public class GraphServlet extends HttpServlet {
                         Confidence confidence = null;
                         if (hasN1Id && hasN2Id) {
                             confidence = currentGraph.getConfidence(currentGraph.getNodeType(n1typeId), currentGraph.getNodeType(n2typeId));
-
                             if (confidence.getConfidenceValue() != confidenceValue) {
-
-                            /* update confidence*/
+                                /* update confidence*/
                                 confidence.setConfidenceValue(confidenceValue);
-
-                                confidenceDAO.updateConfidence(currentGraph.getNodeType(n1typeId), currentGraph.getNodeType(n2typeId), confidenceValue);
+                                currentGraph.updateConfidence(confidence);
                             } else {
                                 //pass
                             }
+
                         } else {
                             NodeType nt1=null, nt2=null;
                             if(hasN1Id)
@@ -372,12 +375,16 @@ public class GraphServlet extends HttpServlet {
                     deletingConfidenceSet.removeAll(confidenceRecievedSet);
 
                     for (Confidence c : deletingConfidenceSet) {
-                        currentGraph.deleteConfidence(c.getOrigin(), c.getDestination());
+                        currentGraph.deleteConfidence(c);
+
+                        //TODO remove
+                        currentGraph.deleteConfidence(c);
                     }
 
                     /**
                      *  Node
                      */
+                    HashMap<Integer, Node> clientIdNodeMap = new HashMap<>();
                     JSONArray nodeJsonArray = (JSONArray) graph.get("node_set");
                     HashSet<Node> nodeRecievedSet = new HashSet<>();
 
@@ -431,6 +438,17 @@ public class GraphServlet extends HttpServlet {
                                     isUpdated = true;
                                 }
                             }
+                            if(node.getNodeType() != null) {
+                                if(nodetypeId != node.getNodeType().getId()) {
+                                    node.setNodeType(currentGraph.getNodeType(nodetypeId));
+                                    isUpdated = true;
+                                }
+                            } else {
+                                if(nodetypeId != 0) {
+                                    node.setNodeType(currentGraph.getNodeType(nodetypeId));
+                                    isUpdated = true;
+                                }
+                            }
                             if (!name.equals(node.getName())) {
                                 node.setName(name);
                                 isUpdated = true;
@@ -446,22 +464,31 @@ public class GraphServlet extends HttpServlet {
                             if (isUpdated) {
                                 nodeDAO.updateNode(node);
                             }
-                        } else {
+                        } else {    // (hasId && hasTypeId) is false
                             NodeType nodeType = null;
-
-                            if(hasTypeId) { //node(x) = clientId
+                            if(hasTypeId) { // new node, old node type
                                 nodeType = currentGraph.getNodeType(nodetypeId);
-                                nodeDAO.saveNode(domainId, name, nodeType.getId(), x, y, graphid);
+                                if(nodeType != null) {
+                                    node = new Node(domainId, nodeType, name, x, y);
+                                    nodeDAO.saveNode(node, graphid);
+                                }
+                                else {
+                                    node = new Node(domainId, null, name, x, y);
+                                    nodeDAO.saveNode(node, graphid);
+                                }
+                                clientIdNodeMap.put(clientId, node);
                             }
-                            else { //node type (x)
+                            else {  //new node type
                                 nodeType = clientIdNodetypeMap.get(nodetypeClientId);
-                                if (hasId) {
+                                if (hasId) {    //old node, new node type
                                     node = currentGraph.getNode(id);
                                     node.setNodeType(nodeType);
                                     nodeDAO.updateNode(node);
                                 }
-                                else { //node type (x), node (x)
-                                    nodeDAO.saveNode(domainId, name, nodeType.getId(), x, y, graphid);
+                                else {           //new node, new node type
+                                    node = new Node(domainId, nodeType, name, x, y);
+                                    nodeDAO.saveNode(node, graphid);
+                                    clientIdNodeMap.put(clientId, node);
                                 }
                             }
                         }
@@ -475,8 +502,91 @@ public class GraphServlet extends HttpServlet {
                     deletingNodeSet.removeAll(nodeRecievedSet);
 
                     for (Node n : deletingNodeSet) {
-                        currentGraph.deleteNode(n.getId());
+                        currentGraph.deleteNode(n);
                     }
+
+                    /* Node clientid : nodeid JSONobject*/
+                    JSONObject clientIdNodeJsonObject = new JSONObject();
+                    for (Integer i : clientIdNodeMap.keySet()) {
+                        clientIdNodeJsonObject.put(i, clientIdNodeMap.get(i).getId());
+//                        clientIdNodetypeJsonArray.add(clientIdNodetypeJsonObject);
+                    }
+                    System.out.println(clientIdNodeJsonObject.toJSONString());
+                    result.put("node_id_map", clientIdNodeJsonObject);
+
+                    /**
+                     * EdgeType
+                     */
+
+                    HashMap<Integer, EdgeType> clientIdEdgetypeMap = new HashMap<>();
+                    JSONArray edgetypeJsonArray = (JSONArray) graph.get("edge_type_set");
+                    HashSet<EdgeType> edgeTypeRecievedSet = new HashSet<>();
+
+                    for (Object o : edgetypeJsonArray) {
+                        boolean hasId = false;
+                        int id = 0, clientId = 0;
+                        String color = null, name = null;
+                        JSONObject edgetypeJsonObject = (JSONObject) o;
+
+                        System.out.println(edgetypeJsonObject.toJSONString());
+                        if (edgetypeJsonObject.containsKey("edge_type_id")) {
+                            id = Integer.parseInt(edgetypeJsonObject.get("edge_type_id").toString());
+                            hasId = true;
+                        }
+                        clientId = Integer.parseInt(edgetypeJsonObject.get("edge_type_client_id").toString());
+                        color = edgetypeJsonObject.get("color").toString();
+                        name = edgetypeJsonObject.get("edge_type_name").toString();
+
+                        EdgeType edgeType = null;
+                        if (hasId) {
+                            edgeType = currentGraph.getEdgeType(id);
+
+                            if (!edgeType.getColor().equals(color) ||
+                                    !edgeType.getName().equals(name)) {
+
+                                /* update edge type*/
+                                edgeType.setColor(color);
+                                edgeType.setName(name);
+
+                                currentGraph.updateEdgeType(edgeType);
+                            } else {
+                                //pass
+                            }
+                        } else {
+
+                             /* create node type */
+                            edgeType = new EdgeType(color, name);
+
+                            /* save node type(both memory and DB) */
+                            currentGraph.addEdgeType(edgeType);  //add exception handling when update node type error.
+                            clientIdEdgetypeMap.put(clientId, edgeType);
+                        }
+
+                        edgeTypeRecievedSet.add(edgeType);
+                    }
+
+                    /* delete edgeType in momory */
+                    Set<EdgeType> edgeTypeSet = currentGraph.getEdgeTypeSet();
+                    HashSet<EdgeType> deletingEdgetypeSet = new HashSet<>();
+                    deletingEdgetypeSet.addAll(edgeTypeSet);
+                    deletingEdgetypeSet.removeAll(edgeTypeRecievedSet);
+
+                    for (EdgeType et : deletingEdgetypeSet) {
+                        currentGraph.deleteEdgeType(et);
+                    }
+
+                    /* NodeType clientid : edgetypeid JSONobject*/
+                    JSONObject clientIdEdgetypeJsonObject = new JSONObject();
+                    for (Integer i : clientIdEdgetypeMap.keySet()) {
+                        clientIdEdgetypeJsonObject.put(i, clientIdEdgetypeMap.get(i).getId());
+                    }
+                    System.out.println(clientIdEdgetypeJsonObject.toJSONString());
+                    result.put("edgetype_id_map", clientIdEdgetypeJsonObject);
+
+                    /**
+                     * Edge
+                     */
+
                     result.put("result", "success");
                 } catch (Exception e) {
                     e.printStackTrace();

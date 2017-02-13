@@ -1,7 +1,7 @@
 package kr.ac.ssu.soft.influencenetwork;
 
 public class Edge implements Comparable<Edge> {
-	private EdgeType et;
+	private EdgeType edgeType;
 	private Node n1;
 	private Node n2;
 	private float influenceValue;
@@ -12,19 +12,19 @@ public class Edge implements Comparable<Edge> {
 		this.influenceValue = influenceValue;
 	}
 
-	public Edge(EdgeType et, Node n1, Node n2, float influenceValue) {
-		this.et = et;
+	public Edge(EdgeType edgeType, Node n1, Node n2, float influenceValue) {
+		this.edgeType = edgeType;
 		this.n1 = n1;
 		this.n2 = n2;
 		this.influenceValue = influenceValue;
 	}
 
-	public EdgeType getEt() {
-		return et;
+	public EdgeType getEdgeType() {
+		return edgeType;
 	}
 
-	public void setEt(EdgeType et) {
-		this.et = et;
+	public void setEdgeType(EdgeType edgeType) {
+		this.edgeType = edgeType;
 	}
 
 	public Node getOrigin() {

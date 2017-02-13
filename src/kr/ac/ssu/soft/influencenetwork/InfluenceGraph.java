@@ -1,8 +1,5 @@
 package kr.ac.ssu.soft.influencenetwork;
-import kr.ac.ssu.soft.influencenetwork.db.ConfidenceDAO;
-import kr.ac.ssu.soft.influencenetwork.db.EdgeDAO;
-import kr.ac.ssu.soft.influencenetwork.db.NodeDAO;
-import kr.ac.ssu.soft.influencenetwork.db.NodeTypeDAO;
+import kr.ac.ssu.soft.influencenetwork.db.*;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -15,11 +12,13 @@ public class InfluenceGraph {
 
     private Set<NodeType> nodeTypeSet = new TreeSet<NodeType>();
     private Set<Node> nodeSet = new TreeSet<Node>();
+    private Set<EdgeType> edgeTypeSet = new TreeSet<>();
     private Set<Edge> edgeSet = new TreeSet<Edge>();
     private Set<Confidence> confidenceSet = new TreeSet<Confidence>();
 
     private NodeTypeDAO nodeTypeDAO = new NodeTypeDAO();
     private NodeDAO nodeDAO = new NodeDAO();
+    private EdgeTypeDAO edgeTypeDAO = new EdgeTypeDAO();
     private EdgeDAO edgeDAO = new EdgeDAO();
     private ConfidenceDAO confidenceDAO = new ConfidenceDAO();
 
@@ -82,93 +81,109 @@ public class InfluenceGraph {
         return false;
     }
 
-    /**
-     * Return a nodetype in nodeTypeSet which has same nodeTypeId.
-     *
-     * @param nodeTypeId    ID of node type to find.
-     * @return NodeType     Node type which has same nodeTypeId.
-     */
-    public NodeType getNodeType(int nodeTypeId) {
-        for (NodeType nt : nodeTypeSet) {
-            if (nt.getId() == nodeTypeId) return nt;
-        }
-        return null;
-    }
-
     public Set<NodeType> getNodeTypeSet() {
         return nodeTypeSet;
     }
 
-    /* need to revise */
-    public boolean updateNodeType(int nodeTypeId, String name, String color) {
-        if (name == null && color == null)
-            return false;
+    /**
+     * Return a nodetype in nodeTypeSet which has same nodeTypeId.
+     *
+     * @param ntId    ID of node type to find.
+     * @return NodeType     Node type which has same nodeTypeId.
+     */
+    public NodeType getNodeType(int ntId) {
         for (NodeType nt : nodeTypeSet) {
-            if (nt.getId() == nodeTypeId) {
+            if (nt.getId() == ntId) return nt;
+        }
+        return null;
+    }
 
-                /** a backup of nt attributes for DB update failure. */
-                String previousName = nt.getName();
-                String previousColor = nt.getColor();
+    public boolean updateNodeType(NodeType nt) {
+        if (nodeTypeSet.contains(nt)) {
+            return nodeTypeDAO.updateNodeType(nt);
+        }
+        else return false;
+    }
 
-                if (name != null)
-                    nt.setName(name);
-                if (color != null)
-                    nt.setColor(color);
-
-                if (nodeTypeDAO.updateNodeType(nt))
-                    return true;   // Successfully Update NodeType in DB
-
-                /* revert nodetype in nodeTypeSet to previous state */
-                nt.setName(previousName);
-                nt.setColor(previousColor);
-                return false;
+    public boolean deleteNodeType(NodeType nt) {
+        if (nodeTypeSet.contains(nt)) {
+        /* set nodetype of node to null*/
+        Set<Node> updatedNodeSet = new TreeSet<>();
+        for (Node n : nodeSet) {
+            NodeType nNodeType = n.getNodeType();
+            if(nNodeType != null) {
+                if (nNodeType == nt){
+                    n.setNodeType(null);
+                }
             }
+        }
+
+        Set<Confidence> deletedConfidenceSet = new TreeSet<Confidence>();
+        for (Confidence c : confidenceSet) {
+            if((c.getOrigin() == nt) || (c.getDestination() == nt)) {
+                deletedConfidenceSet.add(c);
+            }
+        }
+        confidenceSet.removeAll(deletedConfidenceSet);
+        nodeTypeSet.remove(nt);
+        return nodeTypeDAO.deleteNodeType(nt.getId());
+        } else return false;
+    }
+
+    /**
+     * Confidence Methods
+     */
+
+    /**
+     * Return success or failure of adding confidence to confidenceSet and DB.
+     *
+     * @param confidence    confidence for adding confidenceSet and DB.
+     * @return isSuccess    Success or failure of adding.
+     */
+    public boolean addConfidence(Confidence confidence) {
+        if (confidenceSet.add(confidence)) {
+            if (confidenceDAO.saveConfidence(confidence, id) == 0) {
+                return true;
+            }
+            confidenceSet.remove(confidence);
         }
         return false;
     }
 
-    public boolean deleteNodeType(int nodeTypeId) {
-//        Set<NodeType> deleteNodeTypeSet = new TreeSet<>();
-        for (NodeType nt : nodeTypeSet) {
-            if(nt.getId() == nodeTypeId) {
-                if (nodeTypeSet.contains(nt)) {
+    public Set<Confidence> getConfidenceSet() {
+        return confidenceSet;
+    }
 
-                    /* set nodetype of node to null*/
-                    Set<Node> updatedNodeSet = new TreeSet<>();
-                    for (Node n : nodeSet) {
-                        NodeType nodeType = n.getNodeType();
-                        if(nodeType != null) {
-                            if (nodeType.getId() == nodeTypeId){
-                                updatedNodeSet.add(n);
-                                n.setNodeType(null);
-                            }
-                        }
-                    }
-
-                    Set<Confidence> deletedConfidenceSet = new TreeSet<Confidence>();
-                    for (Confidence c : confidenceSet) {
-                        if((c.getOrigin().getId() == nodeTypeId) || (c.getDestination().getId() == nodeTypeId)) {
-                            deletedConfidenceSet.add(c);
-                        }
-                    }
-                    confidenceSet.removeAll(deletedConfidenceSet);
-                    if (nodeTypeDAO.deleteNodeType(nodeTypeId)) {
-                        nodeTypeSet.remove(nt);
-                        return true;
-                    } else {
-
-                        /* Revert deleted nodetype, node and confidences */
-                        nodeTypeSet.add(nt);
-                        for (Node n : updatedNodeSet) {
-                            n.setNodeType(nt);
-                        }
-                        confidenceSet.addAll(deletedConfidenceSet);
-                    }
-                }
-                return false;
-            }
+    public Confidence getConfidence(NodeType nt1, NodeType nt2) {
+        for (Confidence c : confidenceSet) {
+            if (c.getOrigin() == nt1 && c.getDestination() == nt2)
+                return c;
         }
-        return false;
+        return null;
+    }
+
+    public boolean updateConfidence(Confidence c) {
+        if (confidenceSet.contains(c)) {
+            return confidenceDAO.updateConfidence(c.getOrigin(), c.getDestination(), c.getConfidenceValue());
+        } else return false;
+    }
+
+    public boolean deleteConfidence(Confidence c) {
+        if (confidenceSet.contains(c)) {
+            confidenceSet.remove(c);
+            return confidenceDAO.deleteConfidence(c.getOrigin(), c.getDestination());
+        } else return false;
+    }
+
+    //TODO Need to fix
+    public float getConfidenceValue(NodeType nt1, NodeType nt2) {
+
+        for(Confidence c : confidenceSet){
+            if(nt1 == c.getOrigin() && nt2 == c.getDestination())
+                return c.getConfidenceValue();
+        }
+
+        return 1;
     }
 
     /**
@@ -208,69 +223,81 @@ public class InfluenceGraph {
         return null;
     }
 
-    /* need to revise */
-    public boolean updateNode(int nodeId, String domainId, String name, NodeType nodeType, float x, float y) {
-        if (name == null && nodeType == null)
-            return false;
-        for (Node n : nodeSet) {
-            if (n.getId() == nodeId) {
-
-                /** a backup of n attributes for DB update failure. */
-                String previousDomainId = n.getDomainId();
-                String previousName = n.getName();
-                NodeType previousNodeType = n.getNodeType();
-
-                if (domainId != null)
-                    n.setDomainId(domainId);
-                if (name != null)
-                   n.setName(name);
-                if (nodeType != null)
-                   n.setNodeType(nodeType);
-
-                if (nodeDAO.updateNode(n))
-                    return true;
-
-                n.setDomainId(previousDomainId);
-                n.setName(previousName);
-                n.setNodeType(previousNodeType);
-                return false;
-            }
-        }
-        return false;
+    public boolean updateNode(Node node) {
+        if(nodeSet.contains(node)) {
+            return nodeDAO.updateNode(node);
+        } else return false;
     }
 
     /**
      * Return success or failure of delete node in nodeSet and DB.
      *
-     * @param nodeId        Node ID to delete node
+     * @param node       Node ID to delete node
      * @return isSuccess    success or failure for deleting
      */
-    public boolean deleteNode(int nodeId) {
-        for (Node n : nodeSet) {
-            if(n.getId() == nodeId) {
-                if (nodeSet.remove(n)) {
-                    Set<Edge> deletedEdgeSet = new TreeSet<Edge>();
-                    for (Edge e : edgeSet) {
-                        if ((e.getOrigin().getId() == nodeId) || (e.getDestination().getId() == nodeId)) {
-                            deletedEdgeSet.add(e);
-                        }
-                    }
-
-                    /* Delete edges connected with deleted node */
-                    edgeSet.removeAll(deletedEdgeSet);
-
-                    if (nodeDAO.deleteNode(nodeId)) {
-                        return true;
-                    }
-
-                    /* Revert deleted node and edges */
-                    nodeSet.add(n);
-                    edgeSet.addAll(deletedEdgeSet);
+    public boolean deleteNode(Node node) {
+        if(nodeSet.contains(node)) {
+            nodeSet.remove(node);
+            Set<Edge> deletedEdgeSet = new TreeSet<Edge>();
+            for (Edge e : edgeSet) {
+                if ((e.getOrigin() == node) || (e.getDestination() == node)) {
+                    deletedEdgeSet.add(e);
                 }
-                return false;
             }
+
+            /* Delete edges connected with deleted node */
+            edgeSet.removeAll(deletedEdgeSet);
+            return nodeDAO.deleteNode(node.getId());
+        } else return false;
+    }
+
+    /**
+     * Edge Type Methods
+     */
+
+    public boolean addEdgeType(EdgeType et) {
+        if (edgeTypeSet.add(et)) {
+            if (edgeTypeDAO.saveEdgeType(et, id) == 0) {
+                return true;
+            } else
+                edgeTypeSet.remove(et); // as DB Failure is, remove nodetype
         }
         return false;
+    }
+
+    public Set<EdgeType> getEdgeTypeSet() {
+        return edgeTypeSet;
+    }
+
+    public EdgeType getEdgeType(int etId) {
+        for (EdgeType et : edgeTypeSet) {
+            if (et.getId() == etId) return et;
+        }
+        return null;
+    }
+
+    public boolean updateEdgeType(EdgeType et) {
+        if(edgeTypeSet.contains(et)) {
+            return edgeTypeDAO.updateEdgeType(et);
+        } else return false;
+    }
+
+    public boolean deleteEdgeType(EdgeType et) {
+        if(edgeTypeSet.contains(et)) {
+
+            /* set edgetype of edge to null*/
+            Set<Edge> updatedEdgeSet = new TreeSet<>();
+            for (Edge e : edgeSet) {
+                EdgeType edgeType = e.getEdgeType();
+                if (edgeType != null) {
+                    if (edgeType == et) {
+                        e.setEdgeType(null);
+                    }
+                }
+            }
+            edgeTypeSet.remove(et);
+            return edgeTypeDAO.deleteEdgeType(et.getId());
+        } else return false;
     }
 
     /**
@@ -305,113 +332,17 @@ public class InfluenceGraph {
         return null;
     }
 
-    public boolean updateInfluenceValue(Node n1, Node n2, float influenceValue) {
-        if (influenceValue > 1 && influenceValue < 0)
-            return false;
-        for (Edge e : edgeSet) {
-            if((e.getOrigin().getId() == n1.getId()) && (e.getDestination().getId() == n2.getId())) {
-                float previousInfluenceValue = e.getInfluenceValue();
-
-                e.setInfluenceValue(influenceValue);
-                if (edgeDAO.updateEdge(n1, n2, influenceValue)) {
-                    return true;
-                }
-                e.setInfluenceValue(previousInfluenceValue);
-                return false;
-            }
-        }
-        return false;
+    public boolean updateEdge(Edge edge) {
+       if (edgeSet.contains(edge)) {
+           return edgeDAO.updateEdge(edge.getOrigin(), edge.getDestination(), edge.getInfluenceValue());
+       } else return false;
     }
 
-    public boolean deleteEdge(Node n1, Node n2) {
-        for (Edge e : edgeSet) {
-            if((e.getOrigin().getId() == n1.getId()) && (e.getDestination().getId() == n2.getId())) {
-                if (edgeSet.remove(e)) {
-                    if (edgeDAO.deleteEdge(n1, n2)) {
-                        return true;
-                    }
-                    edgeSet.add(e);
-                }
-                return false;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Confidence Methods
-     */
-
-    /**
-     * Return success or failure of adding confidence to confidenceSet and DB.
-     *
-     * @param confidence    confidence for adding confidenceSet and DB.
-     * @return isSuccess    Success or failure of adding.
-     */
-    public boolean addConfidence(Confidence confidence) {
-        if (confidenceSet.add(confidence)) {
-            if (confidenceDAO.saveConfidence(confidence, id) == 0) {
-                return true;
-            }
-            confidenceSet.remove(confidence);
-        }
-        return false;
-    }
-
-    public Set<Confidence> getConfidenceSet() {
-        return confidenceSet;
-    }
-
-    public Confidence getConfidence(NodeType nt1, NodeType nt2) {
-        for (Confidence c : confidenceSet) {
-            if (c.getOrigin() == nt1 && c.getDestination() == nt2)
-                return c;
-        }
-        return null;
-    }
-
-    public boolean updateConfidenceValue(NodeType nt1, NodeType nt2, float confidenceValue) {
-        if (confidenceValue > 1 && confidenceValue < 0)
-            return false;
-        for (Confidence c : confidenceSet) {
-            if((c.getOrigin().getId() == nt1.getId()) && (c.getDestination().getId() == nt2.getId())) {
-                float previousConfidenceValue = c.getConfidenceValue();
-
-                c.setConfidenceValue(confidenceValue);
-                if (confidenceDAO.updateConfidence(nt1, nt2, confidenceValue)) {
-                    return true;
-                }
-                c.setConfidenceValue(previousConfidenceValue);
-                return false;
-            }
-        }
-        return false;
-    }
-
-    public boolean deleteConfidence(NodeType nt1, NodeType nt2) { //delete one Confidence
-        for (Confidence c : confidenceSet) {
-            if((c.getOrigin().getId() == nt1.getId()) && (c.getDestination().getId() == nt2.getId())) {
-                if (confidenceSet.remove(c)) {
-                    if (confidenceDAO.deleteConfidence(nt1, nt2)) {
-                        return true;
-                    }
-                    confidenceSet.add(c);
-                }
-                return false;
-            }
-        }
-        return false;
-    }
-
-    //TODO Need to fix
-    public float getConfidenceValue(NodeType nt1, NodeType nt2) {
-
-        for(Confidence c : confidenceSet){
-            if(nt1 == c.getOrigin() && nt2 == c.getDestination())
-                return c.getConfidenceValue();
-        }
-
-        return 1;
+    public boolean deleteEdge(Edge edge) {
+        if(edgeSet.contains(edge)) {
+            edgeSet.remove(edge);
+            return edgeDAO.deleteEdge(edge.getOrigin(), edge.getDestination());
+        } else return false;
     }
 
     /**
