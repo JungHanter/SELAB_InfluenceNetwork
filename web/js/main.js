@@ -1586,7 +1586,7 @@ function menuSaveGraph() {
         data: JSON.stringify({
             action: 'save',
             email: user.email,
-            graph: graphJson()
+            graph: graphJson
         }),
         success: function (res) {
             console.log(res);
