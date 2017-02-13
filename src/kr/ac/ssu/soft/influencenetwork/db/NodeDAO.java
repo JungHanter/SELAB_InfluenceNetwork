@@ -21,7 +21,7 @@ public class NodeDAO {
 //		String sql = "insert into node(name, graph_id, type_id) values(?,?,"+"(select id from nodetype where name=\""+ node.getNt().getName() +"\"" +"))";
 		int id = 0;
 		String sql = "insert into node(domain_id, name, graph_id, type_id, x, y) " +
-				"values(?, ?, ?, (select id from nodetype where name=?), ?, ?)";
+				"values(?, ?, ?, ?, ?, ?)";
 		conn = DBManager.getConnection();
 		
 		try{
@@ -29,7 +29,10 @@ public class NodeDAO {
 			pstmt.setString(1, node.getDomainId());
 			pstmt.setString(2, node.getName());
 			pstmt.setInt(3, graphId);
-			pstmt.setString(4, node.getNodeType().getName());
+			if(node.getNodeType() != null)
+				pstmt.setInt(4, node.getNodeType().getId());
+			else
+				pstmt.setNull(4, Types.INTEGER);
 			pstmt.setFloat(5,node.getX());
 			pstmt.setFloat(6,node.getY());
 			pstmt.executeUpdate();
@@ -63,7 +66,7 @@ public class NodeDAO {
 		conn = DBManager.getConnection();
 
 		try{
-			pstmt = conn.prepareStatement(sql);
+			pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			if(domainId == null)
 				pstmt.setNull(1, Types.VARCHAR);
 			else
@@ -73,7 +76,10 @@ public class NodeDAO {
 			else
 				pstmt.setString(2, name);
 			pstmt.setInt(3, graphId);
-			pstmt.setInt(4, typeId);
+			if(typeId != 0)
+				pstmt.setInt(4, typeId);
+			else
+				pstmt.setNull(4, Types.INTEGER);
 			pstmt.setFloat(5, x);
 			pstmt.setFloat(6, y);
 			pstmt.executeUpdate();
@@ -137,12 +143,22 @@ public class NodeDAO {
 
 		try {
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, node.getDomainId());
-			pstmt.setString(2, node.getName());
-			pstmt.setInt(3, node.getNodeType().getId());
-			pstmt.setFloat(4, node.getY());
-			pstmt.setFloat(5, node.getX());
+			if(node.getDomainId() != null)
+				pstmt.setString(1, node.getDomainId());
+			else
+				pstmt.setNull(1, Types.VARCHAR);
+			if(node.getName() != null)
+				pstmt.setString(2, node.getName());
+			else
+				pstmt.setNull(2, Types.VARCHAR);
+			if(node.getNodeType() != null)
+				pstmt.setInt(3, node.getNodeType().getId());
+			else
+				pstmt.setNull(3, Types.INTEGER);
+			pstmt.setFloat(4, node.getX());
+			pstmt.setFloat(5, node.getY());
 			pstmt.setInt(6, node.getId());
+			pstmt.executeUpdate();
 			DBManager.closeConnection(conn, pstmt);
 			return true;
 		} catch(SQLException e) {

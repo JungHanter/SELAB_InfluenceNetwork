@@ -3,7 +3,7 @@ package kr.ac.ssu.soft.influencenetwork;
 public class Node implements Comparable<Node> {
 	private int id;
 	private String domainId;
-	private NodeType nt;
+	private NodeType nt = null;
 	private String name;
 	private float x = 100;
 	private float y = 100;
