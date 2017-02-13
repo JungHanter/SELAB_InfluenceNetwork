@@ -41,6 +41,7 @@
             <li><a class="menuDeleteEdge" href="#">Delete Edge</a></li>
             <li role="separator" class="divider"></li>
             <li><a class="menuManageNodeType" href="#">Manage Node Type</a></li>
+            <li><a class="menuManageEdgeType" href="#">Manage Edge Type</a></li>
             <li><a class="menuManageConfidence" href="#">Manage Confidence</a></li>
           </ul>
         </li>
@@ -144,7 +145,7 @@
         <span>Path : </span>
       </div>
       <div class="btn-group">
-        <div id="subMenuEdgeSource" class="btn btn-default btn-selection long-length unselected subMenuEdgeNode">Select Source Node</div>
+        <div id="subMenuEdgeSource" class="btn btn-default btn-selection unselected subMenuEdgeNode">Select Source Node</div>
         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <span class="caret"></span>
           <span class="sr-only">Toggle Dropdown</span>
@@ -157,7 +158,7 @@
         <span> --> </span>
       </div>
       <div class="btn-group">
-        <div id="subMenuEdgeTarget" class="btn btn-default btn-selection long-length unselected subMenuEdgeNode">Select Target Node</div>
+        <div id="subMenuEdgeTarget" class="btn btn-default btn-selection unselected subMenuEdgeNode">Select Target Node</div>
         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <span class="caret"></span>
           <span class="sr-only">Toggle Dropdown</span>
@@ -168,10 +169,25 @@
       </div>
       <div class="sub-menu-divider"></div>
       <div class="sub-menu-name">
+        <span>Type : </span>
+      </div>
+      <div class="btn-group">
+        <div id="subMenuEdgeType" class="btn btn-default btn-selection unselected">Select Type</div>
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span class="caret"></span>
+          <span class="sr-only">Toggle Dropdown</span>
+        </button>
+        <ul id="subMenuEdgeTypeDropdown" class="dropdown-menu">
+          <li><a href="#"><span class="edgeTypeColor type-color-bg">&nbsp;</span><span class="edgeTypeName">Type1</span></a></li>
+        </ul>
+      </div>
+      <div class="sub-menu-divider"></div>
+      <div class="sub-menu-name">
         <span>Influence : </span>
       </div>
       <div class="sub-menu-field">
-        <input type="number" step=0.01 min=0 max=1 id="subMenuEdgeInfluence" class="form-control" placeholder="Influence">
+        <input type="number" step=0.01 min=0 max=1 id="subMenuEdgeInfluence" class="form-control" placeholder="Influence"
+               stype="width: 100px;">
       </div>
       <div class="sub-menu-divider"></div>
       <div class="sub-menu-btn">
@@ -351,6 +367,20 @@
         </div>
         <br/>
         <div>
+          <span>Edge Type : </span><br/>
+          <div class="btn-group">
+            <div id="newEdgeDlgType" class="btn btn-default btn-selection long-length unselected newEdgeDlgNode">Select Target Node</div>
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <span class="caret"></span>
+              <span class="sr-only">Toggle Dropdown</span>
+            </button>
+            <ul id="newEdgeDlgTypeDropdown" class="dropdown-menu">
+              <li><a href="#"><span class="edgeTypeColor type-color-bg">&nbsp;</span><span class="edgeTypeName">Type1</span></a></li>
+            </ul>
+          </div>
+        </div>
+        <br/>
+        <div>
           <span>Influence (0 to 1) : </span>
           <input type="number" step=0.01 min=0 max=1 id="newEdgeDlgInfluence" class="form-control" placeholder="Influence Value">
         </div>
@@ -398,6 +428,71 @@
               <h5>Select Color</h5>
             </div>
             <div id="manageNodeTypeColorList" class="list-group">
+              <a href="#" class="list-group-item active" data-color="red">Red <span class="typeColor type-color-bg type-color-red">&nbsp;</span></a>
+              <a href="#" class="list-group-item" data-color="pink">Pink <span class="typeColor type-color-bg type-color-pink">&nbsp;</span></a>
+              <a href="#" class="list-group-item" data-color="purple">Purple <span class="typeColor type-color-bg type-color-purple">&nbsp;</span></a>
+              <a href="#" class="list-group-item" data-color="deep-purple">Deep Purple <span class="typeColor type-color-bg type-color-deep-purple">&nbsp;</span></a>
+              <a href="#" class="list-group-item" data-color="indigo">Indigo <span class="typeColor type-color-bg type-color-indigo">&nbsp;</span></a>
+              <a href="#" class="list-group-item" data-color="blue">Blue <span class="typeColor type-color-bg type-color-blue">&nbsp;</span></a>
+              <a href="#" class="list-group-item" data-color="light-blue">Light Blue <span class="typeColor type-color-bg type-color-light-blue">&nbsp;</span></a>
+              <a href="#" class="list-group-item" data-color="cyan">Cyan <span class="typeColor type-color-bg type-color-cyan">&nbsp;</span></a>
+              <a href="#" class="list-group-item" data-color="teal">Teal <span class="typeColor type-color-bg type-color-teal">&nbsp;</span></a>
+              <a href="#" class="list-group-item" data-color="green">Green <span class="typeColor type-color-bg type-color-green">&nbsp;</span></a>
+              <a href="#" class="list-group-item" data-color="light-green">Light Green <span class="typeColor type-color-bg type-color-light-green">&nbsp;</span></a>
+              <a href="#" class="list-group-item" data-color="lime">Lime <span class="typeColor type-color-bg type-color-lime">&nbsp;</span></a>
+              <a href="#" class="list-group-item" data-color="yellow">Yellow <span class="typeColor type-color-bg type-color-yellow">&nbsp;</span></a>
+              <a href="#" class="list-group-item" data-color="amber">Amber <span class="typeColor type-color-bg type-color-amber">&nbsp;</span></a>
+              <a href="#" class="list-group-item" data-color="orange">Orange <span class="typeColor type-color-bg type-color-orange">&nbsp;</span></a>
+              <a href="#" class="list-group-item" data-color="deep-orange">Deep Orange <span class="typeColor type-color-bg type-color-deep-orange">&nbsp;</span></a>
+              <a href="#" class="list-group-item" data-color="brown">Brown <span class="typeColor type-color-bg type-color-brown">&nbsp;</span></a>
+              <a href="#" class="list-group-item" data-color="grey">Grey <span class="typeColor type-color-bg type-color-grey">&nbsp;</span></a>
+              <a href="#" class="list-group-item" data-color="blue-grey">Blue Grey <span class="typeColor type-color-bg type-color-blue-grey">&nbsp;</span></a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="manageEdgeTypeModal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Manage Edge Type</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-xs-8">
+            <div class="list-header">
+              <h5>Node Types</h5>
+              <div class="btn-group" role="group">
+                <a id="btnDeleteEdgeType" class="btn btn-default btn-xs" aria-label="Delete Edge Type">
+                  <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                </a>
+                <a id="btnEditEdgeTypeName" class="btn btn-default btn-xs" aria-label="Edit Edge Type Name">
+                  <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                </a>
+                <a id="btnAddEdgeType" class="btn btn-default btn-xs" aria-label="Add Edge Type">
+                  <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                </a>
+              </div>
+            </div>
+            <div id="manageEdgeTypeList" class="list-group">
+              <a href="#" class="list-group-item active">Type 1</a>
+              <a href="#" class="list-group-item">Type 2</a>
+            </div>
+            <span class="unfocusor" style="display: none;">&nbsp;</span>
+          </div>
+          <div class="col-xs-4">
+            <div>
+              <h5>Select Color</h5>
+            </div>
+            <div id="manageEdgeTypeColorList" class="list-group">
               <a href="#" class="list-group-item active" data-color="red">Red <span class="typeColor type-color-bg type-color-red">&nbsp;</span></a>
               <a href="#" class="list-group-item" data-color="pink">Pink <span class="typeColor type-color-bg type-color-pink">&nbsp;</span></a>
               <a href="#" class="list-group-item" data-color="purple">Purple <span class="typeColor type-color-bg type-color-purple">&nbsp;</span></a>

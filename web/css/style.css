@@ -21,7 +21,8 @@ body {
 /*prevent collapse*/
 .navbar > .top-menu {
     width: 100%;
-    min-width: 996px;
+    /*min-width: 996px;*/
+    min-width: 1200px;
 }
 .top-menu .navbar-nav {
     float: left;
@@ -298,14 +299,18 @@ body {
 
 #subMenuNodeType .nodeTypeColor,
 .subMenuEdgeNode .nodeTypeColor,
-.newEdgeDlgNode .nodeTypeColor {
+.newEdgeDlgNode .nodeTypeColor,
+#subMenuEdgeType .edgeTypeColor,
+#newEdgeDlgType .edgeTypeColor {
     width: 20px;
     margin-right: 8px;
     display: inline-block;
 }
 #subMenuNodeTypeDropdown .nodeTypeColor,
 .subMenuEdgeNodeDropdown .nodeTypeColor,
-.newEdgeDlgNodeDropdown .nodeTypeColor {
+.newEdgeDlgNodeDropdown .nodeTypeColor,
+#subMenuEdgeTypeDropdown .edgeTypeColor,
+#newEdgeDlgTypeDropdown .edgeTypeColor  {
     width: 20px;
     margin-right: 8px;
     display: inline-block;
@@ -316,7 +321,9 @@ body {
 .newEdgeDlgNode .nodeTypeId,
 #subMenuNodeTypeDropdown .nodeTypeId,
 .subMenuEdgeNodeDropdown .nodeTypeId,
-.newEdgeDlgNodeDropdown .nodeTypeId {
+.newEdgeDlgNodeDropdown .nodeTypeId,
+#subMenuEdgeType .edgeTypeId,
+#subMenuEdgeTypeDropdown .edgeTypeId {
     display: none;
 }
 
@@ -341,21 +348,26 @@ body {
     margin-top: 3px;
 }
 
-#manageNodeTypeModal .modal-body .list-group {
+#manageNodeTypeModal .modal-body .list-group,
+#manageEdgeTypeModal .modal-body .list-group {
     max-height: 300px;
     overflow-y: scroll;
     overflow-x: hidden;
 }
 #manageNodeTypeList .typeColor,
-#manageNodeTypeColorList .typeColor {
+#manageNodeTypeColorList .typeColor,
+#manageEdgeTypeList .typeColor,
+#manageEdgeTypeColorList .typeColor {
     width: 20px;
     display: inline-block;
     float: right;
 }
-#manageNodeTypeList .typeId {
+#manageNodeTypeList .typeId,
+#manageEdgeTypeList .typeId{
     display: none;
 }
-#manageNodeTypeList .list-group-item {
+#manageNodeTypeList .list-group-item,
+#manageEdgeTypeList .list-group-item{
     min-height: 42px;
 }
 #manageNodeTypeList .list-group-item.active,
@@ -363,7 +375,13 @@ body {
 #manageNodeTypeList .list-group-item.active:focus,
 #manageNodeTypeColorList .list-group-item.active,
 #manageNodeTypeColorList .list-group-item.active:hover,
-#manageNodeTypeColorList .list-group-item.active:focus {
+#manageNodeTypeColorList .list-group-item.active:focus,
+#manageEdgeTypeList .list-group-item.active,
+#manageEdgeTypeList .list-group-item.active:hover,
+#manageEdgeTypeList .list-group-item.active:focus,
+#manageEdgeTypeColorList .list-group-item.active,
+#manageEdgeTypeColorList .list-group-item.active:hover,
+#manageEdgeTypeColorList .list-group-item.active:focus{
     border-color: #bdbdbd;
 }
 

@@ -520,7 +520,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         if (mouseDownNode !== d){
             // we're in a different node: create new edge for mousedown edge and add to graph
             // TODO here is to create edge!!!
-            var newEdge = this.createEdge(mouseDownNode, d, 0.5, true);
+            var newEdge = this.createEdge(mouseDownNode, d, 0.5, null, true);
             thisGraph.onEdgeChanged('created', newEdge);
         } else{
             // we're in the same node
@@ -862,9 +862,9 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         return newNodeData;
     }
 
-    GraphCreator.prototype.createEdge = function(sourceNode, targetNode, name, editable=false) {
+    GraphCreator.prototype.createEdge = function(sourceNode, targetNode, name, type, editable=false) {
         var thisGraph = this;
-        var newEdge = {source: sourceNode, target: targetNode, name: name, bilateral: false};
+        var newEdge = {source: sourceNode, target: targetNode, name: name, bilateral: false, type: type};
         var filtRes = thisGraph.paths.filter(function(d){
             return d.source === newEdge.source && d.target === newEdge.target;
         });

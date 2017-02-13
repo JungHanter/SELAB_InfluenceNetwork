@@ -25,10 +25,18 @@ var nodeConfidences = {
     }
 }
 
+var edgeTypes = {
+    0: {name: "P", color: "indigo"},
+    1: {name: "Q", color: "teal"}
+};
+var edgeTypeCnt = 0;
+
 //remove defaults
-nodeTypes = {}
+nodeTypes = {};
 nodeTypeCnt = 0;
-nodeConfidences = {}
+nodeConfidences = {};
+edgeTypes = {};
+edgeTypeCnt = 0;
 
 function updateNodeTypes() {
     $('#subMenuNodeTypeDropdown').empty();
@@ -162,6 +170,33 @@ function updateNodeList(event, updatedData) {  //if updatedData is null, all dat
     }
 }
 
+function updateEdgeTypes() {
+    $('#subMenuEdgeTypeDropdown').empty();
+    for (var tid in edgeTypes) {
+        $('#subMenuEdgeTypeDropdown').append("<li><a href='#'>"
+            + edgeTypeToSubMenuHtml(tid) + "</a></li>");
+    }
+    $('#subMenuEdgeTypeDropdown > li > a').off('click').unbind('click').click(function() {
+        var selItem = $(this);
+        $('#subMenuEdgeType').removeClass('unselected').html(selItem.html());
+    });
+
+    $('#newEdgeDlgTypeDropdown').empty();
+    for (var tid in edgeTypes) {
+        $('#newEdgeDlgTypeDropdown').append("<li><a href='#'>"
+            + edgeTypeToSubMenuHtml(tid) + "</a></li>");
+    }
+    $('#newEdgeDlgTypeDropdown > li > a').off('click').unbind('click').click(function() {
+        var selItem = $(this);
+        $('#newEdgeDlgType').removeClass('unselected').html(selItem.html());
+    });
+
+    //TODO edge set type
+    networkGraph.setTypes(edgeTypes);
+    updateEdgeList();
+    networkGraph.updateGraph();
+}
+
 function updateEdgeList(event, updatedData) {
     if (event == undefined || updatedData == undefined)
         event = updatedData = null;
@@ -272,13 +307,18 @@ function setSelectedEdge(d3PathG, edgeData) {
     $('#subMenuEdgeInfluence').val(edgeData.name);
     $('#subMenuEdgeSource').removeClass('unselected').html(nodeDataToSubMenuHtml(edgeData.source));
     $('#subMenuEdgeTarget').removeClass('unselected').html(nodeDataToSubMenuHtml(edgeData.target));
+    if (edgeData.type != null) {
+        $('#subMenuEdgeType').removeClass('unselected').html(edgeTypeToSubMenuHtml(edgeData.type));
+    } else {
+        $('#subMenuEdgeType').addClass('unselected').text("Select Type");
+    }
 
     $('#sideMenuNodeList > li > a').removeClass('active');
     $('#sideMenuEdgeList > li > a').removeClass('active');
     $('#sideMenuEdgeList > li > a').each(function(idx, elem) {
         if (edgeData.source.id == $(this).find('.edge-source').data('nodeid') &&
                 edgeData.target.id == $(this).find('.edge-target').data('nodeid')) {
-            $(this).addClass('active').focus();;
+            $(this).addClass('active').focus();
         }
     });
 
@@ -301,6 +341,7 @@ function setUnselected(graphUnselect) {
     $('#subMenuNodeName').val('');
     $('#subMenuDomainId').val('');
     $('#subMenuNodeType').addClass('unselected').text('');
+    $('#subMenuEdgeType').addClass('unselected').text('');
     $('#subMenuEdgeInfluence').val('');
     $('.subMenuEdgeNode').addClass('unselected').text('');
 
@@ -336,6 +377,12 @@ function nodeDataToSubMenuHtml(nodeData) {
     }
     return nodeInfoHtml;
 }
+function edgeTypeToSubMenuHtml(typeid) {
+    return "<span class='edgeTypeColor type-color-bg type-color-"
+        + edgeTypes[typeid]['color'] + "'>&nbsp;</span><span class='edgeTypeName'>"
+        + edgeTypes[typeid]['name'] +"</span><span class='edgeTypeId'>"
+        + typeid + "</span>";
+}
 
 function createNode() {
     var createdNode = networkGraph.createNode();
@@ -344,7 +391,7 @@ function createNode() {
 }
 function editNode() {
     if (selectedNode != null) {
-        var origianlType = selectedNode.nodeData.type;
+        var originalType = selectedNode.nodeData.type;
         selectedNode.nodeData.title = $('#subMenuNodeName').val();
         // selectedNode.nodeData.type = $('#subMenuNodeType .nodeTypeName').text();
         selectedNode.nodeData.type = parseInt($('#subMenuNodeType .nodeTypeId').text());
@@ -372,7 +419,7 @@ function editNode() {
         else selectedNode.nodeData.domainId = null;
 
         networkGraph.changeNodeTitle(selectedNode.d3Node, selectedNode.nodeData.title);
-        if (origianlType != selectedNode.nodeData.type) {
+        if (originalType != selectedNode.nodeData.type) {
             networkGraph.updateNodeType(selectedNode.d3Node);
         }
         networkGraph.updateGraph();
@@ -399,17 +446,17 @@ function createEdge() {
             $('#newEdgeDlgSource').removeClass('unselected').html(nodeDataToSubMenuHtml(selectedNode.nodeData));
         }
         $('#newEdgeDlgTarget').addClass('unselected').html("Select Target Node");
+        $('#newEdgeDlgType').addClass('unselected').html("Select Type");
         $('#newEdgeModal').modal();
     }
 }
 function createEdgeConfirm() {
     var sourceId = parseInt($('#newEdgeDlgSource .nodeName').data('nodeid')),
         targetId = parseInt($('#newEdgeDlgTarget .nodeName').data('nodeid')),
-        influence = parseFloat($('#newEdgeDlgInfluence').val());
-
+        influence = parseFloat($('#newEdgeDlgInfluence').val()),
+        edgeType = null;
     var sourceNode = networkGraph.getNodeById(sourceId),
         targetNode = networkGraph.getNodeById(targetId);
-
 
     if (isNaN(sourceId) || isNaN(targetId)) {
         openAlertModal("The nodes of edge must be selected!");
@@ -421,7 +468,9 @@ function createEdgeConfirm() {
         openAlertModal("The influence value is must be set!");
         return;
     } else if (validEdge(sourceNode, targetNode)) {
-        var newEdge = networkGraph.createEdge(sourceNode, targetNode, influence);
+        if (!$('#newEdgeDlgType').hasClass('unselected'))
+            edgeType = parseInt($('#newEdgeDlgType').find('> .edgeTypeId').text());
+        var newEdge = networkGraph.createEdge(sourceNode, targetNode, influence, edgeType);
         updateEdgeList('created', newEdge);
         $('#newEdgeModal').modal('hide');
     } else {
@@ -431,13 +480,15 @@ function createEdgeConfirm() {
 }
 function editEdge() {
     if (selectedEdge != null) {
-        var origianlSourceId = selectedEdge.edgeData.source.id,
+        var originalType = selectedEdge.edgeData.type;
+        var originalSourceId = selectedEdge.edgeData.source.id,
             originalTargetId = selectedEdge.edgeData.target.id;
         var changedSourceId = parseInt($('#subMenuEdgeSource .nodeName').data('nodeid')),
             changedTargetId = parseInt($('#subMenuEdgeTarget .nodeName').data('nodeid'))
         selectedEdge.edgeData.name = $('#subMenuEdgeInfluence').val();
+        selectedEdge.edgeData.type = parseInt($('#subMenuEdgeType .edgeTypeId').text());
 
-        if (origianlSourceId == changedSourceId && originalTargetId == changedTargetId) {
+        if (originalSourceId == changedSourceId && originalTargetId == changedTargetId) {
             //pass
         } else {
             var changedSource = networkGraph.getNodeById(changedSourceId);
@@ -455,6 +506,8 @@ function editEdge() {
                 return;
             }
         }
+
+        //TODO apply chage type
 
         networkGraph.changeEdgeName(selectedEdge.d3PathG, selectedEdge.edgeData);
         networkGraph.updateGraph();
@@ -482,6 +535,9 @@ function validEdge(sourceNode, targedNode) {
 function manageNodeType() {
     $('#manageNodeTypeModal').modal();
 }
+function manageEdgeType() {
+    $('#manageEdgeTypeModal').modal();
+}
 function manageConfidence() {
     $('#manageConfidenceModal').modal();
 }
@@ -489,6 +545,7 @@ function manageConfidence() {
 $(document).ready(function() {
     setUnselected();
     updateNodeTypes();
+    updateEdgeTypes();
     updateEdgeList();
 
     networkGraph.setCallbacks(
@@ -518,6 +575,7 @@ $(document).ready(function() {
     $('.menuDeleteEdge').click(deleteEdge);
 
     $('.menuManageNodeType').click(manageNodeType);
+    $('.menuManageEdgeType').click(manageEdgeType);
     $('.menuManageConfidence').click(manageConfidence);
 
     $('.menuNew').click(menuNewGraph);
@@ -530,6 +588,7 @@ $(document).ready(function() {
 });
 
 var selectedNodeTypeElem = null;
+var selectedEdgeTypeElem = null;
 function initUI() {
     // About Edge
     $('#subMenuEdgeInfluence, #newEdgeDlgInfluence').blur(function() {
@@ -550,6 +609,7 @@ function initUI() {
     });
 
     initManageNodeTypeUI();
+    initManageEdgeTypeUI();
     initManageConfidenceUI();
     initControllers();
 }
@@ -764,6 +824,218 @@ function nodeTypeManageListItemAddClick(elem) {
                     $(this).addClass('active').addClass('type-color-bg')
                         .addClass('type-color-text').addClass('type-color-'+typeColor);
                     $('#manageNodeTypeColorList').focus();
+                    $(this).focus().blur();
+                } else {
+                    $(this).attr('class', 'list-group-item');
+                }
+            });
+        }
+    });
+}
+
+function initManageEdgeTypeUI() {
+    $('#btnEditEdgeTypeName').attr('disabled', true);
+    $('#btnDeleteEdgeType').attr('disabled', true);
+    $('#manageEdgeTypeColorList').css('visibility', 'hidden');
+
+    $('#manageEdgeTypeModal').on('hide.bs.modal', function (e) {
+        setUnselected(true);
+        updateEdgeTypes();
+    });
+    $('#manageEdgeTypeModal').on('hidden.bs.modal', function (e) {
+        $('#manageEdgeTypeColorList').css('visibility', 'hidden');
+        $('#manageEdgeTypeList > .list-group-item').each(function() {
+            $(this).attr('class', 'list-group-item');
+        });
+        $('#manageEdgeTypeColorList > .list-group-item').each(function() {
+            $(this).attr('class', 'list-group-item');
+        });
+    });
+
+    updateManageEdgeTypeUI();
+
+    $('#btnAddEdgeType').click(function() {
+        var usedNames = [];
+        var usedColors = [];
+        for (var typeid in edgeTypes) {
+            usedNames.push(edgeTypes[typeid]['name']);
+            usedColors.push(edgeTypes[typeid]['color']);
+        }
+
+        var defaultNewTypeName = 'New Edge Type';
+        var defaultCnt = 1;
+        while (true) {
+            var used = false;
+            for (var k=0; k<usedNames.length; k++) {
+                if (defaultNewTypeName == usedNames[k]) {
+                    used = true;
+                    break;
+                }
+            }
+            if (used) {
+                defaultCnt++;
+                defaultNewTypeName = 'New Edge Type ' + defaultCnt;
+            } else {
+                break;
+            }
+        }
+
+        var defaultNewTypeColor = null;
+        var remainedColors = [];
+        for (var i=0; i<typeColors.length; i++) {
+            var color = typeColors[i];
+            var used = false;
+            for (var k=0; k<usedColors.length; k++) {
+                if (color == usedColors[k]) {
+                    used = true;
+                    break;
+                }
+            }
+            if (!used) remainedColors.push(color);
+        }
+        if (remainedColors.length > 0) {
+            var randColorIdx = Math.floor((Math.random() * remainedColors.length));
+            defaultNewTypeColor = remainedColors[randColorIdx];
+        } else {
+            var randColorIdx = Math.floor((Math.random() * typeColors.length));
+            defaultNewTypeColor = typeColors[randColorIdx];
+        }
+
+        //reset active other list item
+        $('#manageEdgeTypeList > .list-group-item').each(function() {
+            $(this).attr('class', 'list-group-item');
+        });
+
+        //add list item
+        $('#manageEdgeTypeList').append("<a href='#' class='list-group-item'>"
+            + "<span class='edgeTypeName'>" + defaultNewTypeName + "</span>"
+            + "<span class='typeColor type-color-bg type-color-" + defaultNewTypeColor
+            + "' data-color='" + defaultNewTypeColor + "'>&nbsp;</span>"
+            + "<span class='typeId'>" + edgeTypeCnt + "</span></a>");
+        //add edgeTypes with default
+        edgeTypes[edgeTypeCnt] = {name: defaultNewTypeName, color:defaultNewTypeColor};
+        edgeTypeCnt++;
+
+        var appendedElem = $('#manageEdgeTypeList').find('.list-group-item:last-of-type');
+        edgeTypeManageListItemAddClick(appendedElem);
+        appendedElem.find('> .edgeTypeName').attr('contenteditable', true)
+            .blur(function() {
+                $(this).attr('contenteditable', false);
+                var typeid = parseInt(appendedElem.find('> .typeId').text());
+                edgeTypes[typeid]['name'] = $(this).text();
+                window.getSelection().removeAllRanges();
+            }).keydown(function(e) {
+            if (e.which == 13) {
+                $(this).blur();
+            }
+        }).focus();
+        document.execCommand('selectAll', false, null);
+    });
+
+    $('#btnEditEdgeTypeName').click(function() {
+        if (selectedEdgeTypeElem != null) {
+            var typeColor = selectedEdgeTypeElem.find('> .typeColor').data('color');
+            var nowElem = selectedEdgeTypeElem;
+            var classes = selectedEdgeTypeElem.attr('class');
+            selectedEdgeTypeElem.attr('class', 'list-group-item');
+
+            selectedEdgeTypeElem.find('> .edgeTypeName').attr('contenteditable', true)
+                .blur(function() {
+                    $(this).attr('contenteditable', false);
+                    var typeid = parseInt(nowElem.find('> .typeId').text());
+                    edgeTypes[typeid]['name'] = $(this).text();
+                    window.getSelection().removeAllRanges();
+
+                    // if (selectedEdgeTypeElem != null)
+                    if (selectedEdgeTypeElem == nowElem)
+                        selectedEdgeTypeElem.attr('class', classes);
+                }).keydown(function(e) {
+                if (e.which == 13) {
+                    $(this).blur();
+                }
+            }).focus();
+            document.execCommand('selectAll', false, null);
+        }
+    });
+
+    $('#btnDeleteEdgeType').click(function() {
+        if (selectedEdgeTypeElem != null) {
+            var typeid = parseInt(selectedEdgeTypeElem.find('> .typeId').text());
+            delete edgeTypes[typeid];
+
+            selectedEdgeTypeElem.remove();
+            selectedEdgeTypeElem = null;
+            $('#btnEditEdgeTypeName').attr('disabled', true);
+            $('#btnDeleteEdgeType').attr('disabled', true);
+            $('#manageEdgeTypeColorList').css('visibility', 'hidden');
+        }
+    });
+
+    $('#manageEdgeTypeColorList > .list-group-item').click(function() {
+        var color = $(this).data('color');
+        $('#manageEdgeTypeColorList > .list-group-item').each(function() {
+            $(this).attr('class', 'list-group-item');
+        });
+        $(this).addClass('active').addClass('type-color-bg')
+            .addClass('type-color-text').addClass('type-color-'+color);
+
+        if (selectedEdgeTypeElem != null) {
+            var prevColor = selectedEdgeTypeElem.find('> .typeColor').data('color');
+            selectedEdgeTypeElem.attr('class', 'list-group-item active');
+            selectedEdgeTypeElem.addClass('type-color-bg')
+                .addClass('type-color-text').addClass('type-color-' + color);
+            selectedEdgeTypeElem.find('> .typeColor').removeClass('type-color-' + prevColor)
+                .addClass('type-color-' + color).data('color', color);
+
+            var typeId = parseInt(selectedEdgeTypeElem.find('> .typeId').text());
+            edgeTypes[typeId]['color'] = color;
+        }
+    });
+}
+
+function updateManageEdgeTypeUI() {
+    $('#manageEdgeTypeList').empty();
+    for (var typeid in edgeTypes) {
+        $('#manageEdgeTypeList').append("<a href='#' class='list-group-item'>"
+            + "<span class='edgeTypeName'>" + edgeTypes[typeid]['name'] + "</span>"
+            + "<span class='typeColor type-color-bg type-color-" + edgeTypes[typeid]['color']
+            + "' data-color='" + edgeTypes[typeid]['color'] + "'>&nbsp;</span>"
+            + "<span class='typeId'>" + typeid + "</span></a>");
+        var appendedElem = $('#manageEdgeTypeList').find('.list-group-item:last-of-type');
+        edgeTypeManageListItemAddClick(appendedElem);
+    }
+}
+
+function edgeTypeManageListItemAddClick(elem) {
+    elem.click(function() {
+        if ($(this).hasClass('active')) {   //active->inactive
+            selectedEdgeTypeElem = null;
+            $(this).find('> .edgeTypeName').blur();
+            $(this).attr('class', 'list-group-item');
+
+            $('#btnEditEdgeTypeName').attr('disabled', true);
+            $('#btnDeleteEdgeType').attr('disabled', true);
+            $('#manageEdgeTypeColorList').css('visibility', 'hidden');
+            $('#manageEdgeTypeColorList > .list-group-item').each(function() {
+                $(this).attr('class', 'list-group-item');
+            });
+        } else {    //inactive->active
+            selectedEdgeTypeElem = $(this);
+            var typeColor = $(this).find('> .typeColor').data('color');
+            $('#manageEdgeTypeList > .list-group-item').each(function() {
+                $(this).attr('class', 'list-group-item');
+            });
+            $(this).addClass('active').addClass('type-color-bg')
+                .addClass('type-color-text').addClass('type-color-'+typeColor);
+
+            $('#btnEditEdgeTypeName').attr('disabled', false);
+            $('#btnDeleteEdgeType').attr('disabled', false);
+            $('#manageEdgeTypeColorList').css('visibility', 'visible');
+            $('#manageEdgeTypeColorList > .list-group-item').each(function() {
+                if ($(this).data('color') == typeColor) {
+                    $(this).addClass('active').addClass('type-color-bg')
+                        .addClass('type-color-text').addClass('type-color-'+typeColor);
+                    $('#manageEdgeTypeColorList').focus();
                     $(this).focus().blur();
                 } else {
                     $(this).attr('class', 'list-group-item');
@@ -1030,6 +1302,11 @@ function initControllers() {
         .attr('disabled', false).removeClass('disabled');
     setGraphUIEnable(false);
 
+    //for test 2
+    setGraphUIEnable(true);
+    $('#graphName').text("GRAPH");
+    nowGraphInfo = {graphId: 1234, graphName: "GRAPH"};
+
     $('#btnNewGraph').click(function() {
         var newGraphName = $('#newGraphName').val();
         if (newGraphName!=null && /\S/.test(newGraphName)) {
@@ -1195,7 +1472,7 @@ function newGraph(graphName) {
             $.LoadingOverlay('hide');
             console.log(res);
             if (res['result'] == 'success') {
-                closeGraph();;
+                closeGraph();
                 setGraphUIEnable(true);
                 $('#graphName').text(graphName);
                 nowGraphInfo = {graphId: res['graph_id'], graphName: graphName}
@@ -1287,12 +1564,14 @@ function closeGraph() {
     networkGraph.deleteGraph(true);
     setGraphUIEnable(false);
     nowGraphInfo = null;
-    nodeTypes = {}
+    nodeTypes = {};
     nodeTypeCnt = 0;
-    nodeConfidences = {}
+    nodeConfidences = {};
     updateNodeTypes();
+    updateEdgeTypes();
     updateEdgeList();
     updateManageNodeTypeUI();
+    updateManageEdgeTypeUI();
     updateManageConfidenceUI();
 }
 
@@ -1330,7 +1609,8 @@ function menuSaveAsGraph() {
     if ($(this).hasClass('disabled') || $(this).attr('disabled')) return;
 
     $('#saveAsGraphModal').modal();
-    console.log(generateSaveGraphJson(true));
+    // console.log(JSON.stringify(generateSaveGraphJson()));
+    console.log(s(true));
 }
 
 function menuPrintGraph() {
@@ -1353,6 +1633,7 @@ function loadGraph(graphData) {
         nodeTypeCnt++;
     }
     updateManageNodeTypeUI();
+    updateManageEdgeTypeUI();
 
     nodeConfidences = {};
     for (var i=0; i<graphData['confidence_set'].length; i++) {
@@ -1386,13 +1667,19 @@ function loadGraph(graphData) {
     }
     updateNodeTypes();
 
+    //TODO add edgeType
+
     for (var i=0; i<graphData['edge_set'].length; i++) {
         var json = graphData['edge_set'][i];
         var sourceNode = nodeServerIds[json['n1_id']];
         var targetNode = nodeServerIds[json['n2_id']];
         var influence = json['influence_value'];
-        networkGraph.createEdge(sourceNode, targetNode, influence);
+        var edgeType = null;
+        // if ('node_type_id' in json)
+        //     newNodeData.type = nodeTypeServerIds[json['node_type_id']];
+        networkGraph.createEdge(sourceNode, targetNode, influence, edgeType);
     }
+    updateEdgeTypes();
     updateEdgeList();
     networkGraph.updateGraph();
 }
