@@ -517,7 +517,6 @@ public class GraphServlet extends HttpServlet {
                     /**
                      * EdgeType
                      */
-
                     HashMap<Integer, EdgeType> clientIdEdgetypeMap = new HashMap<>();
                     JSONArray edgetypeJsonArray = (JSONArray) graph.get("edge_type_set");
                     HashSet<EdgeType> edgeTypeRecievedSet = new HashSet<>();
@@ -586,6 +585,87 @@ public class GraphServlet extends HttpServlet {
                     /**
                      * Edge
                      */
+                    JSONArray edgeJsonArray = (JSONArray) graph.get("edge_set");
+                    HashSet<Edge> edgeRecievedSet = new HashSet<>();
+
+                    for (Object o : edgeJsonArray) {
+                        boolean hasN1Id = false, hasN2Id = false, hasEdgeTypeId = false;
+                        int n1ClientId = 0, n2ClientId = 0, edgeTypeClientId = 0;
+                        int n1Id = 0, n2Id = 0, edgeTypeId = -1;
+                        float influenceValue = 0;
+                        JSONObject edgeJsonObject = (JSONObject) o;
+                        System.out.println(edgeJsonObject.toJSONString());
+
+                        if (edgeJsonObject.containsKey("n1_id")) {
+                            n1Id = Integer.parseInt(edgeJsonObject.get("n1_id").toString());
+                            hasN1Id = true;
+                        } else {
+                            n1ClientId = Integer.parseInt(edgeJsonObject.get("n1_client_id").toString());
+                        }
+                        if (edgeJsonObject.containsKey("n2_id")) {
+                            n2Id = Integer.parseInt(edgeJsonObject.get("n2_id").toString());
+                            hasN2Id = true;
+                        } else {
+                            n2ClientId = Integer.parseInt(edgeJsonObject.get("n2_client_id").toString());
+                        }
+                        if (edgeJsonObject.containsKey("edge_type_id")) {
+                            edgeTypeId = Integer.parseInt(edgeJsonObject.get("edge_type_id").toString());
+                            hasEdgeTypeId = true;
+                        } else {
+                            edgeTypeClientId = Integer.parseInt(edgeJsonObject.get("edge_type_client_id").toString());
+                        }
+
+                        influenceValue = Float.parseFloat(edgeJsonObject.get("influence_value").toString());
+
+
+                        Edge edge = null;
+                        if (hasN1Id && hasN2Id && hasEdgeTypeId) {
+
+                            /* update Edge*/
+                            edge = currentGraph.getEdge(currentGraph.getNode(n1Id), currentGraph.getNode(n2Id));
+                            if (edge.getInfluenceValue() != influenceValue) {
+                                edge.setInfluenceValue(influenceValue);
+                                currentGraph.updateEdge(edge);
+                            } else {
+                                //pass
+                            }
+                        } else {
+
+                            /* create edge */
+                            Node n1=null, n2=null;
+                            EdgeType et = null;
+                            if(hasN1Id)
+                                n1 = currentGraph.getNode(n1Id);
+                            else
+                                n1 = clientIdNodeMap.get(n1ClientId);
+
+                            if(hasN2Id)
+                                n2 = currentGraph.getNode(n2Id);
+                            else
+                                n2 = clientIdNodeMap.get(n2ClientId);
+
+                            if(hasEdgeTypeId)
+                                et = currentGraph.getEdgeType(edgeTypeId);
+                            else
+                                et = clientIdEdgetypeMap.get(edgeTypeClientId);
+
+                            edge = new Edge(et, n1, n2, influenceValue);
+
+                            /* save edge(both memory and DB) */
+                            currentGraph.addEdge(edge); //add exception handling when update node type error.
+                        }
+                        edgeRecievedSet.add(edge);
+                    }
+
+                    /* delete nodetype in momory */
+                    Set<Edge> edgeSet = currentGraph.getEdgeSet();
+                    HashSet<Edge> deletingEdgeSet = new HashSet<>();
+                    deletingEdgeSet.addAll(edgeSet);
+                    deletingEdgeSet.removeAll(edgeRecievedSet);
+
+                    for (Edge c : deletingEdgeSet) {
+                        currentGraph.deleteEdge(c);
+                    }
 
                     result.put("result", "success");
                 } catch (Exception e) {
