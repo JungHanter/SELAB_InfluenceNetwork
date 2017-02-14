@@ -61,9 +61,9 @@ public class UserServlet extends HttpServlet {
 
         if(action.equals("signup")) {
             String email = jsonObject.get("email").toString();
-            String pw = jsonObject.get("pw").toString();
-            String name = jsonObject.get("name").toString();
-            result = signup(email, pw, name);
+            String password = jsonObject.get("password").toString();
+            String name = jsonObject.get("user_name").toString();
+            result = signup(email, password, name);
         } else {
             result.put("result", "fail");
             result.put("meassage", "api form is wrong");
@@ -73,7 +73,7 @@ public class UserServlet extends HttpServlet {
         out.close();
     }
 
-    public JSONObject signup(String email, String pw, String name) {
+    public JSONObject signup(String email, String password, String name) {
         JSONObject result = new JSONObject();
 
         String regexEmail = "^[A-Za-z0-9+_.-]+@(.+)$";
@@ -85,12 +85,9 @@ public class UserServlet extends HttpServlet {
             return result;
         }
 
-        User user = new User(email, pw, name);
+        User user = new User(email, password, name);
         if(userDAO.saveUser(user) == 0) {
             JSONObject userJson = new JSONObject();
-            userJson.put("email", user.getEmail());
-            userJson.put("user_name", user.getName());
-            result.put("user", userJson);
             result.put("result", "success");
         } else {
             result.put("result", "fail");

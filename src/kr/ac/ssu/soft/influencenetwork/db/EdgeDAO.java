@@ -2,6 +2,7 @@ package kr.ac.ssu.soft.influencenetwork.db;
 
 
 import kr.ac.ssu.soft.influencenetwork.Edge;
+import kr.ac.ssu.soft.influencenetwork.EdgeType;
 import kr.ac.ssu.soft.influencenetwork.Node;
 import java.sql.*;
 import java.util.*;
@@ -21,15 +22,19 @@ public class EdgeDAO {
 	public int saveEdge(Edge edge, int graph_id) {
 		
 		conn = DBManager.getConnection();
-		String sql = "insert into edge(n1_id, n2_id, influenceValue, graph_id) " +
-				"values(?,?,?,?)";
+		String sql = "insert into edge(n1_id, n2_id, type_id, influenceValue, graph_id) " +
+				"values(?,?,?,?,?)";
 		
 		try{
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, edge.getOrigin().getId());
 			pstmt.setInt(2, edge.getDestination().getId());
-			pstmt.setFloat(3, edge.getInfluenceValue());
-			pstmt.setInt(4, graph_id);
+			if(edge.getEdgeType() != null)
+				pstmt.setInt(3, edge.getEdgeType().getId());
+			else
+				pstmt.setInt(3, -1);
+			pstmt.setFloat(4, edge.getInfluenceValue());
+			pstmt.setInt(5, graph_id);
 			pstmt.executeUpdate();
 			DBManager.closeConnection(conn, pstmt);
 			return SUCCESS;
@@ -48,59 +53,38 @@ public class EdgeDAO {
 		}		
 	}
 
-	public int saveEdge(int n1id, int n2id, float influenceValue, int typeId, int graphId) {
-
-		conn = DBManager.getConnection();
-		String sql = "insert into edge(n1_id, n2_id, influenceValue, type_id, graph_id) " +
-				"values(?,?,?,?,?)";
-
-		try{
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setInt(1, n1id);
-			pstmt.setInt(2, n2id);
-			pstmt.setFloat(3, influenceValue);
-			pstmt.setInt(4, typeId);
-			pstmt.setInt(5, graphId);
-			pstmt.executeUpdate();
-			DBManager.closeConnection(conn, pstmt);
-			return SUCCESS;
-		} catch (SQLException e){
-			e.printStackTrace();
-			DBManager.closeConnection(conn, pstmt);
-			System.out.println(e.getErrorCode() +" " + e.getMessage());
-			switch (e.getErrorCode()) {
-				case 1129 :
-					return ERROR_CONNECTION;
-				case 1169 :
-					return ERROR_DUPLICATION;
-				default:
-					return ERROR_UNKNOWN;
-			}
-		}
-	}
-
-	public Set<Edge> getEdgeSet(int graph_id, Set<Node> nodeSet) {
+	public Set<Edge> getEdgeSet(int graph_id, Set<Node> nodeSet, Set<EdgeType> edgeTypeSet) {
 		Set<Edge> EdgeSet = new TreeSet<>();
 		
 		conn = DBManager.getConnection();
-		String sql = "SELECT n1_id, n2_id, influenceValue FROM edge WHERE graph_id=" + graph_id;
+		String sql = "SELECT n1_id, n2_id, type_id, influenceValue FROM edge WHERE graph_id=" + graph_id;
 		try{
 			stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
 			while(rs.next()) {
 				int n1_id = rs.getInt(1);
 				int n2_id = rs.getInt(2);
-				float influenceValue = rs.getFloat(3);
+				int type_id = rs.getInt(3);
+				float influenceValue = rs.getFloat(4);
 				Node n1 = null, n2 = null;
+				EdgeType edgeType = null;
 
-				for(Node node : nodeSet){
+				for (Node node : nodeSet) {
 					if(node.getId() == n1_id)
 						n1 = node;
 					if(node.getId() == n2_id)
 						n2 = node;
 				}
 
-				Edge edge = new Edge(n1, n2, influenceValue);
+				if(type_id != -1) {
+					for (EdgeType et : edgeTypeSet) {
+						if (type_id == et.getId()) {
+							edgeType = et;
+						}
+					}
+				}
+
+				Edge edge = new Edge(edgeType, n1, n2, influenceValue);
 				EdgeSet.add(edge);
 			}
 			DBManager.closeConnection(conn, stmt);
@@ -112,18 +96,24 @@ public class EdgeDAO {
 		}
 	}
 
-	public boolean updateEdge(Node n1, Node n2, float influenceValue) {
+	public boolean updateEdge(Node n1, Node n2, EdgeType edgeType, float influenceValue) {
 		if(influenceValue < 0 && influenceValue > 1)
 			return false;
 
 		conn = DBManager.getConnection();
-		String sql = "UPDATE edge SET influenceValue = ? WHERE n1_id=? AND n2_id=?";
+		String sql = "UPDATE edge SET influenceValue = ? WHERE n1_id=? AND n2_id=? AND type_id=?";
 
 		try {
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setFloat(1, influenceValue);
 			pstmt.setInt(2, n1.getId());
 			pstmt.setInt(3, n2.getId());
+			if(edgeType == null) {
+//				EdgeTypeDAO edgeTypeDAO = new EdgeTypeDAO();
+				pstmt.setInt(4, -1);
+			}
+			else
+				pstmt.setInt(4, edgeType.getId());
 			pstmt.executeUpdate();
 			DBManager.closeConnection(conn, pstmt);
 			return true;
@@ -135,15 +125,19 @@ public class EdgeDAO {
 		}
 	}
 
-	public boolean deleteEdge(Node n1, Node n2) {
+	public boolean deleteEdge(Node n1, Node n2, EdgeType edgeType) {
 		
 		conn = DBManager.getConnection();
-		String sql = "DELETE FROM edge WHERE n1_id=? and n2_id=?";
+		String sql = "DELETE FROM edge WHERE n1_id = ? AND n2_id = ? AND type_id = ?";
 		
 		try {
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, n1.getId());
 			pstmt.setInt(2, n2.getId());
+			if(edgeType == null)
+				pstmt.setInt(3, -1);
+			else
+				pstmt.setInt(3, edgeType.getId());
 			pstmt.executeUpdate();
 			DBManager.closeConnection(conn, pstmt);
 			return true;

@@ -31,6 +31,14 @@ public class InfluenceGraphDAO {
 				int id = rs.getInt(1);
 				ig.setId(id);
 			}
+
+			/** save default edge type */
+			sql = "insert into edgetype(name, color, graph_id) values(?, ?, ?)";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, "default");
+			pstmt.setString(2, "default");
+			pstmt.setInt(3, ig.getId());
+
 			DBManager.closeConnection(conn, pstmt);
 			return SUCCESS;
 		} catch(SQLException e) {

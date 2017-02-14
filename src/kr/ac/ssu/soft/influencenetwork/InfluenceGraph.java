@@ -324,9 +324,9 @@ public class InfluenceGraph {
         return edgeSet;
     }
 
-    public Edge getEdge(Node n1, Node n2) {
+    public Edge getEdge(Node n1, Node n2, EdgeType edgeType) {
         for (Edge e : edgeSet) {
-            if (e.getOrigin() == n1 && e.getDestination() == n2)
+            if (e.getOrigin() == n1 && e.getDestination() == n2 && e.getEdgeType() == edgeType)
                 return e;
         }
         return null;
@@ -334,14 +334,14 @@ public class InfluenceGraph {
 
     public boolean updateEdge(Edge edge) {
        if (edgeSet.contains(edge)) {
-           return edgeDAO.updateEdge(edge.getOrigin(), edge.getDestination(), edge.getInfluenceValue());
+           return edgeDAO.updateEdge(edge.getOrigin(), edge.getDestination(), edge.getEdgeType(), edge.getInfluenceValue());
        } else return false;
     }
 
     public boolean deleteEdge(Edge edge) {
         if(edgeSet.contains(edge)) {
             edgeSet.remove(edge);
-            return edgeDAO.deleteEdge(edge.getOrigin(), edge.getDestination());
+            return edgeDAO.deleteEdge(edge.getOrigin(), edge.getDestination(), edge.getEdgeType());
         } else return false;
     }
 
@@ -356,10 +356,10 @@ public class InfluenceGraph {
      * @param target       Target node of pathList.
      * @return pathList    All paths from source to target.
      */
-    public ArrayList<Path> pathSet(Node source, Node target) {
+    public ArrayList<Path> pathSet(Node source, Node target, EdgeType et) {
         ArrayList<Path> pathArrayList = new ArrayList<Path>();
 
-        findPathSet(source, target, new ArrayList<Edge>(), pathArrayList);
+        findPathSet(source, target, new ArrayList<Edge>(), pathArrayList, et);
 
         if (pathArrayList.size() != 0) {
             return pathArrayList;
@@ -375,7 +375,7 @@ public class InfluenceGraph {
      * @param edgelist     Current edgelist in finding path.
      * @param pathlist     Container to save path from source node to target node.
      */
-    public void findPathSet(Node next, Node target, ArrayList<Edge> edgelist, ArrayList<Path> pathlist) {
+    public void findPathSet(Node next, Node target, ArrayList<Edge> edgelist, ArrayList<Path> pathlist, EdgeType et) {
 
         /* Exit Condition of Recursive Function */
 		if(next == target) {
@@ -386,12 +386,12 @@ public class InfluenceGraph {
 
             /* To find edge connected with node*/
 		    for (Edge e : edgeSet) {
-		        if(e.getOrigin() == next) {
+		        if(e.getOrigin() == next && e.getEdgeType() == et) {
                     boolean cycle = false;
 
                     /* To check cycle in edgelist */
-                    for (Edge eg : edgelist) {
-                        if (e.getDestination() == eg.getOrigin()) {
+                    for (Edge e2 : edgelist) {
+                        if (e.getDestination() == e2.getOrigin() && e2.getEdgeType() == et) {
                             cycle = true;
                             break;
                         }
@@ -400,7 +400,7 @@ public class InfluenceGraph {
                         ArrayList<Edge> new_edgelist = new ArrayList<Edge>();
                         new_edgelist.addAll(edgelist);
                         new_edgelist.add(e);
-                        findPathSet(e.getDestination(), target, new_edgelist, pathlist);
+                        findPathSet(e.getDestination(), target, new_edgelist, pathlist, et);
                     }
                 }
             }
@@ -437,8 +437,8 @@ public class InfluenceGraph {
         return (float)0.0;
     }
 
-    public Path maxInfluencePath(Node source, Node target) { //among all path which connect two node, return path which have maximum value of influence
-        ArrayList<Path> pathArrayList = pathSet(source, target);
+    public Path maxInfluencePath(Node source, Node target, EdgeType et) { //among all path which connect two node, return path which have maximum value of influence
+        ArrayList<Path> pathArrayList = pathSet(source, target, et);
         float max = 0;
         int maxIndex = 0;
         Path maxInfluencePath;
@@ -505,7 +505,7 @@ public class InfluenceGraph {
         confidenceSet.addAll(confidenceDAO.getConfidenceSet(id, nodeTypeSet));
         nodeSet.addAll(nodeDAO.getNodeSet(id, nodeTypeSet));
         edgeTypeSet.addAll(edgeTypeDAO.getEdgeTypeSet(id));
-        edgeSet.addAll(edgeDAO.getEdgeSet(id, nodeSet));
+        edgeSet.addAll(edgeDAO.getEdgeSet(id, nodeSet, edgeTypeSet));
 
         return 0;
     }

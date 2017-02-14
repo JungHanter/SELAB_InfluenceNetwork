@@ -1,10 +1,7 @@
 package kr.ac.ssu.soft.influencenetwork.restapi;
 
 import kr.ac.ssu.soft.influencenetwork.*;
-import kr.ac.ssu.soft.influencenetwork.db.ConfidenceDAO;
-import kr.ac.ssu.soft.influencenetwork.db.InfluenceGraphDAO;
-import kr.ac.ssu.soft.influencenetwork.db.NodeDAO;
-import kr.ac.ssu.soft.influencenetwork.db.NodeTypeDAO;
+import kr.ac.ssu.soft.influencenetwork.db.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -29,16 +26,9 @@ public class GraphServlet extends HttpServlet {
 
     InfluenceGraph currentGraph = null;
     InfluenceGraphDAO influenceGraphDAO = new InfluenceGraphDAO();
-    NodeTypeDAO nodeTypeDAO = new NodeTypeDAO();
     NodeDAO nodeDAO = new  NodeDAO();
-    ConfidenceDAO confidenceDAO = new ConfidenceDAO();
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-        PrintWriter out = response.getWriter();
-        String id = request.getParameter("graph_id");
-        String email = request.getParameter("email");
-        JSONObject result = new JSONObject();
 
         /* check session */
 //        JSONObject session = SessionServlet.getSession(request);
@@ -47,9 +37,12 @@ public class GraphServlet extends HttpServlet {
 //            return;
 //        }
 
-        if (id==null && email != null) {
+        PrintWriter out = response.getWriter();
+        String id = request.getParameter("graph_id");
+        String email = request.getParameter("email");
+        JSONObject result = new JSONObject();
 
-            /* getGraphList */
+        if (id==null && email != null) {    /** getGraphList */
             ArrayList<InfluenceGraph> influenceGraphSet = influenceGraphDAO.getInfluenceGraphList(email);
             if (influenceGraphSet != null) {
                 JSONArray influenceGraphJsonArray = new JSONArray();
@@ -65,9 +58,8 @@ public class GraphServlet extends HttpServlet {
                 out.write(result.toJSONString());
 
             }
-        } else if(id != null) {
+        } else if(id != null) {             /** getGraph */
             try {
-            /* getGraph */
                 InfluenceGraph ig = influenceGraphDAO.getInfluenceGraph(Integer.parseInt(id));
                 JSONObject influenceGraphJsonObject = new JSONObject();
                 influenceGraphJsonObject.put("graph_id", ig.getId());
@@ -626,26 +618,29 @@ public class GraphServlet extends HttpServlet {
                 } else {
                     n2ClientId = Integer.parseInt(edgeJsonObject.get("n2_client_id").toString());
                 }
-                if(hasN1Id && hasN2Id) {
-                    if(currentGraph.getEdge(currentGraph.getNode(n1Id), currentGraph.getNode(n2Id)) != null)
-                        isInEdgeSet = true;
-                }
                 if (edgeJsonObject.containsKey("edge_type_id")) {
                     if(edgeJsonObject.get("edge_type_id") != null) {
                         edgeTypeId = Integer.parseInt(edgeJsonObject.get("edge_type_id").toString());
-                    } else
-                        edgeTypeId = -1;
+                    } else {
+                        EdgeTypeDAO edgeTypeDAO = new EdgeTypeDAO();
+                        edgeTypeId = edgeTypeDAO.getDefaultEdgeTypeId(currentGraph.getId());
+                    }
                     hasEdgeTypeId = true;
                 } else {
                     edgeTypeClientId = Integer.parseInt(edgeJsonObject.get("edge_type_client_id").toString());
                 }
+                if(hasN1Id && hasN2Id && hasEdgeTypeId) {
+                    if(currentGraph.getEdge(currentGraph.getNode(n1Id), currentGraph.getNode(n2Id), currentGraph.getEdgeType(edgeTypeId)) != null)
+                        isInEdgeSet = true;
+                }
+
                 influenceValue = Float.parseFloat(edgeJsonObject.get("influence_value").toString());
 
                 Edge edge = null;
-                if (hasN1Id && hasN2Id && hasEdgeTypeId && isInEdgeSet) {
+                if (isInEdgeSet) {
 
                     /* update Edge*/
-                    edge = currentGraph.getEdge(currentGraph.getNode(n1Id), currentGraph.getNode(n2Id));
+                    edge = currentGraph.getEdge(currentGraph.getNode(n1Id), currentGraph.getNode(n2Id), currentGraph.getEdgeType(edgeTypeId));
                     if (edge.getInfluenceValue() != influenceValue) {
                         edge.setInfluenceValue(influenceValue);
                         currentGraph.updateEdge(edge);
