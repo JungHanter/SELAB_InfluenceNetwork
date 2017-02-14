@@ -1,0 +1,354 @@
+#graph {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    /*background-color: rgb(248, 248, 248)*/
+    background-color: white;
+}
+
+#toolbox {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    margin-bottom: 0.5em;
+    margin-left: 1em;
+    border: 2px solid #EEEEEE;
+    border-radius: 5px;
+    padding: 1em;
+    z-index: 5;
+}
+
+#toolbox input{
+    width: 30px;
+    opacity: 0.4;
+}
+#toolbox input:hover{
+    opacity: 1;
+    cursor: pointer;
+}
+
+#hidden-file-upload{
+    display: none;
+}
+
+#download-input{
+    margin: 0 0.5em;
+}
+
+
+marker{
+    fill: #333;
+}
+
+g.conceptG {
+    /*opacity: 0.5;*/
+}
+g.conceptG text{
+    pointer-events: none;
+}
+g.conceptG circle{
+    fill: #F6F6F6;
+    stroke: #333;
+    stroke-width: 2px;
+}
+g.conceptG text{
+    fill: black;
+}
+g.conceptG:hover circle{
+    fill: rgb(200, 238, 241);
+    stroke-width: 3px;
+}
+g.conceptG:hover text{
+    /*fill: black;*/
+}
+g.conceptG.selected circle{
+    fill: rgb(250, 232, 255);
+    stroke-width: 6px;
+}
+g.conceptG.selected:hover circle{
+    stroke-width: 6px;
+}
+
+g.conceptG.type-color-red circle { fill: #f44336; }
+g.conceptG.type-color-red text { fill: white; }
+g.conceptG.type-color-red:hover circle { fill: #FF5252; }
+g.conceptG.type-color-red.selected circle { fill: #F44336; }
+g.conceptG.type-color-red.selected:hover circle { fill: #FF5252; }
+g.conceptG.type-color-pink circle { fill: #e91e63; }
+g.conceptG.type-color-pink text { fill: white; }
+g.conceptG.type-color-pink:hover circle { fill: #FF4081; }
+g.conceptG.type-color-pink.selected circle { fill: #e91e63; }
+g.conceptG.type-color-pink.selected:hover circle { fill: #FF4081; }
+g.conceptG.type-color-purple circle { fill: #9c27b0; }
+g.conceptG.type-color-purple text { fill: white; }
+g.conceptG.type-color-purple:hover circle { fill: #E040FB; }
+g.conceptG.type-color-purple.selected circle { fill: #9c27b0; }
+g.conceptG.type-color-purple.selected:hover circle { fill: #E040FB; }
+g.conceptG.type-color-deep-purple circle { fill: #673ab7; }
+g.conceptG.type-color-deep-purple text { fill: white; }
+g.conceptG.type-color-deep-purple:hover circle { fill: #7C4DFF; }
+g.conceptG.type-color-deep-purple.selected circle { fill: #673ab7; }
+g.conceptG.type-color-deep-purple.selected:hover circle { fill: #7C4DFF; }
+g.conceptG.type-color-indigo circle { fill: #3f51b5; }
+g.conceptG.type-color-indigo text { fill: white; }
+g.conceptG.type-color-indigo:hover circle { fill: #536DFE; }
+g.conceptG.type-color-indigo.selected circle { fill: #3f51b5; }
+g.conceptG.type-color-indigo.selected:hover circle { fill: #536DFE; }
+g.conceptG.type-color-blue circle { fill: #2196f3; }
+g.conceptG.type-color-blue text { fill: white; }
+g.conceptG.type-color-blue:hover circle { fill: #448AFF; }
+g.conceptG.type-color-blue.selected circle { fill: #2196f3; }
+g.conceptG.type-color-blue.selected:hover circle { fill: #448AFF; }
+g.conceptG.type-color-light-blue circle { fill: #03a9f4; }
+g.conceptG.type-color-light-blue text { fill: black; }
+g.conceptG.type-color-light-blue:hover circle { fill: #40C4FF; }
+g.conceptG.type-color-light-blue.selected circle { fill: #03a9f4; }
+g.conceptG.type-color-light-blue.selected:hover circle { fill: #40C4FF; }
+g.conceptG.type-color-cyan circle { fill: #00bcd4; }
+g.conceptG.type-color-cyan text { fill: black; }
+g.conceptG.type-color-cyan:hover circle { fill: #18FFFF; }
+g.conceptG.type-color-cyan.selected circle { fill: #00bcd4; }
+g.conceptG.type-color-cyan.selected:hover circle { fill: #18FFFF; }
+g.conceptG.type-color-teal circle { fill: #009688; }
+g.conceptG.type-color-teal text { fill: white; }
+g.conceptG.type-color-teal:hover circle { fill: #64FFDA; }
+g.conceptG.type-color-teal.selected circle { fill: #009688; }
+g.conceptG.type-color-teal.selected:hover circle { fill: #64FFDA; }
+g.conceptG.type-color-green circle { fill: #4caf50; }
+g.conceptG.type-color-green text { fill: black; }
+g.conceptG.type-color-green:hover circle { fill: #69F0AE; }
+g.conceptG.type-color-green.selected circle { fill: #4caf50; }
+g.conceptG.type-color-green.selected:hover circle { fill: #69F0AE; }
+g.conceptG.type-color-light-green circle { fill: #8bc34a; }
+g.conceptG.type-color-light-green text { fill: black; }
+g.conceptG.type-color-light-green:hover circle { fill: #B2FF59; }
+g.conceptG.type-color-light-green.selected circle { fill: #8bc34a; }
+g.conceptG.type-color-light-green.selected:hover circle { fill: #B2FF59; }
+g.conceptG.type-color-lime circle { fill: #cddc39; }
+g.conceptG.type-color-lime text { fill: black; }
+g.conceptG.type-color-lime:hover circle { fill: #EEFF41; }
+g.conceptG.type-color-lime.selected circle { fill: #cddc39; }
+g.conceptG.type-color-lime.selected:hover circle { fill: #EEFF41; }
+g.conceptG.type-color-yellow circle { fill: #ffeb3b; }
+g.conceptG.type-color-yellow text { fill: black; }
+g.conceptG.type-color-yellow:hover circle { fill: #FFFF00; }
+g.conceptG.type-color-yellow.selected circle { fill: #ffeb3b; }
+g.conceptG.type-color-yellow.selected:hover circle { fill: #FFFF00; }
+g.conceptG.type-color-amber circle { fill: #ffc107; }
+g.conceptG.type-color-amber text { fill: black; }
+g.conceptG.type-color-amber:hover circle { fill: #FFD740; }
+g.conceptG.type-color-amber.selected circle { fill: #ffc107; }
+g.conceptG.type-color-amber.selected:hover circle { fill: #FFD740; }
+g.conceptG.type-color-orange circle { fill: #ff9800; }
+g.conceptG.type-color-orange text { fill: black; }
+g.conceptG.type-color-orange:hover circle { fill: #FFAB40; }
+g.conceptG.type-color-orange.selected circle { fill: #ff9800; }
+g.conceptG.type-color-orange.selected:hover circle { fill: #FFAB40; }
+g.conceptG.type-color-deep-orange circle { fill: #ff5722; }
+g.conceptG.type-color-deep-orange text { fill: white; }
+g.conceptG.type-color-deep-orange:hover circle { fill: #FF6E40; }
+g.conceptG.type-color-deep-orange.selected circle { fill: #ff5722; }
+g.conceptG.type-color-deep-orange.selected:hover circle { fill: #FF6E40; }
+g.conceptG.type-color-brown circle { fill: #795548; }
+g.conceptG.type-color-brown text { fill: white; }
+g.conceptG.type-color-brown:hover circle { fill: #8D6E63; }
+g.conceptG.type-color-brown.selected circle { fill: #795548; }
+g.conceptG.type-color-brown.selected:hover circle { fill: #8D6E63; }
+g.conceptG.type-color-grey circle { fill: #757575; }
+g.conceptG.type-color-grey text { fill: white; }
+g.conceptG.type-color-grey:hover circle { fill: #9E9E9E; }
+g.conceptG.type-color-grey.selected circle { fill: #757575; }
+g.conceptG.type-color-grey.selected:hover circle { fill: #9E9E9E; }
+g.conceptG.type-color-blue-grey circle { fill: #607d8b; }
+g.conceptG.type-color-blue-grey text { fill: white; }
+g.conceptG.type-color-blue-grey:hover circle { fill: #78909C; }
+g.conceptG.type-color-blue-grey.selected circle { fill: #607d8b; }
+g.conceptG.type-color-blue-grey.selected:hover circle { fill: #78909C; }
+
+
+path.link {
+    fill: none;
+    stroke: #333;
+    stroke-width: 4px;
+    marker-end: url("#end-arrow");
+    /*stroke-width: 6px;*/
+    cursor: default;
+}
+
+path.link:hover{
+    stroke-width: 6px;
+    marker-end: url("#end-arrow-hover");
+    stroke: rgb(94, 196, 204);
+}
+g.edgeG:hover path.link {
+    stroke-width: 6px;
+    marker-end: url("#end-arrow-hover");
+    stroke: rgb(94, 196, 204);
+}
+g.edgeG:hover text {
+    fill: rgb(94, 196, 204);
+}
+
+g.connect-node circle{
+    fill: #BEFFFF;
+}
+
+path.link.hidden{
+    stroke-width: 0;
+}
+
+path.link.selected {
+    stroke-width: 6px;
+    marker-end: url("#end-arrow-hover");
+    stroke: rgb(229, 172, 247);
+}
+g.edgeG.selected path.link {
+    stroke-width: 6px;
+    marker-end: url("#end-arrow-hover");
+
+    stroke: rgb(229, 172, 247);
+}
+g.edgeG.selected text {
+    fill: rgb(229, 172, 247);
+}
+
+#active-edge-editing {
+    background-color: white !important;
+}
+
+g.edgeG.type-color-red path.link { stroke: #f44336; }
+g.edgeG.type-color-red:hover path.link { stroke: #FF5252; }
+g.edgeG.type-color-red.selected path.link { stroke: #F44336; }
+g.edgeG.type-color-red.selected:hover path.link { stroke: #FF5252; }
+g.edgeG.type-color-red:hover text,
+g.edgeG.type-color-red.selected text,
+g.edgeG.type-color-red.selected:hover text { fill: #B71C1C; }
+g.edgeG.type-color-pink path.link { stroke: #e91e63; }
+g.edgeG.type-color-pink:hover path.link { stroke: #FF4081; }
+g.edgeG.type-color-pink.selected path.link { stroke: #e91e63; }
+g.edgeG.type-color-pink.selected:hover path.link { stroke: #FF4081; }
+g.edgeG.type-color-pink:hover text,
+g.edgeG.type-color-pink.selected text,
+g.edgeG.type-color-pink.selected:hover text { fill: #880E4F; }
+g.edgeG.type-color-purple path.link { stroke: #9c27b0; }
+g.edgeG.type-color-purple:hover path.link { stroke: #E040FB; }
+g.edgeG.type-color-purple.selected path.link { stroke: #9c27b0; }
+g.edgeG.type-color-purple.selected:hover path.link { stroke: #E040FB; }
+g.edgeG.type-color-purple:hover text,
+g.edgeG.type-color-purple.selected text,
+g.edgeG.type-color-purple.selected:hover text { fill: #4A148C; }
+g.edgeG.type-color-deep-purple path.link { stroke: #673ab7; }
+g.edgeG.type-color-deep-purple:hover path.link { stroke: #7C4DFF; }
+g.edgeG.type-color-deep-purple.selected path.link { stroke: #673ab7; }
+g.edgeG.type-color-deep-purple.selected:hover path.link { stroke: #7C4DFF; }
+g.edgeG.type-color-deep-purple:hover text,
+g.edgeG.type-color-deep-purple.selected text,
+g.edgeG.type-color-deep-purple.selected:hover text { fill: #311B92; }
+g.edgeG.type-color-indigo path.link { stroke: #3f51b5; }
+g.edgeG.type-color-indigo:hover path.link { stroke: #536DFE; }
+g.edgeG.type-color-indigo.selected path.link { stroke: #3f51b5; }
+g.edgeG.type-color-indigo.selected:hover path.link { stroke: #536DFE; }
+g.edgeG.type-color-indigo:hover text,
+g.edgeG.type-color-indigo.selected text,
+g.edgeG.type-color-indigo.selected:hover text { fill: #1A237E; }
+g.edgeG.type-color-blue path.link { stroke: #2196f3; }
+g.edgeG.type-color-blue:hover path.link { stroke: #448AFF; }
+g.edgeG.type-color-blue.selected path.link { stroke: #2196f3; }
+g.edgeG.type-color-blue.selected:hover path.link { stroke: #448AFF; }
+g.edgeG.type-color-blue:hover text,
+g.edgeG.type-color-blue.selected text,
+g.edgeG.type-color-blue.selected:hover text { fill: #0D47A1; }
+g.edgeG.type-color-light-blue path.link { stroke: #03a9f4; }
+g.edgeG.type-color-light-blue:hover path.link { stroke: #40C4FF; }
+g.edgeG.type-color-light-blue.selected path.link { stroke: #03a9f4; }
+g.edgeG.type-color-light-blue.selected:hover path.link { stroke: #40C4FF; }
+g.edgeG.type-color-light-blue:hover text,
+g.edgeG.type-color-light-blue.selected text,
+g.edgeG.type-color-light-blue.selected:hover text { fill: #01579B; }
+g.edgeG.type-color-cyan path.link { stroke: #00bcd4; }
+g.edgeG.type-color-cyan:hover path.link { stroke: #18FFFF; }
+g.edgeG.type-color-cyan.selected path.link { stroke: #00bcd4; }
+g.edgeG.type-color-cyan.selected:hover path.link { stroke: #18FFFF; }
+g.edgeG.type-color-cyan:hover text,
+g.edgeG.type-color-cyan.selected text,
+g.edgeG.type-color-cyan.selected:hover text { fill: #006064; }
+g.edgeG.type-color-teal path.link { stroke: #009688; }
+g.edgeG.type-color-teal:hover path.link { stroke: #64FFDA; }
+g.edgeG.type-color-teal.selected path.link { stroke: #009688; }
+g.edgeG.type-color-teal.selected:hover path.link { stroke: #64FFDA; }
+g.edgeG.type-color-teal:hover text,
+g.edgeG.type-color-teal.selected text,
+g.edgeG.type-color-teal.selected:hover text { fill: #004D40; }
+g.edgeG.type-color-green path.link { stroke: #4caf50; }
+g.edgeG.type-color-green:hover path.link { stroke: #69F0AE; }
+g.edgeG.type-color-green.selected path.link { stroke: #4caf50; }
+g.edgeG.type-color-green.selected:hover path.link { stroke: #69F0AE; }
+g.edgeG.type-color-green:hover text,
+g.edgeG.type-color-green.selected text,
+g.edgeG.type-color-green.selected:hover text { fill: #1B5E20; }
+g.edgeG.type-color-light-green path.link { stroke: #8bc34a; }
+g.edgeG.type-color-light-green:hover path.link { stroke: #B2FF59; }
+g.edgeG.type-color-light-green.selected path.link { stroke: #8bc34a; }
+g.edgeG.type-color-light-green.selected:hover path.link { stroke: #B2FF59; }
+g.edgeG.type-color-light-green:hover path.link,
+g.edgeG.type-color-light-green.selected text,
+g.edgeG.type-color-light-green.selected:hover text { fill: #33691E; }
+g.edgeG.type-color-lime path.link { stroke: #cddc39; }
+g.edgeG.type-color-lime:hover path.link { stroke: #EEFF41; }
+g.edgeG.type-color-lime.selected path.link { stroke: #cddc39; }
+g.edgeG.type-color-lime.selected:hover path.link { stroke: #EEFF41; }
+g.edgeG.type-color-lime:hover text,
+g.edgeG.type-color-lime.selected text,
+g.edgeG.type-color-lime.selected:hover text { fill: #827717; }
+g.edgeG.type-color-yellow path.link { stroke: #ffeb3b; }
+g.edgeG.type-color-yellow:hover path.link { stroke: #FFFF00; }
+g.edgeG.type-color-yellow.selected path.link { stroke: #ffeb3b; }
+g.edgeG.type-color-yellow.selected:hover path.link { stroke: #FFFF00; }
+g.edgeG.type-color-yellow:hover text,
+g.edgeG.type-color-yellow.selected text,
+g.edgeG.type-color-yellow.selected:hover text { fill: #F57F17; }
+g.edgeG.type-color-amber path.link { stroke: #ffc107; }
+g.edgeG.type-color-amber:hover path.link { stroke: #FFD740; }
+g.edgeG.type-color-amber.selected path.link { stroke: #ffc107; }
+g.edgeG.type-color-amber.selected:hover path.link { stroke: #FFD740; }
+g.edgeG.type-color-amber:hover text,
+g.edgeG.type-color-amber.selected text,
+g.edgeG.type-color-amber.selected:hover text { fill: #FF6F00; }
+g.edgeG.type-color-orange path.link { stroke: #ff9800; }
+g.edgeG.type-color-orange:hover path.link { stroke: #FFAB40; }
+g.edgeG.type-color-orange.selected path.link { stroke: #ff9800; }
+g.edgeG.type-color-orange.selected:hover path.link { stroke: #FFAB40; }
+g.edgeG.type-color-orange:hover text,
+g.edgeG.type-color-orange.selected text,
+g.edgeG.type-color-orange.selected:hover text { fill: #E65100; }
+g.edgeG.type-color-deep-orange path.link { stroke: #ff5722; }
+g.edgeG.type-color-deep-orange:hover path.link { stroke: #FF6E40; }
+g.edgeG.type-color-deep-orange.selected path.link { stroke: #ff5722; }
+g.edgeG.type-color-deep-orange.selected:hover path.link { stroke: #FF6E40; }
+g.edgeG.type-color-deep-orange:hover text,
+g.edgeG.type-color-deep-orange.selected text,
+g.edgeG.type-color-deep-orange.selected:hover text { fill: #BF360C; }
+g.edgeG.type-color-brown path.link { stroke: #795548; }
+g.edgeG.type-color-brown:hover path.link { stroke: #8D6E63; }
+g.edgeG.type-color-brown.selected path.link { stroke: #795548; }
+g.edgeG.type-color-brown.selected:hover path.link { stroke: #8D6E63; }
+g.edgeG.type-color-brown:hover text,
+g.edgeG.type-color-brown.selected text,
+g.edgeG.type-color-brown.selected:hover text { fill: #3E2723; }
+g.edgeG.type-color-grey path.link { stroke: #757575; }
+g.edgeG.type-color-grey:hover path.link { stroke: #9E9E9E; }
+g.edgeG.type-color-grey.selected path.link { stroke: #757575; }
+g.edgeG.type-color-grey.selected:hover path.link { stroke: #9E9E9E; }
+g.edgeG.type-color-grey:hover text,
+g.edgeG.type-color-grey.selected text,
+g.edgeG.type-color-grey.selected:hover text { fill: #616161; }
+g.edgeG.type-color-blue-grey path.link { stroke: #607d8b; }
+g.edgeG.type-color-blue-grey:hover path.link { stroke: #78909C; }
+g.edgeG.type-color-blue-grey.selected path.link { stroke: #607d8b; }
+g.edgeG.type-color-blue-grey.selected:hover path.link { stroke: #78909C; }
+g.edgeG.type-color-blue-grey:hover text,
+g.edgeG.type-color-blue-grey.selected text,
+g.edgeG.type-color-blue-grey.selected:hover text { fill: #263238; }
