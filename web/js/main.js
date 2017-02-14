@@ -191,7 +191,6 @@ function updateEdgeTypes() {
         $('#newEdgeDlgType').removeClass('unselected').html(selItem.html());
     });
 
-    //TODO edge set type
     networkGraph.setEdgeTypes(edgeTypes);
     updateEdgeList();
     networkGraph.updateGraph();
@@ -1695,7 +1694,6 @@ function loadGraph(graphData) {
         nodeTypeCnt++;
     }
     updateManageNodeTypeUI();
-    updateManageEdgeTypeUI();
 
     nodeConfidences = {};
     for (var i=0; i<graphData['confidence_set'].length; i++) {
@@ -1741,6 +1739,7 @@ function loadGraph(graphData) {
         edgeTypeServerIds[json['edge_type_id']] = edgeTypeCnt;
         edgeTypeCnt++;
     }
+    updateManageEdgeTypeUI();
 
     for (var i=0; i<graphData['edge_set'].length; i++) {
         var json = graphData['edge_set'][i];
@@ -1753,7 +1752,6 @@ function loadGraph(graphData) {
         networkGraph.createEdge(sourceNode, targetNode, influence, edgeType);
     }
     updateEdgeTypes();
-    updateEdgeList();
     networkGraph.updateGraph();
 }
 
