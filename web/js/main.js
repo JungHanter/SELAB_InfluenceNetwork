@@ -1314,6 +1314,18 @@ function initControllers() {
         signout();
     });
 
+    $('#menuSignup').click(function(e) {
+        $('#inputEmail').val('');
+        $('#inputPw').val('');
+        $('#inputPwConfirm').val('');
+        $('#inputName').val('');
+        $('#signupModal').modal('show');
+    });
+    $('#signupForm').on('submit', function(e) {
+        e.preventDefault();
+        signup();
+    });
+
     //for test
     user = {user_name: 'sm', email: 'sm@gmail.com'}
     $('#menuSignin').hide();
@@ -1399,6 +1411,51 @@ function setGraphUIEnable(enable) {
     }
 }
 
+function signup() {
+    var email = $('#inputEmail').val();
+    var password = $('#inputPw').val();
+    var passwordConfirm = $('#inputPwConfirm').val();
+    var name = $('#inputName').val();
+
+    var regExpEmail = /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
+    if (!regExpEmail.test(email)) {
+        openAlertModal("Invalid Email", "Signup Failure");
+        return;
+    } else if (password.length < 4) {
+        openAlertModal("The minimum length of password is 4.", "Signup Failure");
+        return;
+    } else if (password != passwordConfirm) {
+        openAlertModal("Password Confirm is different.", "Signup Failure");
+    } else if (!/\S/.test(name)) {
+        openAlertModal("Name cannot be empty.", "Signup Failure");
+    } else {
+        $('#signupModal').modal('hide');
+        $.LoadingOverlay('show');
+        $.ajax("/user", {
+            method: 'POST',
+            dataType: 'json',
+            data: JSON.stringify({
+                action: 'signup',
+                email: email,
+                password: password,
+                user_name: name
+            }), success: function(res) {
+                $.LoadingOverlay('hide');
+                if (res['result'] == 'success') {
+                    openAlertModal("Hello, " + name + "! Welcome to Influence Network.", "Signup Success")
+                } else {
+                    console.log(res);
+                    openAlertModal(res['message'], 'Signup Failure');
+                }
+            }, error: function(xhr, status, error) {
+                $.LoadingOverlay('hide');
+                console.log(xhr);
+                openAlertModal(xhr.statusText, 'Signup Failure');
+            }
+        })
+    }
+}
+
 function getSesison() {
     $.LoadingOverlay('show');
     $.ajax("/session", {
@@ -1435,8 +1492,7 @@ function signin() {
             action: 'login',
             email: email,
             password: password
-        }),
-        success: function (res) {
+        }), success: function (res) {
             $.LoadingOverlay('hide');
             console.log(res);
             if (res['result'] == 'success') {
