@@ -151,6 +151,7 @@ public class GraphServlet extends HttpServlet {
 //        if (result.equals("fail")) {
 //            return;
 //        }
+
         BufferedReader br = null;
         PrintWriter out = null;
         String json = "";
@@ -180,70 +181,68 @@ public class GraphServlet extends HttpServlet {
 
         String action = jsonObject.get("action").toString();
         String userEmail = jsonObject.get("email").toString();
-        switch (action) {
-            /* create(action,graph_id,graph_name)*/
-            case "create" :
-                String graphName = jsonObject.get("graph_name").toString();
-                try {
-                    InfluenceGraph newInfluenceGraph = new InfluenceGraph(graphName, userEmail);
-                    currentGraph = newInfluenceGraph;
-                    if (influenceGraphDAO.saveInfluenceGraph(newInfluenceGraph) == 0) {
-                        int temp =newInfluenceGraph.getId();
-                        result.put("graph_id", temp);
-                        result.put("graph_name", newInfluenceGraph.getName());
-                        result.put("result", "success");
-                    } else {
-                        result.put("result", "fail");
-                        result.put("message", "Graph name is duplicated");
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    result = new JSONObject();
-                    result.put("result", "fail");
-                    result.put("message", e.getMessage());
-                }
-                break;
-            case "delete" :
-                int graphId = Integer.parseInt(jsonObject.get("graph_id").toString());
-                try {
-                    if (influenceGraphDAO.deleteInfluenceGraph(graphId) == 0) {
-                        result.put("result", "success");
-                    } else {
-                        result.put("result", "fail");
-                        result.put("message", "There is no graph that has same graph id.");
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    result = new JSONObject();
-                    result.put("result", "fail");
-                    result.put("message", e.getMessage());
-                }
-                break;
-            case "save" :
-                JSONObject graph = (JSONObject)jsonObject.get("graph");
-                graphId = Integer.parseInt(graph.get("graph_id").toString());
-                InfluenceGraph influenceGraph = influenceGraphDAO.getInfluenceGraph(graphId);
-                result = save(influenceGraph, graph);
-                break;
-            case "saveas" :
-                userEmail = jsonObject.get("email").toString();
-                graphName = jsonObject.get("graph_name").toString();
-                graph = (JSONObject)jsonObject.get("graph");
 
-                influenceGraph = new InfluenceGraph(graphName, userEmail);
-                influenceGraphDAO.saveInfluenceGraph(influenceGraph);
-                result = save(influenceGraph, graph);
-
-                if (Integer.parseInt(result.get("graph_id").toString()) <= 0) {
-                    result = new JSONObject();
+        if(action.equals("create")) {
+            String graphName = jsonObject.get("graph_name").toString();
+            try {
+                InfluenceGraph newInfluenceGraph = new InfluenceGraph(graphName, userEmail);
+                currentGraph = newInfluenceGraph;
+                if (influenceGraphDAO.saveInfluenceGraph(newInfluenceGraph) == 0) {
+                    int temp =newInfluenceGraph.getId();
+                    result.put("graph_id", temp);
+                    result.put("graph_name", newInfluenceGraph.getName());
+                    result.put("result", "success");
+                } else {
                     result.put("result", "fail");
-                    result.put("message", "Save as server error.");
+                    result.put("message", "Graph name is duplicated");
                 }
-                break;
-            default:
+            } catch (Exception e) {
+                e.printStackTrace();
+                result = new JSONObject();
                 result.put("result", "fail");
-                result.put("message", "There is no action that you enter");
-                break;
+                result.put("message", e.getMessage());
+            }
+        }
+        else if(action.equals("delete")) {
+            int graphId = Integer.parseInt(jsonObject.get("graph_id").toString());
+            try {
+                if (influenceGraphDAO.deleteInfluenceGraph(graphId) == 0) {
+                    result.put("result", "success");
+                } else {
+                    result.put("result", "fail");
+                    result.put("message", "There is no graph that has same graph id.");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                result = new JSONObject();
+                result.put("result", "fail");
+                result.put("message", e.getMessage());
+            }
+        }
+        else if(action.equals("save")) {
+            JSONObject graph = (JSONObject)jsonObject.get("graph");
+            int graphId = Integer.parseInt(graph.get("graph_id").toString());
+            InfluenceGraph influenceGraph = influenceGraphDAO.getInfluenceGraph(graphId);
+            result = save(influenceGraph, graph);
+        }
+        else if(action.equals("saveas")) {
+            userEmail = jsonObject.get("email").toString();
+            String graphName = jsonObject.get("graph_name").toString();
+            JSONObject graph = (JSONObject) jsonObject.get("graph");
+
+            InfluenceGraph influenceGraph = new InfluenceGraph(graphName, userEmail);
+            influenceGraphDAO.saveInfluenceGraph(influenceGraph);
+            result = save(influenceGraph, graph);
+
+            if (Integer.parseInt(result.get("graph_id").toString()) <= 0) {
+                result = new JSONObject();
+                result.put("result", "fail");
+                result.put("message", "Save as server error.");
+            }
+        }
+        else {
+            result.put("result", "fail");
+            result.put("message", "There is no action that you enter");
         }
         out.write(result.toJSONString());
         out.close();
@@ -320,7 +319,7 @@ public class GraphServlet extends HttpServlet {
                 clientIdNodetypeJsonObject.put(i, clientIdNodetypeMap.get(i).getId());
             }
             System.out.println(clientIdNodetypeJsonObject.toJSONString());
-            result.put("nodetype_id_map", clientIdNodetypeJsonObject);
+            result.put("node_type_id_map", clientIdNodetypeJsonObject);
 
             /**
              *  confidence
@@ -371,7 +370,6 @@ public class GraphServlet extends HttpServlet {
                         nt2 = currentGraph.getNodeType(n2typeId);
                     else
                         nt2 = clientIdNodetypeMap.get(n2typeClientId);
-
 
                     /* create confidence */
                     confidence = new Confidence(nt1, nt2, confidenceValue);
