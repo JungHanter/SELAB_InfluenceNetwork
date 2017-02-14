@@ -170,7 +170,7 @@ path.link {
     fill: none;
     stroke: #333;
     stroke-width: 4px;
-    marker-end: url("#end-arrow-hover");
+    marker-end: url("#end-arrow");
     /*stroke-width: 6px;*/
     cursor: default;
 }
@@ -205,6 +205,7 @@ path.link.selected {
 g.edgeG.selected path.link {
     stroke-width: 6px;
     marker-end: url("#end-arrow-hover");
+
     stroke: rgb(229, 172, 247);
 }
 g.edgeG.selected text {

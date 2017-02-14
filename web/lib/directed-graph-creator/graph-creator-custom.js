@@ -59,7 +59,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
 
         defs.append('svg:marker')
             .attr('id', 'end-arrow-hover')
-            .attr('viewBox', '0 -5 10 10')
+            .attr('viewBox', '-1 -5 10 10')
             .attr('refX', "32")
             .attr('markerWidth', 3.5)
             .attr('markerHeight', 3.5)
@@ -660,7 +660,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
 
         // add new paths
         pathGroup.append("path")
-            .style('marker-end','url(#end-arrow)')
+            // .style('marker-end','url(#end-arrow)')
             .classed("link", true)
             .attr("d", function(d){
                 return "M" + d.source.x + "," + d.source.y + "L" + d.target.x + "," + d.target.y;
@@ -678,7 +678,8 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         //     });
 
         //update existing paths
-        paths.select("path").style('marker-end', 'url(#end-arrow)')
+        paths.select("path")
+            // .style('marker-end', 'url(#end-arrow)')
             .classed(consts.selectedClass, function(d){
                 return d === state.selectedEdge;
             })
