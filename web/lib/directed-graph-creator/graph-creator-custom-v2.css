@@ -38,14 +38,17 @@
     margin: 0 0.5em;
 }
 
-.conceptG text{
-    pointer-events: none;
-}
 
 marker{
     fill: #333;
 }
 
+g.conceptG {
+    /*opacity: 0.5;*/
+}
+g.conceptG text{
+    pointer-events: none;
+}
 g.conceptG circle{
     fill: #F6F6F6;
     stroke: #333;

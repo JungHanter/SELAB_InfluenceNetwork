@@ -19,6 +19,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
     var GraphCreator = function(svg, nodes, edges, nodeTypes, edgeTypes){
         var thisGraph = this;
         thisGraph.idct = 0;
+        thisGraph.edgect = 0;
 
         thisGraph.nodes = nodes || [];
         thisGraph.edges = edges || [];
@@ -229,11 +230,11 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                 }
             } else {    // dy > dx
                 if (d.source.y < d.target.y) {
-                    tx = tx - 10 - 20 - 5;
-                    ty = ty + (20 * vx / dr);
+                    tx = tx + 20 + 10;
+                    ty = ty - (20 * vx / dr);
                 } else {
-                    tx = tx + 10 + 20;
-                    ty = ty + (20 * vx / dr);
+                    tx = tx - 20 - 10 - 5;
+                    ty = ty - (20 * vx / dr);
                 }
             }
         } else {
@@ -245,11 +246,11 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                 }
                 ty = ty + 10 + (10 * dy / dr);
             } else {
-                tx = tx + 25 + (10 * dx / dr);
+                tx = tx + 20 + (10 * dx / dr);
                 if (d.source.y < d.target.y) {
                     ty = ty - (10 * vx / dr);
                 } else {
-                    ty = ty + (10 * vx / dr);
+                    ty = ty + (10 * vx / dr) - 10;
                 }
             }
         }
@@ -528,7 +529,6 @@ document.onload = (function(d3, saveAs, Blob, undefined){
 
         if (mouseDownNode !== d){
             // we're in a different node: create new edge for mousedown edge and add to graph
-            // TODO here is to create edge!!!
             var newEdge = this.createEdge(mouseDownNode, d, 0.5, null, true);
             thisGraph.onEdgeChanged('created', newEdge);
         } else{
@@ -671,10 +671,6 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                 thisGraph.pathMouseUp.call(thisGraph, d3.select(this), d);
             });
 
-        // paths.select("text")
-        //     .on("mousedown", function(d) {
-        //     });
-
         //update existing paths
         paths.select("path")
             // .style('marker-end', 'url(#end-arrow)')
@@ -693,19 +689,30 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                 // console.log(filtRes);
                 if(filtRes[0].length == 1) {    //bi-direct
                     d.bilateral = true;
-                    var dx = Math.abs(d.source.x - d.target.x);
-                    var dy = Math.abs(d.source.y - d.target.y);
+                    var x = d.source.x - d.target.x;
+                    var dx = Math.abs(x);
+                    var y = d.source.y - d.target.y;
+                    var dy = Math.abs(y);
+                    var rad = Math.atan2(y, x);
+                    console.log (rad);
+                    console.log (rad * (180 / Math.PI));
+                    var cos = Math.cos(rad);
+                    var sin = Math.sin(rad);
                     if (dx >= dy) {
                         if (d.source.x <= d.target.x) {
-                            return "M" + d.source.x + "," + (d.source.y - 10) + "L" + d.target.x + "," + (d.target.y - 10);
+                            return "M" + (d.source.x - 10*sin) + "," + (d.source.y + 10*cos)
+                                + "L" + (d.target.x - 10*sin) + "," + (d.target.y + 10*cos);
                         } else {
-                            return "M" + d.source.x + "," + (d.source.y + 10) + "L" + d.target.x + "," + (d.target.y + 10);
+                            return "M" + (d.source.x - 10*sin) + "," + (d.source.y + 10*cos)
+                                + "L" + (d.target.x - 10*sin) + "," + (d.target.y + 10*cos);
                         }
                     } else {
                         if (d.source.y <= d.target.y) {
-                            return "M" + (d.source.x - 10) + "," + d.source.y + "L" + (d.target.x - 10) + "," + d.target.y;
+                            return "M" + (d.source.x - 10*sin) + "," + (d.source.y + 10*cos)
+                                + "L" + (d.target.x - 10*sin) + "," + (d.target.y + 10*cos);
                         } else {
-                            return "M" + (d.source.x + 10) + "," + d.source.y + "L" + (d.target.x + 10) + "," + d.target.y;
+                            return "M" + (d.source.x - 10*sin) + "," + (d.source.y + 10*cos)
+                                + "L" + (d.target.x - 10*sin) + "," + (d.target.y + 10*cos);
                         }
                     }
                 } else {    //single-direct
@@ -895,7 +902,10 @@ document.onload = (function(d3, saveAs, Blob, undefined){
 
     GraphCreator.prototype.createEdge = function(sourceNode, targetNode, name, type, editable=false) {
         var thisGraph = this;
-        var newEdge = {source: sourceNode, target: targetNode, name: name, bilateral: false, type: type};
+        var newEdge = {source: sourceNode, target: targetNode, name: name, type: type,
+            bilateral: false, ct: thisGraph.edgect};
+        thisGraph.edgect++;
+
         var filtRes = thisGraph.paths.filter(function(d){
             return d.source === newEdge.source && d.target === newEdge.target;
         });
@@ -965,14 +975,14 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         } else {
             return false;
         }
-    }
+    };
 
     GraphCreator.prototype.getNodeById = function(id) {
         for (var i=0; i<this.nodes.length; i++) {
             if (this.nodes[i].id == id) return this.nodes[i];
         }
         return null;
-    }
+    };
 
     GraphCreator.prototype.getEdgeByNodesId = function(sourceId, targetId) {
         var source = this.getNodeById(sourceId),
@@ -983,7 +993,23 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                     this.edges[i].target == target) return this.edges[i];
         }
         return null;
-    }
+    };
+
+    GraphCreator.prototype.getEdgesBetweenTwoNodes = function(nodeId1, nodeId2) {
+        var node1 = this.getNodeById(nodeId1),
+            node2 = this.getNodeById(nodeId2);
+        if (node1 == null || node2 == null) return [];
+        var edgeList = [];
+        for (var i=0; i<this.edges.length; i++) {
+            var edge = this.edges[i];
+            if (edge.source == node1 && edge.target == node2) {
+                edgeList.push(edge);
+            } else if (edge.source == node2 && edge.target == node1) {
+                edgeList.push(edge);
+            }
+        }
+        return edgeList;
+    };
 
     GraphCreator.prototype.deleteNode = function() {
         var thisGraph = this,
@@ -994,7 +1020,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
             state.selectedNode = null;
             thisGraph.updateGraph();
         }
-    }
+    };
 
     GraphCreator.prototype.deleteEdge = function() {
         var thisGraph = this,
