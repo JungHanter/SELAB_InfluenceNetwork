@@ -1444,7 +1444,8 @@ function signout() {
         console.log(data);
         user = null;
         nowGraphInfo = null;
-        networkGraph.deleteGraph();
+        // networkGraph.deleteGraph();
+        closeGraph();
         $('#menuSignin').show();
         $('#menuUser').hide();
         $('.welcome-overlay').show();
@@ -1726,7 +1727,18 @@ function loadGraph(graphData) {
     }
     updateNodeTypes();
 
-    //TODO add edgeType
+    edgeTypes = {};
+    edgeTypeCnt = 0;
+    var edgeTypeServerIds = {};
+    for (var i=0; i<graphData['edge_type_set'].length; i++) {
+        var json = graphData['edge_type_set'][i];
+        var edgeType = {name: json['edge_type_name'],
+            color: json['color'],
+            serverId: json['edge_type_id']};
+        edgeTypes[edgeTypeCnt] = edgeType;
+        edgeTypeServerIds[json['edge_type_id']] = edgeTypeCnt;
+        edgeTypeCnt++;
+    }
 
     for (var i=0; i<graphData['edge_set'].length; i++) {
         var json = graphData['edge_set'][i];
@@ -1734,8 +1746,8 @@ function loadGraph(graphData) {
         var targetNode = nodeServerIds[json['n2_id']];
         var influence = json['influence_value'];
         var edgeType = null;
-        // if ('node_type_id' in json)
-        //     newNodeData.type = nodeTypeServerIds[json['node_type_id']];
+        if ('edge_type_id' in json)
+            edgeType = edgeTypeServerIds[json['edge_type_id']];
         networkGraph.createEdge(sourceNode, targetNode, influence, edgeType);
     }
     updateEdgeTypes();
@@ -1808,8 +1820,20 @@ function generateSaveGraphJson(saveAs=false) {
         graphData['node_set'].push(json);
     }
 
+    var edgeTypeServerIds = {};
     graphData['edge_type_set'] = [];
-    //TODO need to implement
+    for (var edgeTypeId in edgeTypes) {
+        var edgeType = edgeTypes[edgeTypeId];
+        var json = {};
+        json['edge_type_client_id'] = edgeTypeId;
+        if (!saveAs && 'serverId' in edgeType) {
+            json['edge_type_id'] = edgeType.serverId;
+            edgeTypeServerIds[edgeType.serverId] = parseInt(edgeTypeId);
+        }
+        json['edge_type_name'] = edgeType.name;
+        json['color'] = edgeType.color;
+        graphData['edge_type_set'].push(json);
+    }
 
     graphData['edge_set'] = [];
     for (var i=0; i<networkGraph.edges.length; i++) {
@@ -1821,7 +1845,12 @@ function generateSaveGraphJson(saveAs=false) {
         if (!saveAs && 'serverId' in edgeData.target) {
             json['n2_id'] = edgeData.target.serverId;
         } else json['n2_client_id'] = edgeData.target.id;
-        json['edge_type_id'] = null;    //TODO need to implement
+        json['edge_type_id'] = null;
+        if (edgeData.type != null) {
+            if (!saveAs && 'serverId' in edgeTypes[edgeData.type]) {
+                json['edge_type_id'] = edgeTypes[edgeData.type].serverId;
+            } else json['edge_type_client_id'] = parseInt(nodeData.type);
+        }
         json['influence_value'] = parseFloat(edgeData.name);
         graphData['edge_set'].push(json);
     }
