@@ -1580,6 +1580,8 @@ function closeGraph() {
     nodeTypes = {};
     nodeTypeCnt = 0;
     nodeConfidences = {};
+    edgeTypes = {};
+    edgeTypeCnt = 0;
     updateNodeTypes();
     updateEdgeTypes();
     updateEdgeList();
