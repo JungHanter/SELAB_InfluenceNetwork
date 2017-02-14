@@ -47,15 +47,25 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         var defs = svg.append('svg:defs');
         defs.append('svg:marker')
             .attr('id', 'end-arrow')
+            // .attr('viewBox', '0 -5 10 10')
+            .attr('viewBox', '-13 -5 10 10')
+            .attr('refX', "32")
+            .attr('markerWidth', 3.5)
+            .attr('markerHeight', 3.5)
+            .attr('orient', 'auto')
+            .append('svg:path')
+            // .attr('d', 'M0,-5L10,0L0,5');
+            .attr('d', 'M-13,-5L-3,0L-13,5');
+
+        defs.append('svg:marker')
+            .attr('id', 'end-arrow-hover')
             .attr('viewBox', '0 -5 10 10')
-            // .attr('viewBox', '-5 -5 10 10')
             .attr('refX', "32")
             .attr('markerWidth', 3.5)
             .attr('markerHeight', 3.5)
             .attr('orient', 'auto')
             .append('svg:path')
             .attr('d', 'M0,-5L10,0L0,5');
-            // .attr('d', 'M-5,-5L5,0L-5,5');
 
         // define arrow markers for leading arrow
         defs.append('svg:marker')

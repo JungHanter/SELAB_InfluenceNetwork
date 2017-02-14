@@ -169,15 +169,20 @@ g.conceptG.type-color-blue-grey.selected:hover circle { fill: #78909C; }
 path.link {
     fill: none;
     stroke: #333;
-    /*stroke-width: 4px;*/
-    stroke-width: 6px;
+    stroke-width: 4px;
+    marker-end: url("#end-arrow-hover");
+    /*stroke-width: 6px;*/
     cursor: default;
 }
 
 path.link:hover{
+    stroke-width: 6px;
+    marker-end: url("#end-arrow-hover");
     stroke: rgb(94, 196, 204);
 }
 g.edgeG:hover path.link {
+    stroke-width: 6px;
+    marker-end: url("#end-arrow-hover");
     stroke: rgb(94, 196, 204);
 }
 g.edgeG:hover text {
@@ -193,9 +198,13 @@ path.link.hidden{
 }
 
 path.link.selected {
+    stroke-width: 6px;
+    marker-end: url("#end-arrow-hover");
     stroke: rgb(229, 172, 247);
 }
 g.edgeG.selected path.link {
+    stroke-width: 6px;
+    marker-end: url("#end-arrow-hover");
     stroke: rgb(229, 172, 247);
 }
 g.edgeG.selected text {

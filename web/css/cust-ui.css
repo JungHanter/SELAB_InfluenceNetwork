@@ -1,0 +1,30 @@
+.toast {
+    position: fixed;
+    top: 120px;
+    right: 0;
+    left: 0;
+    z-index: 2000;
+    display: none;
+}
+
+.toast .toast-wrapper {
+    min-width: 200px;
+    max-width: 640px;
+    margin: 20px auto
+}
+
+.toast .toast-wrapper .toast-alert {
+    text-align: center;
+}
+
+.toast .toast-wrapper .toast-alert .toast-body {
+    background-color: #424242;
+    color: white;
+    padding: 14px 20px;
+    -webkit-box-shadow: 2px 2px 6px #888888;
+    -moz-box-shadow: 2px 2px 6px #888888;
+    box-shadow: 2px 2px 6px #888888;
+    display: inline-block;
+    border-radius: 6px;
+    min-width: 160px;
+}

@@ -1606,6 +1606,7 @@ function menuSaveGraph() {
             if (res['result'] == 'success') {
                 //save done
                 assignSaveIdMaps(res);
+                toast('Saved');
             } else {
                 openAlertModal(res['message'], 'Save Graph Failure');
             }
@@ -1642,6 +1643,7 @@ function saveAs(graphName) {
                 nowGraphInfo.graphId = res['graph_id'];
                 nowGraphInfo.graphName = graphName;
                 assignSaveIdMaps(res);
+                toast('Saved');
             } else {
                 openAlertModal(res['message'], 'Save As Graph Failure');
             }
@@ -1656,11 +1658,11 @@ function assignSaveIdMaps(res) {
     for (var nodeTypeId in nodeTypeMap) {
         nodeTypes[nodeTypeId].serverId = nodeTypeMap[nodeTypeId];
     }
-    var edgeTypeMap = res['node_type_id_map'];
+    var edgeTypeMap = res['edge_type_id_map'];
     for (var edgeTypeId in edgeTypeMap) {
         edgeTypes[edgeTypeId].serverId = edgeTypeMap[edgeTypeId];
     }
-    var nodeMap = res['node_type_id_map'];
+    var nodeMap = res['node_id_map'];
     for (var nodeId in nodeMap) {
         for (var node in networkGraph.nodes) {
             if (node.id == nodeId) {

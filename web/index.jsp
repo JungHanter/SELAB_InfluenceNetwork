@@ -8,6 +8,7 @@
   <link rel="stylesheet" type="text/css" href="lib/bootstrap/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="css/bootstrap-custom.css">
   <link rel="stylesheet" type="text/css" href="lib/directed-graph-creator/graph-creator-custom.css">
+  <link rel="stylesheet" type="text/css" href="css/cust-ui.css">
   <link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 
@@ -136,7 +137,7 @@
       </div>
       <div class="sub-menu-divider"></div>
       <div class="sub-menu-btn">
-        <button type="button" id="subMenuNodeEditBtn" class="btn btn-default">Edit</button>
+        <button type="button" id="subMenuNodeEditBtn" class="btn btn-default">Update</button>
       </div>
     </ul>
 
@@ -191,7 +192,7 @@
       </div>
       <div class="sub-menu-divider"></div>
       <div class="sub-menu-btn">
-        <button type="button" id="subMenuEdgeEditBtn" class="btn btn-default">Edit</button>
+        <button type="button" id="subMenuEdgeEditBtn" class="btn btn-default">Update</button>
       </div>
     </ul>
 
@@ -698,11 +699,22 @@
   </div>
 </div>
 
+<div id="alertToast" class="toast" role="alert">
+  <div class="toast-wrapper">
+    <div class="toast-alert" role="document">
+      <div class="toast-body">
+        <div id="alertToastMsg">Saved</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <script src="lib/jquery/jquery-3.1.1.min.js"></script>
 <script src="lib/jquery/plugin/loadingoverlay.min.js"></script>
 <script src="js/jquery_extends.js"></script>
 <script src="lib/bootstrap/js/bootstrap.min.js"></script>
+<script src="js/cust-ui.js"></script>
 <%--<script src="lib/d3/d3.min.js"></script>--%>
 <script src="lib/d3/d3.v3.min.js" charset="utf-8"></script>
 <script src="lib/directed-graph-creator/graph-creator-custom.js"></script>
