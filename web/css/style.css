@@ -22,7 +22,7 @@ body {
 .navbar > .top-menu {
     width: 100%;
     /*min-width: 996px;*/
-    min-width: 1200px;
+    min-width: 1600px;
 }
 .top-menu .navbar-nav {
     float: left;

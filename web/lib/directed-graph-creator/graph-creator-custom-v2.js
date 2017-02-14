@@ -21,6 +21,14 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         thisGraph.idct = 0;
         thisGraph.edgect = 0;
 
+        thisGraph.EDGE_VIEW_MODE_ALL = 0;
+        thisGraph.EDGE_VIEW_MODE_SELECTED = 1;
+        thisGraph.EDGE_VIEW_MODE_PATH = 2;
+        thisGraph.EDGE_TYPE_DEFAULT = 'default';
+        thisGraph.edgeViewMode = thisGraph.EDGE_VIEW_MODE_ALL;
+        thisGraph.edgeTypeSelectedList = [];
+        thisGraph.edgeInfPathList = [];
+
         thisGraph.nodes = nodes || [];
         thisGraph.edges = edges || [];
         thisGraph.nodeTypes = nodeTypes || {};
@@ -89,8 +97,8 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                     .style('marker-end', 'url(#mark-end-arrow)');
 
         // svg nodes and edges
-        thisGraph.paths = svgG.append("g").selectAll("g");
         thisGraph.circles = svgG.append("g").selectAll("g");
+        thisGraph.paths = svgG.append("g").selectAll("g");
 
         thisGraph.drag = d3.behavior.drag()
                     .origin(function(d){
@@ -648,9 +656,27 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                 consts = thisGraph.consts,
                 state = thisGraph.state;
 
+        console.log(thisGraph.paths);
         thisGraph.paths = thisGraph.paths.data(thisGraph.edges, function(d){
             return String(d.source.id) + "+" + String(d.target.id);
         });
+
+        console.log(thisGraph.paths);
+        //filter paths
+        if (thisGraph.edgeViewMode == thisGraph.EDGE_VIEW_MODE_SELECTED) {
+            thisGraph.paths = thisGraph.paths.filter(function(d) {
+                if (d.type == null) {
+                    return thisGraph.EDGE_TYPE_DEFAULT in thisGraph.edgeTypeSelectedList;
+                } else {
+                    return d.type in thisGraph.edgeTypeSelectedList;
+                }
+            });
+        } else if (thisGraph.edgeViewMode == thisGraph.EDGE_VIEW_MODE_PATH) {
+            thisGraph.paths = thisGraph.paths.filter(function(d) {
+                return d in thisGraph.edgeInfPathList;
+            });
+        }
+        console.log(thisGraph.paths);
 
         var paths = thisGraph.paths;
         var pathGroup = paths.enter().append("g");
@@ -694,8 +720,6 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                     var y = d.source.y - d.target.y;
                     var dy = Math.abs(y);
                     var rad = Math.atan2(y, x);
-                    console.log (rad);
-                    console.log (rad * (180 / Math.PI));
                     var cos = Math.cos(rad);
                     var sin = Math.sin(rad);
                     if (dx >= dy) {
@@ -1009,6 +1033,30 @@ document.onload = (function(d3, saveAs, Blob, undefined){
             }
         }
         return edgeList;
+    };
+
+    GraphCreator.prototype.setEdgeViewMode = function(mode, selectedList=null) {
+        if(selectedList == undefined || selectedList == null)
+            selectedList = [];
+
+        var thisGraph = this;
+        switch (mode) {
+            case thisGraph.EDGE_VIEW_MODE_ALL:
+                thisGraph.edgeViewMode = mode;
+                thisGraph.edgeTypeSelectedList = [];
+                thisGraph.edgeInfPathList = [];
+                break;
+            case thisGraph.EDGE_VIEW_MODE_SELECTED:
+                thisGraph.edgeViewMode = mode;
+                thisGraph.edgeTypeSelectedList = selectedList;  //edge type list
+                thisGraph.edgeInfPathList = [];
+                break;
+            case thisGraph.EDGE_VIEW_MODE_PATH:
+                thisGraph.edgeViewMode = mode;
+                thisGraph.edgeTypeSelectedList = [];
+                thisGraph.edgeInfPathList = selectedList;   //edge list in path
+                break;
+        }
     };
 
     GraphCreator.prototype.deleteNode = function() {
