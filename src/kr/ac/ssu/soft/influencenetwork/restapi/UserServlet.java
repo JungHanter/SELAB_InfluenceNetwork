@@ -13,7 +13,6 @@ package kr.ac.ssu.soft.influencenetwork.restapi;
 //import java.io.IOException;
 //import java.io.InputStreamReader;
 
-
 import kr.ac.ssu.soft.influencenetwork.User;
 import kr.ac.ssu.soft.influencenetwork.db.UserDAO;
 import org.json.simple.JSONObject;
@@ -26,7 +25,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -34,17 +32,10 @@ import java.io.PrintWriter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@WebServlet(description = "login, logout, getSession", urlPatterns = { "/session" })
-public class SessionServlet extends HttpServlet {
+@WebServlet(description = "signup", urlPatterns = { "/user" })
+public class UserServlet extends HttpServlet {
 
-    private User user;
     private UserDAO userDAO = new UserDAO();
-
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        JSONObject jsonObject = getSession(request);
-        PrintWriter out = response.getWriter();
-        out.write(jsonObject.toJSONString());
-    }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream()));
@@ -68,12 +59,11 @@ public class SessionServlet extends HttpServlet {
 
         String action = jsonObject.get("action").toString();
 
-        if (action.equals("login")) {
+        if(action.equals("signup")) {
             String email = jsonObject.get("email").toString();
-            String pw = jsonObject.get("password").toString();
-            result = login(email, pw, request);
-        } else if (action.equals("logout")) {
-            result = logout(request);
+            String pw = jsonObject.get("pw").toString();
+            String name = jsonObject.get("name").toString();
+            result = signup(email, pw, name);
         } else {
             result.put("result", "fail");
             result.put("meassage", "api form is wrong");
@@ -83,56 +73,29 @@ public class SessionServlet extends HttpServlet {
         out.close();
     }
 
-    public JSONObject login(String email, String pw, HttpServletRequest request) {
+    public JSONObject signup(String email, String pw, String name) {
         JSONObject result = new JSONObject();
-        user = userDAO.getUser(email, pw);
 
-        if (user != null) {
+        String regexEmail = "^[A-Za-z0-9+_.-]+@(.+)$";
+        Pattern pattern = Pattern.compile(regexEmail);
+        Matcher matcher = pattern.matcher(email);
+        if (matcher.matches() == false) {
+            result.put("result", "fail");
+            result.put("meassage", "wrong email form");
+            return result;
+        }
+
+        User user = new User(email, pw, name);
+        if(userDAO.saveUser(user) == 0) {
             JSONObject userJson = new JSONObject();
             userJson.put("email", user.getEmail());
             userJson.put("user_name", user.getName());
             result.put("user", userJson);
             result.put("result", "success");
-
-            HttpSession session = request.getSession();
-            session.setAttribute("user", user);
         } else {
             result.put("result", "fail");
-            result.put("message", "wrong id or pw");
+            result.put("meassage", "duplicated email");
         }
         return result;
-    }
-
-    public JSONObject logout(HttpServletRequest request) {
-        JSONObject result = new JSONObject();
-        User user = (User) request.getSession().getAttribute("user");
-
-        if (user != null) {
-            HttpSession session = request.getSession();
-            session.invalidate();
-            result.put("result", "success");
-        } else {
-            result.put("result", "fail");
-            result.put("message", "already logout");
-        }
-        return result;
-    }
-
-    public static JSONObject getSession(HttpServletRequest request) {
-        JSONObject resultJson = new JSONObject();
-        User user = (User) request.getSession().getAttribute("user");
-
-        if (user != null) {
-            JSONObject userJson = new JSONObject();
-            userJson.put("email", user.getEmail());
-            userJson.put("user_name", user.getName());
-            resultJson.put("result", "success");
-            resultJson.put("user", userJson);
-        } else {
-            resultJson.put("result", "fail");
-            resultJson.put("meassage", "session is none");
-        }
-        return resultJson;
     }
 }
-

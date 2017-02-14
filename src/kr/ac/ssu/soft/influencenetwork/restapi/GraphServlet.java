@@ -254,7 +254,7 @@ public class GraphServlet extends HttpServlet {
         }
         else {
             result.put("result", "fail");
-            result.put("message", "There is no action that you enter");
+            result.put("message", "api form is wrong");
         }
         out.write(result.toJSONString());
         out.close();
