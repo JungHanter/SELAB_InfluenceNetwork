@@ -101,7 +101,7 @@
         </form>
         <div class="signin-more">
           <a href="#">Forgot your password?</a>
-          <a href="#" class="pull-right">Create new account?</a>
+          <a id="menuSignup" href="#" class="pull-right">Create new account?</a>
         </div>
       </div>
     </div>
@@ -287,12 +287,12 @@
       <div class="modal-body">
         <div class="row">
           <div class="col-xs-12">
-            <form id="signupForm" class="form-signup"  name="signupForm" accept-charset="UTF-8">
+            <form id="signupForm" class="form-signup"  name="signupForm" accept-charset="UTF-8" method="POST">
               <div class="form-group">
                 <label for="inputEmail" >Email Address</label>
                 <input type="email" id="inputEmail" name="email" maxlength="100"
                        class="form-control form-control-input valid"
-                       placeholder="Email">
+                       placeholder="Email" required>
                 <button type="button" id="btnCheckEmail" class="btn btn-dark btn-block
                                                                                         form-control form-control-button">
                   Check
@@ -301,25 +301,26 @@
               <div class="form-group">
                 <label for="inputPw">Password</label>
                 <input type="password" id="inputPw" name="pw" maxlength="20" class="form-control invalid"
-                       placeholder="Password">
+                       placeholder="Password" required>
               </div>
               <div class="form-group">
-                <label for="inputPw">Password Confirm</label>
+                <label for="inputPwConfirm">Password Confirm</label>
                 <input type="password" id="inputPwConfirm" maxlength="20" name="pwConfirm" class="form-control"
-                       placeholder="Password Confirm">
+                       placeholder="Password Confirm" required>
               </div>
               <div class="form-group">
                 <label for="inputName" >Name</label>
                 <input type="text" id="inputName" name="inputName" maxlength="40" class="form-control valid"
-                       placeholder="Name">
+                       placeholder="Name" required>
               </div>
               <div class="row">
                 <div class="col-xs-6">
                   <button id="btnSignupCancel" data-dismiss="modal"
-                          class="btn btn-default btn-block" type="submit">Cancel</button>
+                          class="btn btn-default btn-block" type="button">Cancel</button>
                 </div>
                 <div class="col-xs-6">
-                  <button id="btnSignup" class="btn btn-dark btn-block" type="submit">Sign up</button>
+                  <button id="btnSignup" class="btn btn-dark btn-block"
+                          type="submit">Sign up</button>
                 </div>
               </div>
             </form>
