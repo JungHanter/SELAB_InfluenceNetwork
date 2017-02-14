@@ -745,15 +745,27 @@ function initManageNodeTypeUI() {
     $('#btnDeleteNodeType').click(function() {
         if (selectedNodeTypeElem != null) {
             var typeid = parseInt(selectedNodeTypeElem.find('> .typeId').text());
-            delete nodeTypes[typeid];
+            var typeUsed = false;
+            for (var i=0; i<networkGraph.nodes.length; i++) {
+                if (networkGraph.nodes[i].type == typeid) {
+                    typeUsed = true;
+                    break;
+                }
+            }
 
-            selectedNodeTypeElem.remove();
-            selectedNodeTypeElem = null;
-            $('#btnEditNodeTypeName').attr('disabled', true);
-            $('#btnDeleteNodeType').attr('disabled', true);
-            $('#manageNodeTypeColorList').css('visibility', 'hidden');
+            if (typeUsed) {
+                openAlertModal("Deleting node type is not performed. The node type is used.", "Cannnot Delete Node Type")
+            } else {
+                delete nodeTypes[typeid];
 
-            deleteNodeTypeConfidence(typeid);
+                selectedNodeTypeElem.remove();
+                selectedNodeTypeElem = null;
+                $('#btnEditNodeTypeName').attr('disabled', true);
+                $('#btnDeleteNodeType').attr('disabled', true);
+                $('#manageNodeTypeColorList').css('visibility', 'hidden');
+
+                deleteNodeTypeConfidence(typeid);
+            }
         }
     });
 
@@ -960,13 +972,25 @@ function initManageEdgeTypeUI() {
     $('#btnDeleteEdgeType').click(function() {
         if (selectedEdgeTypeElem != null) {
             var typeid = parseInt(selectedEdgeTypeElem.find('> .typeId').text());
-            delete edgeTypes[typeid];
+            var typeUsed = false;
+            for (var i=0; i<networkGraph.edges.length; i++) {
+                if (networkGraph.edges[i].type == typeid) {
+                    typeUsed = true;
+                    break;
+                }
+            }
 
-            selectedEdgeTypeElem.remove();
-            selectedEdgeTypeElem = null;
-            $('#btnEditEdgeTypeName').attr('disabled', true);
-            $('#btnDeleteEdgeType').attr('disabled', true);
-            $('#manageEdgeTypeColorList').css('visibility', 'hidden');
+            if (typeUsed) {
+                openAlertModal("Deleting edge type is not performed. The edge type is used.", "Cannnot Delete Edge Type")
+            } else {
+                delete edgeTypes[typeid];
+
+                selectedEdgeTypeElem.remove();
+                selectedEdgeTypeElem = null;
+                $('#btnEditEdgeTypeName').attr('disabled', true);
+                $('#btnDeleteEdgeType').attr('disabled', true);
+                $('#manageEdgeTypeColorList').css('visibility', 'hidden');
+            }
         }
     });
 
