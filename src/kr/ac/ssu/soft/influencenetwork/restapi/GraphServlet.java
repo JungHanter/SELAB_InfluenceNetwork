@@ -102,6 +102,28 @@ public class GraphServlet extends HttpServlet {
                 }
                 influenceGraphJsonObject.put("node_set", nodeSetJsonArray);
 
+                Set<Confidence> confidenceSet = ig.getConfidenceSet();
+                JSONArray confidenceSetJsonArray = new JSONArray();
+                for (Confidence c : confidenceSet) {
+                    JSONObject confidenceJsonObject = new JSONObject();
+                    confidenceJsonObject.put("n1_type_id", c.getOrigin().getId());
+                    confidenceJsonObject.put("n2_type_id", c.getDestination().getId());
+                    confidenceJsonObject.put("confidence_value", c.getConfidenceValue());
+                    confidenceSetJsonArray.add(confidenceJsonObject);
+                }
+                influenceGraphJsonObject.put("confidence_set", confidenceSetJsonArray);
+
+                Set<EdgeType> edgeTypeSet = ig.getEdgeTypeSet();
+                JSONArray edgeTypeSetJsonArray = new JSONArray();
+                for (EdgeType et : edgeTypeSet) {
+                    JSONObject edgetypeJsonObject = new JSONObject();
+                    edgetypeJsonObject.put("edge_type_id", et.getId());
+                    edgetypeJsonObject.put("color", et.getColor());
+                    edgetypeJsonObject.put("edge_type_name", et.getName());
+                    edgeTypeSetJsonArray.add(edgetypeJsonObject);
+                }
+                influenceGraphJsonObject.put("edge_type_set", edgeTypeSetJsonArray);
+
                 Set<Edge> edgeSet = ig.getEdgeSet();
                 JSONArray edgeSetJsonArray = new JSONArray();
                 for (Edge e : edgeSet) {
@@ -113,16 +135,6 @@ public class GraphServlet extends HttpServlet {
                 }
                 influenceGraphJsonObject.put("edge_set", edgeSetJsonArray);
 
-                Set<Confidence> confidenceSet = ig.getConfidenceSet();
-                JSONArray confidenceSetJsonArray = new JSONArray();
-                for (Confidence c : confidenceSet) {
-                    JSONObject confidenceJsonObject = new JSONObject();
-                    confidenceJsonObject.put("n1_type_id", c.getOrigin().getId());
-                    confidenceJsonObject.put("n2_type_id", c.getDestination().getId());
-                    confidenceJsonObject.put("confidence_value", c.getConfidenceValue());
-                    confidenceSetJsonArray.add(confidenceJsonObject);
-                }
-                influenceGraphJsonObject.put("confidence_set", confidenceSetJsonArray);
                 influenceGraphJsonObject.put("result", "success");
                 System.out.println(influenceGraphJsonObject.toJSONString());
                 out.write(influenceGraphJsonObject.toJSONString());
@@ -549,8 +561,7 @@ public class GraphServlet extends HttpServlet {
                 if (hasId) {
                     edgeType = currentGraph.getEdgeType(id);
 
-                    if (!edgeType.getColor().equals(color) ||
-                            !edgeType.getName().equals(name)) {
+                    if (!edgeType.getColor().equals(color) || !edgeType.getName().equals(name)) {
 
                         /* update edge type*/
                         edgeType.setColor(color);

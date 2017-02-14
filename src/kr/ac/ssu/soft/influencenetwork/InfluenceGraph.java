@@ -504,6 +504,7 @@ public class InfluenceGraph {
         nodeTypeSet.addAll(nodeTypeDAO.getNodeTypeSet(id));
         confidenceSet.addAll(confidenceDAO.getConfidenceSet(id, nodeTypeSet));
         nodeSet.addAll(nodeDAO.getNodeSet(id, nodeTypeSet));
+        edgeTypeSet.addAll(edgeTypeDAO.getEdgeTypeSet(id));
         edgeSet.addAll(edgeDAO.getEdgeSet(id, nodeSet));
 
         return 0;

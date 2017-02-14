@@ -20,7 +20,7 @@ public class UserDAO {
         conn = DBManager.getConnection();
 
         try{
-            pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, user.getEmail());
             pstmt.setString(2, user.getPw());
             pstmt.setString(3, user.getName());

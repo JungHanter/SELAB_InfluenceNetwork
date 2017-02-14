@@ -38,9 +38,9 @@ public class EdgeTypeDAO {
             rs = pstmt.getGeneratedKeys();
             if (rs != null & rs.next()) {
                 int id = rs.getInt(1);
-                DBManager.closeConnection(conn,pstmt);
                 edgeType.setId(id);
             }
+            DBManager.closeConnection(conn,pstmt);
             return SUCCESS;
         } catch(SQLException e) {
             e.printStackTrace();

@@ -58,49 +58,6 @@ public class NodeDAO {
 		}
 	}
 
-	public int saveNode(String domainId, String name, int typeId, float x, float y, int graphId) {
-//		String sql = "insert into node(name, graph_id, type_id) values(?,?,"+"(select id from nodetype where name=\""+ node.getNt().getName() +"\"" +"))";
-		int id = 0;
-		String sql = "insert into node(domain_id, name, graph_id, type_id, x, y) " +
-				"values(?, ?, ?, ?, ?, ?)";
-		conn = DBManager.getConnection();
-
-		try{
-			pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-			if(domainId == null)
-				pstmt.setNull(1, Types.VARCHAR);
-			else
-				pstmt.setString(1, domainId);
-			if(name == null)
-				pstmt.setNull(2, Types.VARCHAR);
-			else
-				pstmt.setString(2, name);
-			pstmt.setInt(3, graphId);
-			if(typeId != 0)
-				pstmt.setInt(4, typeId);
-			else
-				pstmt.setNull(4, Types.INTEGER);
-			pstmt.setFloat(5, x);
-			pstmt.setFloat(6, y);
-			pstmt.executeUpdate();
-			rs = pstmt.getGeneratedKeys();
-			DBManager.closeConnection(conn,pstmt);
-			return SUCCESS;
-		} catch(SQLException e) {
-			e.printStackTrace();
-			DBManager.closeConnection(conn,pstmt);
-			System.out.println(e.getErrorCode() +" " + e.getMessage());
-			switch (e.getErrorCode()) {
-				case 1129 :
-					return ERROR_CONNECTION;
-				case 1169 :
-					return ERROR_DUPLICATION;
-				default:
-					return ERROR_UNKNOWN;
-			}
-		}
-	}
-
 	public Set<Node> getNodeSet(int graphId, Set<NodeType> nodeTypeSet) { //need to revise whole code.
 		conn = DBManager.getConnection();
 		Set<Node> NodeSet = new TreeSet<>();

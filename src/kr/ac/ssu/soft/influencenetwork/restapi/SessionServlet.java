@@ -111,9 +111,11 @@ public class SessionServlet extends HttpServlet {
         }
         else {
             result.put("result", "fail");
+            result.put("message", "Already logout");
         }
         return result;
     }
+
     public static JSONObject getSession(HttpServletRequest request) {
         JSONObject resultJson = new JSONObject();
         User user = (User)request.getSession().getAttribute("user");
@@ -127,7 +129,25 @@ public class SessionServlet extends HttpServlet {
         }
         else {
             resultJson.put("result", "fail");
+            resultJson.put("meassage", "Session is none");
         }
         return resultJson;
+    }
+
+    public JSONObject signup(String email, String password, String name) {
+        User user = new User(email, password, name);
+        JSONObject result = new JSONObject();
+
+        if(userDAO.saveUser(user) == 0) {
+            JSONObject userJson = new JSONObject();
+            userJson.put("email", user.getEmail());
+            userJson.put("user_name", user.getName());
+            result.put("user", userJson);
+            result.put("result", "success");
+        } else {
+            result.put("result", "fail");
+            result.put("meassage", "duplicated email");
+        }
+        return result;
     }
 }
