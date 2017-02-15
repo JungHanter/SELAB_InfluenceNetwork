@@ -30,6 +30,7 @@ var edgeTypes = {
     1: {name: "Q", color: "teal"}
 };
 var edgeTypeCnt = 0;
+var viewedEdgeTypes = [networkGraph.EDGE_TYPE_DEFAULT, 0, 1];
 
 //remove defaults
 nodeTypes = {};
@@ -37,6 +38,7 @@ nodeTypeCnt = 0;
 nodeConfidences = {};
 edgeTypes = {};
 edgeTypeCnt = 0;
+viewedEdgeTypes = [networkGraph.EDGE_TYPE_DEFAULT];
 
 function updateNodeTypes() {
     $('#subMenuNodeTypeDropdown').empty();
@@ -954,7 +956,12 @@ function initManageEdgeTypeUI() {
             + "<span class='typeId'>" + edgeTypeCnt + "</span></a>");
         //add edgeTypes with default
         edgeTypes[edgeTypeCnt] = {name: defaultNewTypeName, color:defaultNewTypeColor};
+        if (networkGraph.edgeViewMode == networkGraph.EDGE_VIEW_MODE_SELECTED) {
+            viewedEdgeTypes.push(edgeTypeCnt);
+            networkGraph.setEdgeViewMode(networkGraph.EDGE_VIEW_MODE_SELECTED, viewedEdgeTypes);
+        }
         edgeTypeCnt++;
+
 
         var appendedElem = $('#manageEdgeTypeList').find('.list-group-item:last-of-type');
         edgeTypeManageListItemAddClick(appendedElem);
@@ -1016,6 +1023,28 @@ function initManageEdgeTypeUI() {
 
                 selectedEdgeTypeElem.remove();
                 selectedEdgeTypeElem = null;
+                console.log(viewedEdgeTypes);
+
+                if (networkGraph.edgeViewMode == networkGraph.EDGE_VIEW_MODE_SELECTED) {
+                    var removingPos = -1;
+                    for (var i=0; i<viewedEdgeTypes.length; i++) {
+                        if (viewedEdgeTypes[i] == typeid) {
+                            removingPos = i;
+                            break;
+                        }
+                    }
+                    if (removingPos != -1) {
+                        console.log(viewedEdgeTypes);
+                        viewedEdgeTypes.splice(removingPos, 1);
+                        console.log(viewedEdgeTypes);
+                        if (viewedEdgeTypes.length == 0) {
+                            viewedEdgeTypes.push(networkGraph.EDGE_TYPE_DEFAULT);
+                        }
+                        console.log(viewedEdgeTypes);
+                        networkGraph.setEdgeViewMode(networkGraph.EDGE_VIEW_MODE_SELECTED, viewedEdgeTypes);
+                    }
+                }
+
                 $('#btnEditEdgeTypeName').attr('disabled', true);
                 $('#btnDeleteEdgeType').attr('disabled', true);
                 $('#manageEdgeTypeColorList').css('visibility', 'hidden');
