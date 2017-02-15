@@ -483,9 +483,13 @@ function editEdge() {
         var originalSourceId = selectedEdge.edgeData.source.id,
             originalTargetId = selectedEdge.edgeData.target.id;
         var changedSourceId = parseInt($('#subMenuEdgeSource .nodeName').data('nodeid')),
-            changedTargetId = parseInt($('#subMenuEdgeTarget .nodeName').data('nodeid'))
+            changedTargetId = parseInt($('#subMenuEdgeTarget .nodeName').data('nodeid'));
         selectedEdge.edgeData.name = $('#subMenuEdgeInfluence').val();
-        selectedEdge.edgeData.type = parseInt($('#subMenuEdgeType .edgeTypeId').text());
+        var edgeTypeId = parseInt($('#subMenuEdgeType .edgeTypeId').text());
+        if (isNaN(edgeTypeId) || !isFinite(edgeTypeId)) {
+            edgeTypeId = null;
+        }
+        selectedEdge.edgeData.type = edgeTypeId;
 
         if (originalSourceId == changedSourceId && originalTargetId == changedTargetId) {
             //pass
@@ -496,6 +500,9 @@ function editEdge() {
             if (changedSourceId == changedTargetId) {
                 openAlertModal("The nodes of path can not be same!");
                 return;
+            // } else if (isNaN(type) || !isFinite(type)) {
+            //     openAlertModal("Please Select Type");
+            //     return;
             } else if (validEdge(changedSource, changedTarget)) {
                 selectedEdge.edgeData.source = changedSource;
                 selectedEdge.edgeData.target = changedTarget;
@@ -506,9 +513,10 @@ function editEdge() {
             }
         }
 
-        //TODO apply chage type
-
         networkGraph.changeEdgeName(selectedEdge.d3PathG, selectedEdge.edgeData);
+        if (originalType != selectedEdge.edgeData.type) {
+            networkGraph.updateEdgeType(selectedEdge.d3PathG);
+        }
         networkGraph.updateGraph();
         updateEdgeList('updated', selectedEdge.edgeData);
     }
@@ -1746,7 +1754,8 @@ function assignSaveIdMaps(res) {
     }
     var nodeMap = res['node_id_map'];
     for (var nodeId in nodeMap) {
-        for (var node in networkGraph.nodes) {
+        for (var i=0; i<networkGraph.nodes.length; i++) {
+            var node = networkGraph.nodes[i];
             if (node.id == nodeId) {
                 node.serverId = nodeMap[nodeId];
             }
