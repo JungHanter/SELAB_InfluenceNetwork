@@ -245,7 +245,6 @@ public class GraphServlet extends HttpServlet {
         }
         else if (action.equals("saveas")) {
             String userEmail = jsonObject.get("email").toString();
-            userEmail = jsonObject.get("email").toString();
             String graphName = jsonObject.get("graph_name").toString();
             JSONObject graph = (JSONObject) jsonObject.get("graph");
 
@@ -263,31 +262,41 @@ public class GraphServlet extends HttpServlet {
             Path maxInfluencePath = null;
             ArrayList<Edge> maxInfluenceEdgeList = null;
 
-            graphId = Integer.parseInt(jsonObject.get("graph_id").toString());
-            n1Id = Integer.parseInt(jsonObject.get("n1_id").toString());
-            n2Id = Integer.parseInt(jsonObject.get("n2_id").toString());
-            edgeTypeId = Integer.parseInt(jsonObject.get("edge_type_id").toString());
+            try {
+                graphId = Integer.parseInt(jsonObject.get("graph_id").toString());
+                n1Id = Integer.parseInt(jsonObject.get("n1_id").toString());
+                n2Id = Integer.parseInt(jsonObject.get("n2_id").toString());
+                edgeTypeId = Integer.parseInt(jsonObject.get("edge_type_id").toString());
 
-            InfluenceGraph influenceGraph = influenceGraphDAO.getInfluenceGraph(graphId);
-            maxInfluencePath = influenceGraph.maxInfluencePath(influenceGraph.getNode(n1Id), influenceGraph.getNode(n2Id), influenceGraph.getEdgeType(edgeTypeId));
-            maxInfluenceEdgeList = maxInfluencePath.getEdgeArrayList();
+                InfluenceGraph influenceGraph = influenceGraphDAO.getInfluenceGraph(graphId);
+                maxInfluencePath = influenceGraph.maxInfluencePath(influenceGraph.getNode(n1Id), influenceGraph.getNode(n2Id), influenceGraph.getEdgeType(edgeTypeId));
+                if(maxInfluencePath == null)
+                    throw new Exception("No Path");
+                maxInfluenceEdgeList = maxInfluencePath.getEdgeArrayList();
 
-            JSONArray edgeListJSONArray = new JSONArray();
-            for (Edge e : maxInfluenceEdgeList) {
-                JSONObject edgeJSONObject = new JSONObject();
-                edgeJSONObject.put("n1_id", e.getOrigin().getId());
-                edgeJSONObject.put("n2_id", e.getDestination().getId());
-                if (e.getEdgeType() != influenceGraph.getDefaultEdgeType())
-                    edgeJSONObject.put("edge_type_id", e.getEdgeType().getId());
-                else
-                    edgeJSONObject.put("edge_type_id", null);
-                edgeJSONObject.put("influence_value", e.getInfluenceValue());
-                edgeListJSONArray.add(edgeJSONObject);
+                JSONArray edgeListJSONArray = new JSONArray();
+                for (Edge e : maxInfluenceEdgeList) {
+                    JSONObject edgeJSONObject = new JSONObject();
+                    edgeJSONObject.put("n1_id", e.getOrigin().getId());
+                    edgeJSONObject.put("n2_id", e.getDestination().getId());
+                    if (e.getEdgeType() != influenceGraph.getDefaultEdgeType())
+                        edgeJSONObject.put("edge_type_id", e.getEdgeType().getId());
+                    else
+                        edgeJSONObject.put("edge_type_id", null);
+                    edgeJSONObject.put("influence_value", e.getInfluenceValue());
+                    edgeListJSONArray.add(edgeJSONObject);
+                }
+                result.put("edge_list", edgeListJSONArray);
+                result.put("result", "success");
+            } catch (Exception e) {
+                e.printStackTrace();
+                result = new JSONObject();
+                result.put("result", "fail");
+                result.put("message", e.getMessage());
             }
-            result.put("edge_list", edgeListJSONArray);
-            result.put("result", "success");
         }
         else {
+            result = new JSONObject();
             result.put("result", "fail");
             result.put("message", "api form is wrong");
         }
