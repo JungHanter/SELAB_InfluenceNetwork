@@ -281,6 +281,10 @@ public class InfluenceGraph {
         return defaultEdgeType;
     }
 
+    public void setDefaultEdgeType(EdgeType defaultEdgeType) {
+        this.defaultEdgeType = defaultEdgeType;
+    }
+
     public boolean updateEdgeType(EdgeType et) {
         if(edgeTypeSet.contains(et)) {
             return edgeTypeDAO.updateEdgeType(et);

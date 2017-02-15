@@ -650,7 +650,7 @@ public class GraphServlet extends HttpServlet {
 
                     /* update Edge*/
                     edge = currentGraph.getEdge(currentGraph.getNode(n1Id), currentGraph.getNode(n2Id), currentGraph.getEdgeType(edgeTypeId));
-                    if (edge.getInfluenceValue() != influenceValue) {
+                    if (edge.getInfluenceValue() != influenceValue) { //TODO fix
                         edge.setInfluenceValue(influenceValue);
                         currentGraph.updateEdge(edge);
                     }

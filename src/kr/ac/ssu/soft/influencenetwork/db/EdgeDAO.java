@@ -96,7 +96,7 @@ public class EdgeDAO {
 			return false;
 
 		conn = DBManager.getConnection();
-		String sql = "UPDATE edge SET influenceValue = ?, type_id = ?WHERE n1_id=? AND n2_id=? AND type_id=?";
+		String sql = "UPDATE edge SET influenceValue=?, type_id=? WHERE n1_id=? AND n2_id=? AND type_id=?";
 
 		try {
 			pstmt = conn.prepareStatement(sql);

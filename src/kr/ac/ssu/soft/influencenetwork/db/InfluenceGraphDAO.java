@@ -1,5 +1,6 @@
 package kr.ac.ssu.soft.influencenetwork.db;
 
+import kr.ac.ssu.soft.influencenetwork.EdgeType;
 import kr.ac.ssu.soft.influencenetwork.InfluenceGraph;
 import java.sql.*;
 import java.util.*;
@@ -33,11 +34,20 @@ public class InfluenceGraphDAO {
 			}
 
 			/** save default edge type */
-			sql = "insert into edgetype(name, color, graph_id) values(?, ?, ?)";
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, "default");
-			pstmt.setString(2, "default");
-			pstmt.setInt(3, ig.getId());
+			EdgeType defaultEdgeType = new EdgeType("default", "default");
+			ig.addEdgeType(defaultEdgeType);
+			ig.setDefaultEdgeType(defaultEdgeType);
+
+//			sql = "insert into edgetype(name, color, graph_id) values(?, ?, ?)";
+//			pstmt = conn.prepareStatement(sql);
+//			pstmt.setString(1, "default");
+//			pstmt.setString(2, "default");
+//			pstmt.setInt(3, ig.getId());
+//			rs = pstmt.getGeneratedKeys();
+//			if(rs != null && rs.next()){
+//				int id = rs.getInt(1);
+//				ig.setId(id);
+//			}
 
 			DBManager.closeConnection(conn, pstmt);
 			return SUCCESS;
