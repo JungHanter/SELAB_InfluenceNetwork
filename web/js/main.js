@@ -1856,7 +1856,7 @@ function loadGraph(graphData) {
             newNodeData.domainId = json['domain_id'];
         else newNodeData.domainId = null;
         newNodeData.title = json['node_name'];
-        if ('node_type_id' in json)
+        if ('node_type_id' in json && json['node_type_id'] != null)
             newNodeData.type = nodeTypeServerIds[json['node_type_id']];
         else newNodeData.type = null;
         newNodeData.x = json['x'];
@@ -1868,6 +1868,7 @@ function loadGraph(graphData) {
 
     edgeTypes = {};
     edgeTypeCnt = 0;
+    viewedEdgeTypes = [networkGraph.EDGE_TYPE_DEFAULT];
     var edgeTypeServerIds = {};
     for (var i=0; i<graphData['edge_type_set'].length; i++) {
         var json = graphData['edge_type_set'][i];
@@ -1875,10 +1876,13 @@ function loadGraph(graphData) {
             color: json['color'],
             serverId: json['edge_type_id']};
         edgeTypes[edgeTypeCnt] = edgeType;
+        viewedEdgeTypes.push(edgeTypeCnt);
         edgeTypeServerIds[json['edge_type_id']] = edgeTypeCnt;
         edgeTypeCnt++;
     }
     updateManageEdgeTypeUI();
+    updateEdgeTypes();
+    networkGraph.setEdgeViewMode(networkGraph.EDGE_VIEW_MODE_SELECTED, viewedEdgeTypes);
 
     for (var i=0; i<graphData['edge_set'].length; i++) {
         var json = graphData['edge_set'][i];
@@ -1886,11 +1890,12 @@ function loadGraph(graphData) {
         var targetNode = nodeServerIds[json['n2_id']];
         var influence = json['influence_value'];
         var edgeType = null;
-        if ('edge_type_id' in json)
+        if ('edge_type_id' in json && json['edge_type_id'] != null) {
             edgeType = edgeTypeServerIds[json['edge_type_id']];
-        networkGraph.createEdge(sourceNode, targetNode, influence, edgeType);
+        }
+        var edge = networkGraph.createEdge(sourceNode, targetNode, influence, edgeType);
     }
-    updateEdgeTypes();
+    updateEdgeList();
     networkGraph.updateGraph();
 }
 
@@ -1921,7 +1926,7 @@ function generateSaveGraphJson(saveAs=false) {
     graphData['confidence_set'] = [];
     for (var sourceId in nodeConfidences) {
         var nodeConfidence = nodeConfidences[sourceId];
-        for (targetId in nodeConfidence) {
+        for (var targetId in nodeConfidence) {
             var confidenceValue = nodeConfidence[targetId];
             var json = {};
             if (!saveAs && 'serverId' in nodeTypes[sourceId]) {
