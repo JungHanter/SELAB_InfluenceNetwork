@@ -168,6 +168,9 @@ g.conceptG.type-color-blue-grey:hover circle { fill: #78909C; }
 g.conceptG.type-color-blue-grey.selected circle { fill: #607d8b; }
 g.conceptG.type-color-blue-grey.selected:hover circle { fill: #78909C; }
 
+g.connect-node circle{
+    fill: #BEFFFF;
+}
 
 path.link {
     fill: none;
@@ -191,9 +194,11 @@ g.edgeG:hover path.link {
 g.edgeG:hover text {
     fill: rgb(94, 196, 204);
 }
-
-g.connect-node circle{
-    fill: #BEFFFF;
+g.edgeG.unviewed {
+    display: none !important;
+}
+path.link.unviewed {
+    display: none !important;
 }
 
 path.link.hidden{

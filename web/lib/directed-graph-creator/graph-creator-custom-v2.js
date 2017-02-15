@@ -21,12 +21,24 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         thisGraph.idct = 0;
         thisGraph.edgect = 0;
 
+        thisGraph.EDGE_INTERVAL_START = {
+            2: -10, 3: -15, 4: -15, 5: -20,
+            6: -20, 7: -21, 8: -28, 9: -28,
+            10: -27, 11: -30
+        };
+        thisGraph.EDGE_INTERVAL = {
+            2: 20, 3: 15, 4: 10, 5: 10,
+            6: 8, 7: 7, 8: 8, 9: 7,
+            10: 6, 11: 6
+        };
+        thisGraph.EDGE_INTERVAL_MAX_WIDTH = 60;
+
         thisGraph.EDGE_VIEW_MODE_ALL = 0;
         thisGraph.EDGE_VIEW_MODE_SELECTED = 1;
         thisGraph.EDGE_VIEW_MODE_PATH = 2;
         thisGraph.EDGE_TYPE_DEFAULT = 'default';
-        thisGraph.edgeViewMode = thisGraph.EDGE_VIEW_MODE_ALL;
-        thisGraph.edgeTypeSelectedList = [];
+        thisGraph.edgeViewMode = thisGraph.EDGE_VIEW_MODE_SELECTED;
+        thisGraph.edgeTypeSelectedList = [thisGraph.EDGE_TYPE_DEFAULT];
         thisGraph.edgeInfPathList = [];
 
         thisGraph.nodes = nodes || [];
@@ -57,7 +69,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         defs.append('svg:marker')
             .attr('id', 'end-arrow')
             .attr('viewBox', '-1 -5 10 10')
-            .attr('refX', "46")
+            .attr('refX', "44")
             .attr('markerWidth', 3.5)
             .attr('markerHeight', 3.5)
             .attr('orient', 'auto')
@@ -97,20 +109,20 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                     .style('marker-end', 'url(#mark-end-arrow)');
 
         // svg nodes and edges
-        thisGraph.circles = svgG.append("g").selectAll("g");
         thisGraph.paths = svgG.append("g").selectAll("g");
+        thisGraph.circles = svgG.append("g").selectAll("g");
 
         thisGraph.drag = d3.behavior.drag()
-                    .origin(function(d){
-                        return {x: d.x, y: d.y};
-                    })
-                    .on("drag", function(args){
-                        thisGraph.state.justDragged = true;
-                        thisGraph.dragmove.call(thisGraph, args);
-                    })
-                    .on("dragend", function() {
-                        // todo check if edge-mode is selected
-                    });
+            .origin(function(d){
+                return {x: d.x, y: d.y};
+            })
+            .on("drag", function(args){
+                thisGraph.state.justDragged = true;
+                thisGraph.dragmove.call(thisGraph, args);
+            })
+            .on("dragend", function() {
+                // todo check if edge-mode is selected
+            });
 
         // listen for key events
         d3.select(window).on("keydown", function(){
@@ -156,6 +168,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
 
     GraphCreator.prototype.consts =  {
         selectedClass: "selected",
+        unviewedClass: "unviewed",
         connectClass: "connect-node",
         circleGClass: "conceptG",
         typeColorHead: "type-color-",
@@ -477,6 +490,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                 if (thisGraph.state.selectedEdge == d) {
                     thisGraph.onEdgeSelected(d3pathG, d);
                 }
+                thisGraph.updateGraph();    //SURE?
                 thisGraph.onEdgeChanged('updated', d);
             });
         return d3txt;
@@ -537,9 +551,46 @@ document.onload = (function(d3, saveAs, Blob, undefined){
 
         if (mouseDownNode !== d){
             // we're in a different node: create new edge for mousedown edge and add to graph
-            var newEdge = this.createEdge(mouseDownNode, d, 0.5, null, true);
-            thisGraph.onEdgeChanged('created', newEdge);
-        } else{
+            var bEditableEdgeName = false;
+            var edgeType = null;
+            if (thisGraph.edgeViewMode == thisGraph.EDGE_VIEW_MODE_PATH) {
+                bEditableEdgeName = true;
+                edgeType = thisGraph.edgeInfPathList[0].type;
+            } else if (thisGraph.edgeViewMode == thisGraph.EDGE_VIEW_MODE_SELECTED
+                    && thisGraph.edgeTypeSelectedList.length == 1) {
+                bEditableEdgeName = true;
+                edgeType = thisGraph.edgeTypeSelectedList[0];
+                if (edgeType == thisGraph.EDGE_TYPE_DEFAULT) {
+                    edgeType = null;
+                }
+            } else {
+                bEditableEdgeName = false;
+                if (!isIncludeArray(thisGraph.edgeTypeSelectedList, thisGraph.EDGE_TYPE_DEFAULT)) {
+                    var otherEdges = thisGraph.getEdgesBetweenSourceTarget(mouseDownNode, d);
+                    var remainedEdgeTypes = [];
+                    for (var i=0; i<thisGraph.edgeTypeSelectedList.length; i++) {
+                        var edgeType = thisGraph.edgeTypeSelectedList[i];
+                        var hasEdgeType = false;
+                        for (var j=0; j<otherEdges.length; j++) {
+                            if (edgeType == otherEdges[j].type) {
+                                hasEdgeType = true;
+                            }
+                        }
+                        if (!hasEdgeType) {
+                            remainedEdgeTypes.push(edgeType);
+                        }
+                    }
+                    if(remainedEdgeTypes.length > 0)
+                        edgeType = remainedEdgeTypes[Math.floor(Math.random()*remainedEdgeTypes.length)];
+                    else
+                        edgeType = thisGraph.edgeTypeSelectedList[Math.floor(Math.random()*thisGraph.edgeTypeSelectedList.length)];
+                }
+            }
+            var newEdge = thisGraph.createEdge(mouseDownNode, d, 0.5, edgeType, bEditableEdgeName);
+            if(newEdge != null) {
+                thisGraph.onEdgeChanged('created', newEdge);
+            }
+        } else {
             // we're in the same node
             if (state.justDragged) {
                 // dragged, not clicked
@@ -656,27 +707,11 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                 consts = thisGraph.consts,
                 state = thisGraph.state;
 
-        console.log(thisGraph.paths);
         thisGraph.paths = thisGraph.paths.data(thisGraph.edges, function(d){
-            return String(d.source.id) + "+" + String(d.target.id);
+            return String(d.source.id) + "+" + String(d.target.id)
+                + "+" + String(d.type);
         });
-
-        console.log(thisGraph.paths);
-        //filter paths
-        if (thisGraph.edgeViewMode == thisGraph.EDGE_VIEW_MODE_SELECTED) {
-            thisGraph.paths = thisGraph.paths.filter(function(d) {
-                if (d.type == null) {
-                    return thisGraph.EDGE_TYPE_DEFAULT in thisGraph.edgeTypeSelectedList;
-                } else {
-                    return d.type in thisGraph.edgeTypeSelectedList;
-                }
-            });
-        } else if (thisGraph.edgeViewMode == thisGraph.EDGE_VIEW_MODE_PATH) {
-            thisGraph.paths = thisGraph.paths.filter(function(d) {
-                return d in thisGraph.edgeInfPathList;
-            });
-        }
-        console.log(thisGraph.paths);
+        // console.log(thisGraph.paths);
 
         var paths = thisGraph.paths;
         var pathGroup = paths.enter().append("g");
@@ -687,7 +722,8 @@ document.onload = (function(d3, saveAs, Blob, undefined){
             // .style('marker-end','url(#end-arrow)')
             .classed("link", true)
             .attr("d", function(d){
-                return "M" + d.source.x + "," + d.source.y + "L" + d.target.x + "," + d.target.y;
+                return "M" + d.source.x + "," + d.source.y
+                    + "L" + d.target.x + "," + d.target.y;
             })
             .on("mousedown", function(d){
                 thisGraph.pathMouseDown.call(thisGraph, d3.select(this), d);
@@ -696,59 +732,219 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                 // state.mouseDownLink = null;
                 thisGraph.pathMouseUp.call(thisGraph, d3.select(this), d);
             });
+        thisGraph.updateEdgeType(pathGroup);
 
         //update existing paths
-        paths.select("path")
-            // .style('marker-end', 'url(#end-arrow)')
-            .classed(consts.selectedClass, function(d){
-                return d === state.selectedEdge;
-            })
-            .attr("d", function(d){
-                var filtRes = paths.filter(function(d2) {
-                    if (d.source === d2.target && d.target === d2.source) {
-                        return true;
-                    } else {
-                        return false;
+        if (thisGraph.edgeViewMode == thisGraph.EDGE_VIEW_MODE_PATH) {
+            // show all edges in the selected type with black color and its value,
+            // and just found edges are highlighted
+            var allPaths = paths.select("path");
+            allPaths.each(function(d) {
+                d3.select(this.parentNode).classed(consts.unviewedClass, true);
+            });
+
+            var edgeTypeInPath = thisGraph.edgeInfPathList[0].type;
+            var selTypePaths = paths.select("path").filter(function(d) {
+                return d.type == edgeTypeInPath;
+            });
+
+            selTypePaths.each(function(d) {
+                d3.select(this.parentNode).classed(consts.unviewedClass, false);
+            });
+            selTypePaths.select("path")
+                .classed(consts.selectedClass, function(d){
+                    return d === state.selectedEdge;
+                })
+                .attr("d", function(d){
+                    var filtRes = selTypePaths.filter(function(d2) {
+                        if (d.source === d2.target && d.target === d2.source) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    });
+                    // console.log("(update)" + d.source.id + " -> " + d.target.id);
+                    console.log(filtRes);
+                    if(filtRes[0].length == 1) {    //bi-direct
+                        d.bilateral = true;
+                        var x = d.source.x - d.target.x;
+                        var dx = Math.abs(x);
+                        var y = d.source.y - d.target.y;
+                        var dy = Math.abs(y);
+                        var rad = Math.atan2(y, x);
+                        var cos = Math.cos(rad);
+                        var sin = Math.sin(rad);
+                        return "M" + (d.source.x - 10*sin) + "," + (d.source.y + 10*cos)
+                            + "L" + (d.target.x - 10*sin) + "," + (d.target.y + 10*cos);
+                    } else {    //single-direct
+                        d.bilateral = false;
+                        return "M" + d.source.x + "," + d.source.y + "L" + d.target.x + "," + d.target.y;
                     }
                 });
-                // console.log("(update)" + d.source.id + " -> " + d.target.id);
-                // console.log(filtRes);
-                if(filtRes[0].length == 1) {    //bi-direct
-                    d.bilateral = true;
-                    var x = d.source.x - d.target.x;
-                    var dx = Math.abs(x);
-                    var y = d.source.y - d.target.y;
-                    var dy = Math.abs(y);
-                    var rad = Math.atan2(y, x);
-                    var cos = Math.cos(rad);
-                    var sin = Math.sin(rad);
-                    if (dx >= dy) {
-                        if (d.source.x <= d.target.x) {
-                            return "M" + (d.source.x - 10*sin) + "," + (d.source.y + 10*cos)
-                                + "L" + (d.target.x - 10*sin) + "," + (d.target.y + 10*cos);
+
+            paths.each(function(d) {
+                d3.select(this).selectAll("text").remove();
+                // if (isIncludeArray(thisGraph.edgeInfPathList, d))
+                if (d.type == edgeTypeInPath)
+                    thisGraph.insertEdgeName(d3.select(this), d);
+            });
+
+        } else if (thisGraph.edgeViewMode == thisGraph.EDGE_VIEW_MODE_SELECTED
+                && thisGraph.edgeTypeSelectedList.length == 1) {
+            // show all edges in the selected type with black color and its value
+            var allPaths = paths.select("path");
+            // allPaths.classed(consts.unviewedClass, true);
+            // d3.select(allPaths.parentNode).classed(consts.unviewedClass, true);
+            allPaths.each(function(d) {
+                d3.select(this.parentNode).classed(consts.unviewedClass, true);
+            });
+
+            var selType = null;
+            if (thisGraph.edgeTypeSelectedList[0] != thisGraph.EDGE_TYPE_DEFAULT)
+                selType = thisGraph.edgeTypeSelectedList[0];
+            var selTypePaths = paths.select("path").filter(function(d) {
+                return d.type == selType;
+            });
+            // console.log(selTypePaths);
+
+            // d3.select(selTypePaths.node().parentNode).classed(consts.unviewedClass, false);
+            selTypePaths.each(function(d) {
+                d3.select(this.parentNode).classed(consts.unviewedClass, false);
+            });
+            // paths.select("path")
+            selTypePaths//.classed(consts.unviewedClass, false)
+                .classed(consts.selectedClass, function(d){
+                    return d === state.selectedEdge;
+                })
+                .attr("d", function(d){
+                    var filtRes = selTypePaths.filter(function(d2) {
+                        if (d.source === d2.target && d.target === d2.source) {
+                            return true;
                         } else {
-                            return "M" + (d.source.x - 10*sin) + "," + (d.source.y + 10*cos)
-                                + "L" + (d.target.x - 10*sin) + "," + (d.target.y + 10*cos);
+                            return false;
                         }
-                    } else {
-                        if (d.source.y <= d.target.y) {
-                            return "M" + (d.source.x - 10*sin) + "," + (d.source.y + 10*cos)
-                                + "L" + (d.target.x - 10*sin) + "," + (d.target.y + 10*cos);
-                        } else {
-                            return "M" + (d.source.x - 10*sin) + "," + (d.source.y + 10*cos)
-                                + "L" + (d.target.x - 10*sin) + "," + (d.target.y + 10*cos);
-                        }
+                    });
+                    // console.log("(update)" + d.source.id + " -> " + d.target.id);
+                    // console.log(filtRes);
+                    if(filtRes[0].length == 1) {    //bi-direct
+                        d.bilateral = true;
+                        var x = d.source.x - d.target.x;
+                        var dx = Math.abs(x);
+                        var y = d.source.y - d.target.y;
+                        var dy = Math.abs(y);
+                        var rad = Math.atan2(y, x);
+                        var cos = Math.cos(rad);
+                        var sin = Math.sin(rad);
+                        return "M" + (d.source.x - 10*sin) + "," + (d.source.y + 10*cos)
+                            + "L" + (d.target.x - 10*sin) + "," + (d.target.y + 10*cos);
+                    } else {    //single-direct
+                        d.bilateral = false;
+                        return "M" + d.source.x + "," + d.source.y + "L" + d.target.x + "," + d.target.y;
                     }
-                } else {    //single-direct
-                    d.bilateral = false;
-                    return "M" + d.source.x + "," + d.source.y + "L" + d.target.x + "," + d.target.y;
+                });
+
+            paths.each(function(d) {
+                d3.select(this).selectAll("text").remove();
+                // if (d.type == null && isIncludeArray(thisGraph.edgeTypeSelectedList, thisGraph.EDGE_TYPE_DEFAULT)
+                //         || isIncludeArray(thisGraph.edgeTypeSelectedList, d.type)) {
+                if (d.type == selType) {
+                    thisGraph.insertEdgeName(d3.select(this), d);
+                }
+            });
+        } else {
+            // show all edge in the selected type with only its color
+            var allPaths = paths.select("path");
+            allPaths.each(function(d) {
+                d3.select(this.parentNode).classed(consts.unviewedClass, true);
+            });
+
+            var selTypePaths = paths.select("path").filter(function(d) {
+                if (d.type == null) {
+                    return isIncludeArray(thisGraph.edgeTypeSelectedList, thisGraph.EDGE_TYPE_DEFAULT);
+                } else {
+                    return isIncludeArray(thisGraph.edgeTypeSelectedList, d.type)
                 }
             });
 
-        paths.each(function(d){
-            d3.select(this).selectAll("text").remove();
-            thisGraph.insertEdgeName(d3.select(this), d);
-        });
+            selTypePaths.each(function(d) {
+                d3.select(this.parentNode).classed(consts.unviewedClass, false);
+            });
+            // paths.select("path")
+            selTypePaths.classed(consts.selectedClass, function(d){
+                    return d === state.selectedEdge;
+                })
+                .attr("d", function(d){
+                    //get all edges between two nodes.
+                    var filtRes = selTypePaths.filter(function(d2) {
+                        if ((d.source === d2.source && d.target === d2.target)
+                                || (d.source === d2.target && d.target === d2.source)) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    });
+                    // console.log("(update)" + d.source.id + " -> " + d.target.id);
+                    // console.log(filtRes);
+                    var edgeNum = filtRes[0].length;    //include itself(d)
+                    if (edgeNum > 1) {  //if edgeNum is more than 1
+                        var edgeCnt = -1;   //find its count
+                        var edgeCtList = [];
+                        for (var i=0; i<filtRes[0].length; i++) {
+                            var path = filtRes[0][i];
+                            edgeCtList.push(path.__data__.ct);
+                        }
+                        edgeCtList.sort();
+                        for (var i=0; i<edgeCtList.length; i++) {
+                            if (d.ct == edgeCtList[i]) {
+                                edgeCnt = i;
+                                break;
+                            }
+                        }
+
+                        var bSourceLeftUp = true;
+                        if (d.source.x == d.target.x) {
+                            if (d.source.y > d.target.y) {
+                                bSourceLeftUp = false;
+                            }
+                        } else if (d.source.x > d.target.x) {
+                            bSourceLeftUp = false;
+                        }
+                        var x = d.source.x - d.target.x;
+                        var dx = Math.abs(x);
+                        var y = d.source.y - d.target.y;
+                        var dy = Math.abs(y);
+                        var rad = Math.atan2(y, x);
+                        var cos = Math.cos(rad);
+                        var sin = Math.sin(rad);
+
+                        var edgeIntervalStart;
+                        var edgeInterval;
+                        if (edgeNum in thisGraph.EDGE_INTERVAL) {
+                            edgeIntervalStart = thisGraph.EDGE_INTERVAL_START[edgeNum];
+                            edgeInterval = thisGraph.EDGE_INTERVAL[edgeNum];
+                        } else {
+                            edgeIntervalStart = -thisGraph.EDGE_INTERVAL_MAX_WIDTH / 2;
+                            edgeInterval = thisGraph.EDGE_INTERVAL_MAX_WIDTH / (edgeNum-1);
+                        }
+                        var interval = edgeIntervalStart + edgeInterval*edgeCnt;
+
+                        if (bSourceLeftUp) {
+                            return "M" + (d.source.x + interval * sin) + "," + (d.source.y - interval * cos)
+                                + "L" + (d.target.x + interval * sin) + "," + (d.target.y - interval * cos);
+                        } else {
+                            return "M" + (d.source.x - interval * sin) + "," + (d.source.y + interval * cos)
+                                + "L" + (d.target.x - interval * sin) + "," + (d.target.y + interval * cos);
+                        }
+                    } else {    //single-direct
+                        d.bilateral = false;
+                        return "M" + d.source.x + "," + d.source.y + "L" + d.target.x + "," + d.target.y;
+                    }
+                });
+
+            paths.each(function(d) {
+                d3.select(this).selectAll("text").remove();
+            });
+        }
 
         thisGraph.paths.exit().remove();
 
@@ -915,14 +1111,14 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         // thisGraph.replaceSelectNode(d3Node, newNodeData);
 
         return newNodeData;
-    }
+    };
 
     GraphCreator.prototype.insertNode = function(newNodeData) {
         var thisGraph = this;
         newNodeData.id = thisGraph.idct++;
         thisGraph.nodes.push(newNodeData);
         return newNodeData;
-    }
+    };
 
     GraphCreator.prototype.createEdge = function(sourceNode, targetNode, name, type, editable=false) {
         var thisGraph = this;
@@ -931,10 +1127,13 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         thisGraph.edgect++;
 
         var filtRes = thisGraph.paths.filter(function(d){
-            return d.source === newEdge.source && d.target === newEdge.target;
+            return d.source === newEdge.source && d.target === newEdge.target
+                && d.type == newEdge.type;
         });
         if (!filtRes[0].length) {
             thisGraph.edges.push(newEdge);
+            thisGraph.updateGraph();
+            thisGraph.updateEdgeType(this.paths);
             thisGraph.updateGraph();
 
             if (editable) {
@@ -949,7 +1148,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
             return newEdge;
         }
         return null;
-    }
+    };
 
     GraphCreator.prototype.selectNode = function(id) {
         var thisGraph = this;
@@ -970,9 +1169,9 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         }
     }
 
-    GraphCreator.prototype.selectEdge = function(sourceId, targetId) {
+    GraphCreator.prototype.selectEdge = function(sourceId, targetId, type) {
         var thisGraph = this;
-        var edgeData = thisGraph.getEdgeByNodesId(sourceId, targetId);
+        var edgeData = thisGraph.getEdge(sourceId, targetId, type);
         if (edgeData != null) {
             var d3PathG = thisGraph.paths.filter(function(d) {
                 return edgeData == d;
@@ -1008,13 +1207,21 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         return null;
     };
 
-    GraphCreator.prototype.getEdgeByNodesId = function(sourceId, targetId) {
+    GraphCreator.prototype.getEdgeByCt = function(ct) {
+        for (var i=0; i<this.edges.length; i++) {
+            if (this.edges[i].ct == ct) return this.edges[i];
+        }
+        return null;
+    };
+
+    GraphCreator.prototype.getEdge = function(sourceId, targetId, type) {
         var source = this.getNodeById(sourceId),
             target = this.getNodeById(targetId);
         if (source == null || target == null) return null;
         for (var i=0; i<this.edges.length; i++) {
-            if (this.edges[i].source == source &&
-                    this.edges[i].target == target) return this.edges[i];
+            var edge = this.edges[i];
+            if (edge.source == source && edge.target == target
+                && edge.type == type) return edge;
         }
         return null;
     };
@@ -1035,6 +1242,18 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         return edgeList;
     };
 
+    GraphCreator.prototype.getEdgesBetweenSourceTarget = function(source, target) {
+        if (source == null || target == null) return [];
+        var edgeList = [];
+        for (var i=0; i<this.edges.length; i++) {
+            var edge = this.edges[i];
+            if (edge.source == source && edge.target == target) {
+                edgeList.push(edge);
+            }
+        }
+        return edgeList;
+    };
+
     GraphCreator.prototype.setEdgeViewMode = function(mode, selectedList=null) {
         if(selectedList == undefined || selectedList == null)
             selectedList = [];
@@ -1042,8 +1261,12 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         var thisGraph = this;
         switch (mode) {
             case thisGraph.EDGE_VIEW_MODE_ALL:
-                thisGraph.edgeViewMode = mode;
+                thisGraph.edgeViewMode = thisGraph.EDGE_VIEW_MODE_SELECTED;
                 thisGraph.edgeTypeSelectedList = [];
+                thisGraph.edgeTypeSelectedList.push(thisGraph.EDGE_TYPE_DEFAULT);
+                for (var edgeType in thisGraph.edgeTypes) {
+                    thisGraph.edgeTypeSelectedList.push(edgeType);
+                }
                 thisGraph.edgeInfPathList = [];
                 break;
             case thisGraph.EDGE_VIEW_MODE_SELECTED:
@@ -1057,6 +1280,9 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                 thisGraph.edgeInfPathList = selectedList;   //edge list in path
                 break;
         }
+        thisGraph.unselect();
+        thisGraph.updateGraph();
+        thisGraph.updateEdgeType(this.paths);
     };
 
     GraphCreator.prototype.deleteNode = function() {
@@ -1094,9 +1320,6 @@ document.onload = (function(d3, saveAs, Blob, undefined){
     GraphCreator.prototype.resetTransform = function() {
         this.svgG.attr('transform', '');
     };
-
-
-
 
     /**** MAIN ****/
 
@@ -1146,3 +1369,13 @@ document.onload = (function(d3, saveAs, Blob, undefined){
     networkGraph.updateGraph();
 
 })(window.d3, window.saveAs, window.Blob);
+
+
+
+/**util functions**/
+function isIncludeArray (arr, data) {
+    for (var i = 0; i < arr.length; i++) {
+        if (arr[i] == data) return true;
+    }
+    return false;
+}

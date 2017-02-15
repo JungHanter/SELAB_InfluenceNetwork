@@ -7,15 +7,15 @@
 
   <link rel="stylesheet" type="text/css" href="lib/bootstrap/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="css/bootstrap-custom.css">
-  <link rel="stylesheet" type="text/css" href="lib/directed-graph-creator/graph-creator-custom.css">
-  <%--<link rel="stylesheet" type="text/css" href="lib/directed-graph-creator/graph-creator-custom-v2.css">--%>
+  <%--<link rel="stylesheet" type="text/css" href="lib/directed-graph-creator/graph-creator-custom.css">--%>
+  <link rel="stylesheet" type="text/css" href="lib/directed-graph-creator/graph-creator-custom-v2.css">
   <link rel="stylesheet" type="text/css" href="css/cust-ui.css">
   <link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 
 <body>
 <nav class="navbar navbar-dark menu-group">
-  <div class="container-fluid top-menu">
+  <div class="container-fluid top-menu top-menu-main">
     <div class="collapse navbar-collapse">
       <ul class="nav navbar-nav main-menu">
         <li class="dropdown">
@@ -718,8 +718,8 @@
 <script src="js/cust-ui.js"></script>
 <%--<script src="lib/d3/d3.min.js"></script>--%>
 <script src="lib/d3/d3.v3.min.js" charset="utf-8"></script>
-<script src="lib/directed-graph-creator/graph-creator-custom.js"></script>
-<%--<script src="lib/directed-graph-creator/graph-creator-custom-v2.js"></script>--%>
+<%--<script src="lib/directed-graph-creator/graph-creator-custom.js"></script>--%>
+<script src="lib/directed-graph-creator/graph-creator-custom-v2.js"></script>
 <script src="js/main.js"></script>
 
 

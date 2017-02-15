@@ -30,6 +30,7 @@ var edgeTypes = {
     1: {name: "Q", color: "teal"}
 };
 var edgeTypeCnt = 0;
+var viewedEdgeTypes = [networkGraph.EDGE_TYPE_DEFAULT, 0, 1];
 
 //remove defaults
 nodeTypes = {};
@@ -37,6 +38,7 @@ nodeTypeCnt = 0;
 nodeConfidences = {};
 edgeTypes = {};
 edgeTypeCnt = 0;
+viewedEdgeTypes = [networkGraph.EDGE_TYPE_DEFAULT];
 
 function updateNodeTypes() {
     $('#subMenuNodeTypeDropdown').empty();
@@ -204,8 +206,11 @@ function updateEdgeList(event, updatedData) {
     if (updatedData == null) {
         $('#sideMenuEdgeList').empty();
         for (var i = 0; i < networkGraph.edges.length; i++) {
-            edgeData = networkGraph.edges[i];
-            var edgeInfoHtml = "<li><a><span class='edge-source' data-nodeid='"
+            var edgeData = networkGraph.edges[i];
+            var edgeType = edgeData.type;
+            if (edgeType == null) edgeType = networkGraph.EDGE_TYPE_DEFAULT;
+            var edgeInfoHtml = "<li><a data-type='" + edgeType + "' data-ct='" + edgeData.ct
+                + "'><span class='edge-source' data-nodeid='"
                 + edgeData.source.id + "'>" + edgeData.source.title + "</span>"
                 + "<span class='edge-pointer'>-></span>"
                 + "<span class='edge-target' data-nodeid='" + edgeData.target.id
@@ -215,7 +220,10 @@ function updateEdgeList(event, updatedData) {
         newListItems = $('#sideMenuEdgeList > li > a');
     } else {
         if (event == 'created') {
-            var edgeInfoHtml = "<li><a><span class='edge-source' data-nodeid='"
+            var edgeType = updatedData.type;
+            if (edgeType == null) edgeType = networkGraph.EDGE_TYPE_DEFAULT;
+            var edgeInfoHtml = "<li><a data-type='" + edgeType + "' data-ct='" + updatedData.ct
+                + "'><span class='edge-source' data-nodeid='"
                 + updatedData.source.id + "'>" + updatedData.source.title + "</span>"
                 + "<span class='edge-pointer'>-></span>"
                 + "<span class='edge-target' data-nodeid='" + updatedData.target.id
@@ -224,17 +232,24 @@ function updateEdgeList(event, updatedData) {
             newListItems = $('#sideMenuEdgeList > li > a:last');
         } else if (event == 'updated') {
             $('#sideMenuEdgeList > li > a').each(function(idx, elem) {
-                if (updatedData.source.id == $(this).find('.edge-source').data('nodeid') &&
-                        updatedData.target.id == $(this).find('.edge-target').data('nodeid')) {
-                    $(this).find('.edge-source').text(updatedData.source.title);
-                    $(this).find('.edge-target').text(updatedData.target.title);
+                // if (updatedData.source.id == $(this).find('.edge-source').data('nodeid') &&
+                //         updatedData.target.id == $(this).find('.edge-target').data('nodeid')) {
+                if (updatedData.ct == parseInt($(this).data('ct'))) {
+                    $(this).find('.edge-source').data('nodeid', updatedData.source.id)
+                        .text(updatedData.source.title);
+                    $(this).find('.edge-target').data('nodeid', updatedData.target.id)
+                        .text(updatedData.target.title);
+                    var edgeType = updatedData.type;
+                    if (edgeType == null) edgeType = networkGraph.EDGE_TYPE_DEFAULT;
+                    $(this).data('type', edgeType);
                 }
             });
         } else if (event == 'deleted') {
             var deletedElem = null;
             $('#sideMenuEdgeList > li > a').each(function(idx, elem) {
-                if (updatedData.source.id == $(this).find('.edge-source').data('nodeid') &&
-                        updatedData.target.id == $(this).find('.edge-target').data('nodeid')) {
+                // if (updatedData.source.id == $(this).find('.edge-source').data('nodeid') &&
+                //         updatedData.target.id == $(this).find('.edge-target').data('nodeid')) {
+                if (updatedData.ct == parseInt($(this).data('ct'))) {
                     deletedElem = $(this);
                 }
             });
@@ -250,8 +265,14 @@ function updateEdgeList(event, updatedData) {
             } else {
                 $('#sideMenuNodeList > li > a, #sideMenuEdgeList > li > a').removeClass('active');
                 selItem.addClass('active');
+                var edgeType = selItem.data('type');
+                if (edgeType == networkGraph.EDGE_TYPE_DEFAULT) {
+                    edgeType = null;
+                } else {
+                    edgeType = parseInt(edgeType);
+                }
                 networkGraph.selectEdge(selItem.find('.edge-source').data('nodeid'),
-                    selItem.find('.edge-target').data('nodeid'));
+                    selItem.find('.edge-target').data('nodeid'), edgeType);
             }
         });
     }
@@ -315,8 +336,9 @@ function setSelectedEdge(d3PathG, edgeData) {
     $('#sideMenuNodeList > li > a').removeClass('active');
     $('#sideMenuEdgeList > li > a').removeClass('active');
     $('#sideMenuEdgeList > li > a').each(function(idx, elem) {
-        if (edgeData.source.id == $(this).find('.edge-source').data('nodeid') &&
-                edgeData.target.id == $(this).find('.edge-target').data('nodeid')) {
+        // if (edgeData.source.id == $(this).find('.edge-source').data('nodeid') &&
+        //         edgeData.target.id == $(this).find('.edge-target').data('nodeid')) {
+        if (edgeData.ct == parseInt($(this).data('ct'))) {
             $(this).addClass('active').focus();
         }
     });
@@ -456,6 +478,8 @@ function createEdgeConfirm() {
         edgeType = null;
     var sourceNode = networkGraph.getNodeById(sourceId),
         targetNode = networkGraph.getNodeById(targetId);
+    if (!$('#newEdgeDlgType').hasClass('unselected'))
+        edgeType = parseInt($('#newEdgeDlgType').find('> .edgeTypeId').text());
 
     if (isNaN(sourceId) || isNaN(targetId)) {
         openAlertModal("The nodes of edge must be selected!");
@@ -466,15 +490,16 @@ function createEdgeConfirm() {
     } else if (isNaN(influence) || !isFinite(influence)) {
         openAlertModal("The influence value is must be set!");
         return;
-    } else if (validEdge(sourceNode, targetNode)) {
-        if (!$('#newEdgeDlgType').hasClass('unselected'))
-            edgeType = parseInt($('#newEdgeDlgType').find('> .edgeTypeId').text());
+    } else if (validEdge(sourceNode, targetNode, edgeType)) {
         var newEdge = networkGraph.createEdge(sourceNode, targetNode, influence, edgeType);
-        updateEdgeList('created', newEdge);
-        $('#newEdgeModal').modal('hide');
+        if (newEdge != null) {
+            updateEdgeList('created', newEdge);
+            $('#newEdgeModal').modal('hide');
+        } else {
+            openAlertModal("The edge is already existed!");
+        }
     } else {
-        openAlertModal("The path is already existed!");
-        return;
+        openAlertModal("The edge is already existed!");
     }
 }
 function editEdge() {
@@ -482,30 +507,27 @@ function editEdge() {
         var originalType = selectedEdge.edgeData.type;
         var originalSourceId = selectedEdge.edgeData.source.id,
             originalTargetId = selectedEdge.edgeData.target.id;
+        var changedType = null;
         var changedSourceId = parseInt($('#subMenuEdgeSource .nodeName').data('nodeid')),
             changedTargetId = parseInt($('#subMenuEdgeTarget .nodeName').data('nodeid'));
-        selectedEdge.edgeData.name = $('#subMenuEdgeInfluence').val();
-        var edgeTypeId = parseInt($('#subMenuEdgeType .edgeTypeId').text());
-        if (isNaN(edgeTypeId) || !isFinite(edgeTypeId)) {
-            edgeTypeId = null;
-        }
-        selectedEdge.edgeData.type = edgeTypeId;
+        if (!$('#subMenuEdgeType').hasClass('unselected'))
+            changedType = parseInt($('#subMenuEdgeType .edgeTypeId').text());
 
-        if (originalSourceId == changedSourceId && originalTargetId == changedTargetId) {
+        selectedEdge.edgeData.name = $('#subMenuEdgeInfluence').val();
+
+        if (originalSourceId == changedSourceId && originalTargetId == changedTargetId
+                && originalType == changedType) {
             //pass
         } else {
-            var changedSource = networkGraph.getNodeById(changedSourceId);
-            var changedTarget = networkGraph.getNodeById(changedTargetId);
-
+            var changedSource = networkGraph.getNodeById(changedSourceId),
+                changedTarget = networkGraph.getNodeById(changedTargetId);
             if (changedSourceId == changedTargetId) {
-                openAlertModal("The nodes of path can not be same!");
+                openAlertModal("The source and target of edge can not be same!");
                 return;
-            // } else if (isNaN(type) || !isFinite(type)) {
-            //     openAlertModal("Please Select Type");
-            //     return;
-            } else if (validEdge(changedSource, changedTarget)) {
+            } else if (validEdge(changedSource, changedTarget, changedType)) {
                 selectedEdge.edgeData.source = changedSource;
                 selectedEdge.edgeData.target = changedTarget;
+                selectedEdge.edgeData.type = changedType;
                 networkGraph.updateEdges();
             } else {
                 openAlertModal("The path is already existed!");
@@ -529,10 +551,11 @@ function deleteEdge() {
         updateEdgeList('deleted', deletedEdge);
     }
 }
-function validEdge(sourceNode, targedNode) {
+function validEdge(sourceNode, targetNode, type) {
     for (var i=0; i<networkGraph.edges.length; i++) {
-        if (networkGraph.edges[i].source === sourceNode &&
-                networkGraph.edges[i].target === targedNode) {
+        var edge = networkGraph.edges[i];
+        if (edge.source === sourceNode && edge.target === targetNode
+                && edge.type == type) {
             return false;
         }
     }
@@ -933,7 +956,12 @@ function initManageEdgeTypeUI() {
             + "<span class='typeId'>" + edgeTypeCnt + "</span></a>");
         //add edgeTypes with default
         edgeTypes[edgeTypeCnt] = {name: defaultNewTypeName, color:defaultNewTypeColor};
+        if (networkGraph.edgeViewMode == networkGraph.EDGE_VIEW_MODE_SELECTED) {
+            viewedEdgeTypes.push(edgeTypeCnt);
+            networkGraph.setEdgeViewMode(networkGraph.EDGE_VIEW_MODE_SELECTED, viewedEdgeTypes);
+        }
         edgeTypeCnt++;
+
 
         var appendedElem = $('#manageEdgeTypeList').find('.list-group-item:last-of-type');
         edgeTypeManageListItemAddClick(appendedElem);
@@ -995,6 +1023,28 @@ function initManageEdgeTypeUI() {
 
                 selectedEdgeTypeElem.remove();
                 selectedEdgeTypeElem = null;
+                console.log(viewedEdgeTypes);
+
+                if (networkGraph.edgeViewMode == networkGraph.EDGE_VIEW_MODE_SELECTED) {
+                    var removingPos = -1;
+                    for (var i=0; i<viewedEdgeTypes.length; i++) {
+                        if (viewedEdgeTypes[i] == typeid) {
+                            removingPos = i;
+                            break;
+                        }
+                    }
+                    if (removingPos != -1) {
+                        console.log(viewedEdgeTypes);
+                        viewedEdgeTypes.splice(removingPos, 1);
+                        console.log(viewedEdgeTypes);
+                        if (viewedEdgeTypes.length == 0) {
+                            viewedEdgeTypes.push(networkGraph.EDGE_TYPE_DEFAULT);
+                        }
+                        console.log(viewedEdgeTypes);
+                        networkGraph.setEdgeViewMode(networkGraph.EDGE_VIEW_MODE_SELECTED, viewedEdgeTypes);
+                    }
+                }
+
                 $('#btnEditEdgeTypeName').attr('disabled', true);
                 $('#btnDeleteEdgeType').attr('disabled', true);
                 $('#manageEdgeTypeColorList').css('visibility', 'hidden');
@@ -1934,12 +1984,11 @@ function generateSaveGraphJson(saveAs=false) {
         if (!saveAs && 'serverId' in edgeData.target) {
             json['n2_id'] = edgeData.target.serverId;
         } else json['n2_client_id'] = edgeData.target.id;
-        json['edge_type_id'] = null;
         if (edgeData.type != null) {
             if (!saveAs && 'serverId' in edgeTypes[edgeData.type]) {
                 json['edge_type_id'] = edgeTypes[edgeData.type].serverId;
-            } else json['edge_type_client_id'] = parseInt(nodeData.type);
-        }
+            } else json['edge_type_client_id'] = parseInt(edgeData.type);
+        } else json['edge_type_id'] = null;
         json['influence_value'] = parseFloat(edgeData.name);
         graphData['edge_set'].push(json);
     }
