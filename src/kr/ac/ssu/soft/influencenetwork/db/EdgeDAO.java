@@ -29,10 +29,7 @@ public class EdgeDAO {
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, edge.getOrigin().getId());
 			pstmt.setInt(2, edge.getDestination().getId());
-			if(edge.getEdgeType() != null)
-				pstmt.setInt(3, edge.getEdgeType().getId());
-			else
-				pstmt.setInt(3, -1);
+            pstmt.setInt(3, edge.getEdgeType().getId());
 			pstmt.setFloat(4, edge.getInfluenceValue());
 			pstmt.setInt(5, graph_id);
 			pstmt.executeUpdate();
@@ -99,19 +96,15 @@ public class EdgeDAO {
 			return false;
 
 		conn = DBManager.getConnection();
-		String sql = "UPDATE edge SET influenceValue = ? WHERE n1_id=? AND n2_id=? AND type_id=?";
+		String sql = "UPDATE edge SET influenceValue = ?, type_id = ?WHERE n1_id=? AND n2_id=? AND type_id=?";
 
 		try {
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setFloat(1, influenceValue);
-			pstmt.setInt(2, n1.getId());
-			pstmt.setInt(3, n2.getId());
-			if(edgeType == null) {
-//				EdgeTypeDAO edgeTypeDAO = new EdgeTypeDAO();
-				pstmt.setInt(4, -1);
-			}
-			else
-				pstmt.setInt(4, edgeType.getId());
+            pstmt.setInt(2, edgeType.getId());
+			pstmt.setInt(3, n1.getId());
+			pstmt.setInt(4, n2.getId());
+            pstmt.setInt(5, edgeType.getId());
 			pstmt.executeUpdate();
 			DBManager.closeConnection(conn, pstmt);
 			return true;
@@ -132,10 +125,7 @@ public class EdgeDAO {
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, n1.getId());
 			pstmt.setInt(2, n2.getId());
-			if(edgeType == null)
-				pstmt.setInt(3, -1);
-			else
-				pstmt.setInt(3, edgeType.getId());
+            pstmt.setInt(3, edgeType.getId());
 			pstmt.executeUpdate();
 			DBManager.closeConnection(conn, pstmt);
 			return true;

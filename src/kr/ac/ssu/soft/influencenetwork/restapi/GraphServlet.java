@@ -63,7 +63,6 @@ public class GraphServlet extends HttpServlet {
             try {
                 InfluenceGraph ig = influenceGraphDAO.getInfluenceGraph(Integer.parseInt(id));
                 currentGraph = ig;
-                defaultEdgeTypeId = currentGraph.getEdgeTypeDefaultId();
 
                 JSONObject influenceGraphJsonObject = new JSONObject();
                 influenceGraphJsonObject.put("graph_id", ig.getId());
@@ -111,6 +110,9 @@ public class GraphServlet extends HttpServlet {
                 Set<EdgeType> edgeTypeSet = ig.getEdgeTypeSet();
                 JSONArray edgeTypeSetJsonArray = new JSONArray();
                 for (EdgeType et : edgeTypeSet) {
+                    if (et == currentGraph.getDefaultEdgeType())
+                       continue;
+
                     JSONObject edgetypeJsonObject = new JSONObject();
                     edgetypeJsonObject.put("edge_type_id", et.getId());
                     edgetypeJsonObject.put("color", et.getColor());
@@ -125,6 +127,10 @@ public class GraphServlet extends HttpServlet {
                     JSONObject edgeJsonObject = new JSONObject();
                     edgeJsonObject.put("n1_id", e.getOrigin().getId());
                     edgeJsonObject.put("n2_id", e.getDestination().getId());
+                    if (e.getEdgeType() != currentGraph.getDefaultEdgeType())
+                        edgeJsonObject.put("edge_type_id", e.getEdgeType().getId());
+                    else
+                        edgeJsonObject.put("edge_type_id", null);
                     edgeJsonObject.put("influence_value", e.getInfluenceValue());
                     edgeSetJsonArray.add(edgeJsonObject);
                 }
@@ -626,8 +632,7 @@ public class GraphServlet extends HttpServlet {
                     if(edgeJsonObject.get("edge_type_id") != null) {
                         edgeTypeId = Integer.parseInt(edgeJsonObject.get("edge_type_id").toString());
                     } else {
-                        EdgeTypeDAO edgeTypeDAO = new EdgeTypeDAO();
-                        edgeTypeId = edgeTypeDAO.getDefaultEdgeTypeId(currentGraph.getId());
+                        edgeTypeId = currentGraph.getDefaultEdgeType().getId();
                     }
                     hasEdgeTypeId = true;
                 } else {

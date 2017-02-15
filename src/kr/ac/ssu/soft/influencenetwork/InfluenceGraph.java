@@ -9,6 +9,7 @@ public class InfluenceGraph {
     private int id;
     private String name;
     private String userEmail;
+    private EdgeType defaultEdgeType;
 
     private Set<NodeType> nodeTypeSet = new TreeSet<NodeType>();
     private Set<Node> nodeSet = new TreeSet<Node>();
@@ -276,8 +277,8 @@ public class InfluenceGraph {
         return null;
     }
 
-    public int getEdgeTypeDefaultId() {
-        return edgeTypeDAO.getDefaultEdgeTypeId(id);
+    public EdgeType getDefaultEdgeType() {
+        return defaultEdgeType;
     }
 
     public boolean updateEdgeType(EdgeType et) {
@@ -510,7 +511,14 @@ public class InfluenceGraph {
         nodeSet.addAll(nodeDAO.getNodeSet(id, nodeTypeSet));
         edgeTypeSet.addAll(edgeTypeDAO.getEdgeTypeSet(id));
         edgeSet.addAll(edgeDAO.getEdgeSet(id, nodeSet, edgeTypeSet));
-        EdgeType defaultEdgeType = null;
+
+        /* set default edge type */
+        for (EdgeType et : edgeTypeSet) {
+            if(et.getName().equals("default") && et.getColor().equals("default")) {
+                defaultEdgeType = et;
+                break;
+            }
+        }
         return 0;
     }
 

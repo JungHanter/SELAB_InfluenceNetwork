@@ -71,8 +71,6 @@ public class EdgeTypeDAO {
                 int id = rs.getInt(1);
                 String edgetypeName = rs.getString(2);
                 String edgetypeColor = rs.getString(3);
-                if(edgetypeName.equals("default") && edgetypeColor.equals("default"))
-                    continue;
                 EdgeType edgeType = new EdgeType(edgetypeColor, edgetypeName);
                 edgeType.setId(id);
                 edgeTypeSet.add(edgeType);
@@ -115,7 +113,7 @@ public class EdgeTypeDAO {
             pstmt.setInt(1, edgeTypeId);
             pstmt.executeUpdate();
 
-            sql = "UPDATE edge SET type_id = -1 WHERE type_id = ?";
+            sql = "UPDATE edge SET type_id = (SELECT id FROM edgetype WHERE name=\"default\" AND color = \"default\") WHERE type_id = ?";
             pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, edgeTypeId);
             pstmt.executeUpdate();
@@ -128,26 +126,5 @@ public class EdgeTypeDAO {
             System.out.println(e.getErrorCode() + " " + e.getMessage());
             return false;
         }
-    }
-
-    public int getDefaultEdgeTypeId(int graphId) {
-        conn = DBManager.getConnection();
-        String sql = "SELECT id FROM edgetype WHERE name = ?, color = ?, graph_id = ?";
-        int id = -1;
-
-        try {
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1,"default");
-            pstmt.setString(2,"default");
-            pstmt.setInt(3, graphId);
-            ResultSet rs = pstmt.executeQuery(sql);
-            if (rs.next()) {
-                id = rs.getInt(1);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        DBManager.closeConnection(conn, pstmt);
-        return id;
     }
 }
