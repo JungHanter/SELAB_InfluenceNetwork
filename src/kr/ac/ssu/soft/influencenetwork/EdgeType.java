@@ -35,8 +35,8 @@ public class EdgeType implements Comparable<EdgeType> {
 	}
 
 	@Override
-	public int compareTo(EdgeType o) {
-		if (this==o) return 0;
-		return id - o.getId();
+	public int compareTo(EdgeType et) {
+		if (this==et) return 0;
+		return id - et.getId();
 	}
 }

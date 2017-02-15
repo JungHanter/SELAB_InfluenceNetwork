@@ -49,7 +49,12 @@ public class Edge implements Comparable<Edge> {
 		if (this == o) return 0;
 		int comp = n1.compareTo(o.n1);
 		if (comp == 0) {
-			return n2.compareTo(o.n2);
+			int comp2 = n2.compareTo(o.n2);
+			if(comp2 == 0) {
+				return edgeType.compareTo(o.edgeType);
+			} else {
+				return comp2;
+			}
 		} else {
 			return comp;
 		}
