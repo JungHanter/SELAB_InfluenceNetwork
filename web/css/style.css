@@ -24,6 +24,9 @@ body {
     /*min-width: 996px;*/
     min-width: 1600px;
 }
+.navbar > .top-menu.top-menu-main {
+    min-width: 996px;
+}
 .top-menu .navbar-nav {
     float: left;
     margin: 0;
@@ -323,7 +326,8 @@ body {
 .subMenuEdgeNodeDropdown .nodeTypeId,
 .newEdgeDlgNodeDropdown .nodeTypeId,
 #subMenuEdgeType .edgeTypeId,
-#subMenuEdgeTypeDropdown .edgeTypeId {
+#subMenuEdgeTypeDropdown .edgeTypeId,
+#newEdgeDlgTypeDropdown .edgeTypeId {
     display: none;
 }
 
