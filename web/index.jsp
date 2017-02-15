@@ -291,12 +291,11 @@
               <div class="form-group">
                 <label for="inputEmail" >Email Address</label>
                 <input type="email" id="inputEmail" name="email" maxlength="100"
-                       class="form-control form-control-input valid"
+                       <%--class="form-control form-control-input valid"--%>
+                       class="form-control valid"
                        placeholder="Email" required>
-                <button type="button" id="btnCheckEmail" class="btn btn-dark btn-block
-                                                                                        form-control form-control-button">
-                  Check
-                </button>
+                <%--<button type="button" id="btnCheckEmail" class="btn btn-dark btn-block--%>
+                        <%--form-control form-control-button">Check</button>--%>
               </div>
               <div class="form-group">
                 <label for="inputPw">Password</label>
