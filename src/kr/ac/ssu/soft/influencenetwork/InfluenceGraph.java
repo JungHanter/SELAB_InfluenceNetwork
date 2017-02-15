@@ -452,6 +452,8 @@ public class InfluenceGraph {
         int maxIndex = 0;
         Path maxInfluencePath;
 
+        if (pathArrayList == null)
+            return null;
         if (pathArrayList.size()!=0) {
             for (int i = 0; i < pathArrayList.size(); i++) {
                 float temp = influence(pathArrayList.get(i));
