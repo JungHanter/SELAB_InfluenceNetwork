@@ -27,6 +27,7 @@ public class GraphServlet extends HttpServlet {
     InfluenceGraph currentGraph = null;
     InfluenceGraphDAO influenceGraphDAO = new InfluenceGraphDAO();
     NodeDAO nodeDAO = new  NodeDAO();
+    int defaultEdgeTypeId = -1;
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -61,11 +62,13 @@ public class GraphServlet extends HttpServlet {
         } else if(id != null) {             /** getGraph */
             try {
                 InfluenceGraph ig = influenceGraphDAO.getInfluenceGraph(Integer.parseInt(id));
+                currentGraph = ig;
+                defaultEdgeTypeId = currentGraph.getEdgeTypeDefaultId();
+
                 JSONObject influenceGraphJsonObject = new JSONObject();
                 influenceGraphJsonObject.put("graph_id", ig.getId());
                 influenceGraphJsonObject.put("graph_name", ig.getName());
 
-                currentGraph = ig;
                 Set<NodeType> nodeTypeSet = ig.getNodeTypeSet();
                 JSONArray nodeTypeJsonArray = new JSONArray();
                 for (NodeType nt : nodeTypeSet) {
@@ -579,6 +582,7 @@ public class GraphServlet extends HttpServlet {
             HashSet<EdgeType> deletingEdgetypeSet = new HashSet<>();
             deletingEdgetypeSet.addAll(edgeTypeSet);
             deletingEdgetypeSet.removeAll(edgeTypeRecievedSet);
+            deletingEdgetypeSet.remove(currentGraph.getDefaultEdgeType());
 
             for (EdgeType et : deletingEdgetypeSet) {
                 currentGraph.deleteEdgeType(et);

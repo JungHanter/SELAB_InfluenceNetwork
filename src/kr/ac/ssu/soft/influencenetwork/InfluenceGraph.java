@@ -276,6 +276,10 @@ public class InfluenceGraph {
         return null;
     }
 
+    public int getEdgeTypeDefaultId() {
+        return edgeTypeDAO.getDefaultEdgeTypeId(id);
+    }
+
     public boolean updateEdgeType(EdgeType et) {
         if(edgeTypeSet.contains(et)) {
             return edgeTypeDAO.updateEdgeType(et);
@@ -506,7 +510,7 @@ public class InfluenceGraph {
         nodeSet.addAll(nodeDAO.getNodeSet(id, nodeTypeSet));
         edgeTypeSet.addAll(edgeTypeDAO.getEdgeTypeSet(id));
         edgeSet.addAll(edgeDAO.getEdgeSet(id, nodeSet, edgeTypeSet));
-
+        EdgeType defaultEdgeType = null;
         return 0;
     }
 

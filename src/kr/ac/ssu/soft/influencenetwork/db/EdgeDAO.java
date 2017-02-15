@@ -69,19 +69,17 @@ public class EdgeDAO {
 				Node n1 = null, n2 = null;
 				EdgeType edgeType = null;
 
+                for (EdgeType et : edgeTypeSet) {
+                    if (type_id == et.getId()) {
+                        edgeType = et;
+                    }
+                }
+
 				for (Node node : nodeSet) {
 					if(node.getId() == n1_id)
 						n1 = node;
 					if(node.getId() == n2_id)
 						n2 = node;
-				}
-
-				if(type_id != -1) {
-					for (EdgeType et : edgeTypeSet) {
-						if (type_id == et.getId()) {
-							edgeType = et;
-						}
-					}
 				}
 
 				Edge edge = new Edge(edgeType, n1, n2, influenceValue);
