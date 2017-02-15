@@ -353,7 +353,8 @@ body {
 }
 
 #manageNodeTypeModal .modal-body .list-group,
-#manageEdgeTypeModal .modal-body .list-group {
+#manageEdgeTypeModal .modal-body .list-group,
+#manageEdgeTypeViewModal .modal-body .list-group {
     max-height: 300px;
     overflow-y: scroll;
     overflow-x: hidden;
@@ -361,17 +362,20 @@ body {
 #manageNodeTypeList .typeColor,
 #manageNodeTypeColorList .typeColor,
 #manageEdgeTypeList .typeColor,
-#manageEdgeTypeColorList .typeColor {
+#manageEdgeTypeColorList .typeColor,
+#manageEdgeTypeViewList .typeColor{
     width: 20px;
     display: inline-block;
     float: right;
 }
 #manageNodeTypeList .typeId,
-#manageEdgeTypeList .typeId{
+#manageEdgeTypeList .typeId,
+#manageEdgeTypeViewList .typeId{
     display: none;
 }
 #manageNodeTypeList .list-group-item,
-#manageEdgeTypeList .list-group-item{
+#manageEdgeTypeList .list-group-item,
+#manageEdgeTypeViewList .list-group-item{
     min-height: 42px;
 }
 #manageNodeTypeList .list-group-item.active,
@@ -385,7 +389,10 @@ body {
 #manageEdgeTypeList .list-group-item.active:focus,
 #manageEdgeTypeColorList .list-group-item.active,
 #manageEdgeTypeColorList .list-group-item.active:hover,
-#manageEdgeTypeColorList .list-group-item.active:focus{
+#manageEdgeTypeColorList .list-group-item.active:focus,
+#manageEdgeTypeViewList .list-group-item.active,
+#manageEdgeTypeViewList .list-group-item.active:hover,
+#manageEdgeTypeViewList .list-group-item.active:focus{
     border-color: #bdbdbd;
 }
 
@@ -588,4 +595,5 @@ body {
 .type-color-text.type-color-grey { color: white !important; }
 .type-color-bg.type-color-blue-grey { background-color: #607d8b !important; }
 .type-color-text.type-color-blue-grey { color: white !important; }
-
+.type-color-bg.type-color-default { background-color: #424242 !important; }
+.type-color-text.type-color-default { color: white !important; }

@@ -50,11 +50,13 @@
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">View</a>
           <ul class="dropdown-menu">
-            <li><a id="" href="#">Graphical View</a></li>
-            <li><a id="" href="#">Table View</a></li>
+            <li><a href="#">Graphical View</a></li>
+            <li><a href="#">Table View</a></li>
             <li role="separator" class="divider"></li>
-            <li><a id="" href="#">Zoom-In</a></li>
-            <li><a id="" href="#">Zoom-Out</a></li>
+            <li><a class="menuManageEdgeTypeView" href="#">Edge Type View Setting</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="#">Zoom-In</a></li>
+            <li><a href="#">Zoom-Out</a></li>
           </ul>
         </li>
         <li class="dropdown">
@@ -574,6 +576,38 @@
           </div>
         </div>
 
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="manageEdgeTypeViewModal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Edge Type View Setting</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-xs-12">
+            <div class="list-header">
+              <h5>Node Types</h5>
+            </div>
+            <div id="manageEdgeTypeViewList" class="list-group">
+              <a href="#" class="list-group-item active">Type 1</a>
+              <a href="#" class="list-group-item">Type 2</a>
+            </div>
+          </div>
+        </div>
+        <div class="checkbox" style="margin: 0;">
+          <label style="font-weight: normal; margin: 0;">
+            <input id="checkboxAllEdgeTypeView" type="checkbox" value="remember"> Show All Edge Types
+          </label>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
