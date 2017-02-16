@@ -62,20 +62,20 @@
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Analyze</a>
           <ul class="dropdown-menu">
-            <li><a id="menuSummary" href="#">Summary</a></li>
-            <li><a id="menuStatistics" href="#">Statistics</a></li>
+            <li><a class="menuSummary" href="#">Summary</a></li>
+            <li><a class="menuStatistics" href="#">Statistics</a></li>
             <li role="separator" class="divider"></li>
-            <li><a id="menuMaxInfluence" href="#">Max Influence</a></li>
+            <li><a class="menuMaxInfluence" href="#">Max Influence</a></li>
           </ul>
         </li>
         <li class="dropdown">
           <a href="#" class="dropdown-toggle dropdown-default" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Resource</a>
           <ul class="dropdown-menu">
-            <li><a id="" href="#">News</a></li>
-            <li><a id="" href="#">Events</a></li>
+            <li><a href="#">News</a></li>
+            <li><a href="#">Events</a></li>
             <li role="separator" class="divider"></li>
-            <li><a id="" href="#">Sites</a></li>
-            <li><a id="" href="#">Resources</a></li>
+            <li><a href="#">Sites</a></li>
+            <li><a href="#">Resources</a></li>
           </ul>
         </li>
       </ul>
@@ -373,7 +373,7 @@
         <div>
           <span>Edge Type : </span><br/>
           <div class="btn-group">
-            <div id="newEdgeDlgType" class="btn btn-default btn-selection long-length unselected newEdgeDlgNode">Select Target Node</div>
+            <div id="newEdgeDlgType" class="btn btn-default btn-selection long-length unselected">Select Type</div>
             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <span class="caret"></span>
               <span class="sr-only">Toggle Dropdown</span>
@@ -683,17 +683,59 @@
   </div>
 </div>
 
-<div id="findMaxInfluencePathModal" class="modal fade" tabindex="-1" role="dialog">
+<div id="findMaxInfPathModal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">Alert</h4>
+        <h4 class="modal-title">Find Max Influence Path</h4>
       </div>
       <div class="modal-body">
+        <div>
+          <span>Source Node : </span><br/>
+          <div class="btn-group">
+            <div id="findMaxInfDlgSource" class="btn btn-default btn-selection long-length unselected findMaxInfDlgNode">Select Source Node</div>
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <span class="caret"></span>
+              <span class="sr-only">Toggle Dropdown</span>
+            </button>
+            <ul id="findMaxInfDlgSourceDropdown" class="dropdown-menu findMaxInfDlgNodeDropdown">
+              <li><a href="#">Node 1</a></li>
+            </ul>
+          </div>
+        </div>
+        <br/>
+        <div>
+          <span>Target Node : </span><br/>
+          <div class="btn-group">
+            <div id="findMaxInfDlgTarget" class="btn btn-default btn-selection long-length unselected findMaxInfDlgNode">Select Target Node</div>
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <span class="caret"></span>
+              <span class="sr-only">Toggle Dropdown</span>
+            </button>
+            <ul id="findMaxInfDlgTargetDropdown" class="dropdown-menu findMaxInfDlgNodeDropdown">
+              <li><a href="#">Node 1</a></li>
+            </ul>
+          </div>
+        </div>
+        <br/>
+        <div>
+          <span>Edge Type : </span><br/>
+          <div class="btn-group">
+            <div id="findMaxInfDlgEdgeType" class="btn btn-default btn-selection long-length unselected">Select Type</div>
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <span class="caret"></span>
+              <span class="sr-only">Toggle Dropdown</span>
+            </button>
+            <ul id="findMaxInfDlgEdgeTypeDropdown" class="dropdown-menu">
+              <li><a href="#"><span class="edgeTypeColor type-color-bg">&nbsp;</span><span class="edgeTypeName">Type1</span></a></li>
+            </ul>
+          </div>
+        </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-dark" data-dismiss="modal">OK</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="button" id="btnFindMaxInfPathConfirm" class="btn btn-dark">Find</button>
       </div>
     </div>
   </div>

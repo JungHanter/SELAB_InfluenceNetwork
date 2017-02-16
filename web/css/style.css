@@ -304,7 +304,9 @@ body {
 .subMenuEdgeNode .nodeTypeColor,
 .newEdgeDlgNode .nodeTypeColor,
 #subMenuEdgeType .edgeTypeColor,
-#newEdgeDlgType .edgeTypeColor {
+#newEdgeDlgType .edgeTypeColor,
+.findMaxInfDlgNode .nodeTypeColor,
+#findMaxInfDlgEdgeType .edgeTypeColor {
     width: 20px;
     margin-right: 8px;
     display: inline-block;
@@ -313,21 +315,28 @@ body {
 .subMenuEdgeNodeDropdown .nodeTypeColor,
 .newEdgeDlgNodeDropdown .nodeTypeColor,
 #subMenuEdgeTypeDropdown .edgeTypeColor,
-#newEdgeDlgTypeDropdown .edgeTypeColor  {
+#newEdgeDlgTypeDropdown .edgeTypeColor,
+.findMaxInfDlgNodeDropdown .nodeTypeColor,
+#findMaxInfDlgEdgeTypeDropdown .edgeTypeColor {
     width: 20px;
     margin-right: 8px;
     display: inline-block;
 }
 
 #subMenuNodeType .nodeTypeId,
-.subMenuEdgeNode .nodeTypeId,
-.newEdgeDlgNode .nodeTypeId,
 #subMenuNodeTypeDropdown .nodeTypeId,
+.subMenuEdgeNode .nodeTypeId,
 .subMenuEdgeNodeDropdown .nodeTypeId,
+.newEdgeDlgNode .nodeTypeId,
 .newEdgeDlgNodeDropdown .nodeTypeId,
 #subMenuEdgeType .edgeTypeId,
 #subMenuEdgeTypeDropdown .edgeTypeId,
-#newEdgeDlgTypeDropdown .edgeTypeId {
+#newEdgeDlgType .edgeTypeId,
+#newEdgeDlgTypeDropdown .edgeTypeId,
+.findMaxInfDlgNode .nodeTypeId,
+.findMaxInfDlgNodeDropdown .nodeTypeId,
+#findMaxInfDlgEdgeType .edgeTypeId,
+#findMaxInfDlgEdgeTypeDropdown .edgeTypeId {
     display: none;
 }
 
