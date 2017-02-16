@@ -304,13 +304,11 @@ public class GraphServlet extends HttpServlet {
             ArrayList<Edge> maxInfluenceEdgeList = null;
 
             try {
-
-
-                InfluenceGraph influenceGraph = influenceGraphDAO.getInfluenceGraph(graphId);
-
                 graphId = Integer.parseInt(jsonObject.get("graph_id").toString());
                 n1Id = Integer.parseInt(jsonObject.get("n1_id").toString());
                 n2Id = Integer.parseInt(jsonObject.get("n2_id").toString());
+                InfluenceGraph influenceGraph = influenceGraphDAO.getInfluenceGraph(graphId);
+
                 if(jsonObject.get("edge_type_id") != null)
                     edgeTypeId = Integer.parseInt(jsonObject.get("edge_type_id").toString());
                 else
