@@ -614,7 +614,7 @@ public class GraphServlet extends HttpServlet {
                         }
                         else {           //new node, new node type
                             node = new Node(domainId, nodeType, name, x, y);
-                            if(currentGraph.updateNode(node) == false) {
+                            if(currentGraph.addNode(node) == false) {
                                 throw new Exception("failt to update a node");
                             }
                             clientIdNodeMap.put(clientId, node);
