@@ -450,19 +450,23 @@ public class InfluenceGraph {
         ArrayList<Path> pathArrayList = pathSet(source, target, et);
         float max = 0;
         int maxIndex = 0;
-        Path maxInfluencePath;
+        Path maxInfluencePath = null;
 
         if (pathArrayList == null)
             return null;
         if (pathArrayList.size()!=0) {
             for (int i = 0; i < pathArrayList.size(); i++) {
-                float temp = influence(pathArrayList.get(i));
-                if (temp > max) {
-                    max = temp;
+                Path path = pathArrayList.get(i);
+                float influenceValue = influence(path);
+                path.setInfluenceValue(influenceValue);
+
+                if (influenceValue > max) {
+                    max = influenceValue;
                     maxIndex = i;
+                    maxInfluencePath = path;
                 }
             }
-            maxInfluencePath = pathArrayList.get(maxIndex);
+//            maxInfluencePath = pathArrayList.get(maxIndex);
             return maxInfluencePath;
         }
         return null;

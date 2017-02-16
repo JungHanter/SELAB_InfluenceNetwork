@@ -26,8 +26,6 @@ public class GraphServlet extends HttpServlet {
 
     InfluenceGraph graph = null;
     InfluenceGraphDAO influenceGraphDAO = new InfluenceGraphDAO();
-    NodeDAO nodeDAO = new  NodeDAO();
-    int defaultEdgeTypeId = -1;
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -46,25 +44,37 @@ public class GraphServlet extends HttpServlet {
         if (id==null && email != null) {
 
             /** getGraphList */
-            ArrayList<InfluenceGraph> influenceGraphSet = influenceGraphDAO.getInfluenceGraphList(email);
-            if (influenceGraphSet != null) {
-                JSONArray influenceGraphJsonArray = new JSONArray();
-                for (InfluenceGraph ig : influenceGraphSet) {
-                    JSONObject influenceGraphJsonObject = new JSONObject();
-                    influenceGraphJsonObject.put("graph_id", ig.getId());
-                    influenceGraphJsonObject.put("graph_name", ig.getName());
-                    influenceGraphJsonArray.add(influenceGraphJsonObject);
+            try {
+                ArrayList<InfluenceGraph> influenceGraphSet = influenceGraphDAO.getInfluenceGraphList(email);
+                if (influenceGraphSet != null) {
+                    JSONArray influenceGraphJsonArray = new JSONArray();
+                    for (InfluenceGraph ig : influenceGraphSet) {
+                        JSONObject influenceGraphJsonObject = new JSONObject();
+                        influenceGraphJsonObject.put("graph_id", ig.getId());
+                        influenceGraphJsonObject.put("graph_name", ig.getName());
+                        influenceGraphJsonArray.add(influenceGraphJsonObject);
+                    }
+                    result.put("graph_list", influenceGraphJsonArray);
+                    result.put("result", "success");
+                    System.out.println(result.toJSONString());
+                    out.write(result.toJSONString());
+                } else {
+                    throw new Exception("fail to get the graph list");
                 }
-                result.put("graph_list", influenceGraphJsonArray);
-                result.put("result", "success");
-                System.out.println(result.toJSONString());
-                out.write(result.toJSONString());
+            } catch (Exception e) {
+                e.printStackTrace();
+                result = new JSONObject();
+                result.put("result", "fail");
+                result.put("message", e.getMessage());
             }
         } else if(id != null) {
 
             /** getGraph */
             try {
                 InfluenceGraph ig = influenceGraphDAO.getInfluenceGraph(Integer.parseInt(id));
+                if (ig == null) {
+                   throw new Exception("fail to get the graph");
+                }
                 graph = ig;
 
                 JSONObject influenceGraphJsonObject = new JSONObject();
@@ -126,6 +136,7 @@ public class GraphServlet extends HttpServlet {
 
                 Set<Edge> edgeSet = ig.getEdgeSet();
                 JSONArray edgeSetJsonArray = new JSONArray();
+
                 for (Edge e : edgeSet) {
                     JSONObject edgeJsonObject = new JSONObject();
                     edgeJsonObject.put("n1_id", e.getOrigin().getId());
@@ -135,11 +146,12 @@ public class GraphServlet extends HttpServlet {
                     else
                         edgeJsonObject.put("edge_type_id", null);
                     edgeJsonObject.put("influence_value", e.getInfluenceValue());
+
                     edgeSetJsonArray.add(edgeJsonObject);
                 }
                 influenceGraphJsonObject.put("edge_set", edgeSetJsonArray);
-
                 influenceGraphJsonObject.put("result", "success");
+
                 System.out.println(influenceGraphJsonObject.toJSONString());
                 out.write(influenceGraphJsonObject.toJSONString());
             } catch (Exception e) {
@@ -171,6 +183,8 @@ public class GraphServlet extends HttpServlet {
         BufferedReader br = null;
         PrintWriter out = null;
         String json = "";
+        JSONObject result = new JSONObject();
+
         try {
             br = new BufferedReader(new InputStreamReader(request.getInputStream()));
             out = response.getWriter();
@@ -178,25 +192,35 @@ public class GraphServlet extends HttpServlet {
             if (br != null) {
                 json = br.readLine();
             } else {
-                ///error
+                throw new Exception("fail to read buffer");
             }
         } catch (Exception e) {
             e.printStackTrace();
+            result = new JSONObject();
+            result.put("result", "fail");
+            result.put("message", e.getMessage());
+            out.write(result.toJSONString());
+            out.close();
+            return;
         }
         System.out.println(json);
 
         JSONParser parser = new JSONParser();
         JSONObject jsonObject = null;
-        JSONObject result = new JSONObject();
 
         try {
             jsonObject = (JSONObject) parser.parse(json);
         } catch (ParseException e) {
             e.printStackTrace();
+            result = new JSONObject();
+            result.put("result", "fail");
+            result.put("message", e.getMessage());
+            out.write(result.toJSONString());
+            out.close();
+            return;
         }
 
         String action = jsonObject.get("action").toString();
-
 
         /* choose action */
         if (action.equals("create")) {
@@ -206,13 +230,12 @@ public class GraphServlet extends HttpServlet {
                 InfluenceGraph newInfluenceGraph = new InfluenceGraph(graphName, userEmail);
                 graph = newInfluenceGraph;
                 if (influenceGraphDAO.saveInfluenceGraph(newInfluenceGraph) == 0) {
-                    int temp =newInfluenceGraph.getId();
+                    int temp = newInfluenceGraph.getId();
                     result.put("graph_id", temp);
                     result.put("graph_name", newInfluenceGraph.getName());
                     result.put("result", "success");
                 } else {
-                    result.put("result", "fail");
-                    result.put("message", "Graph name is duplicated");
+                    throw new Exception("fail to create a new graph");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -227,8 +250,7 @@ public class GraphServlet extends HttpServlet {
                 if (influenceGraphDAO.deleteInfluenceGraph(graphId) == 0) {
                     result.put("result", "success");
                 } else {
-                    result.put("result", "fail");
-                    result.put("message", "There is no graph that has same graph id.");
+                    throw new Exception("fail to delete the graph");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -242,9 +264,15 @@ public class GraphServlet extends HttpServlet {
                 JSONObject graph = (JSONObject)jsonObject.get("graph");
                 int graphId = Integer.parseInt(graph.get("graph_id").toString());
                 InfluenceGraph influenceGraph = influenceGraphDAO.getInfluenceGraph(graphId);
+                if (influenceGraph == null) {
+                    throw new Exception("fail to save the graph");
+                }
                 result = save(influenceGraph, graph);
             } catch (Exception e) {
                 e.printStackTrace();
+                result = new JSONObject();
+                result.put("result", "fail");
+                result.put("message", e.getMessage());
             }
         }
         else if (action.equals("saveas")) {
@@ -253,13 +281,15 @@ public class GraphServlet extends HttpServlet {
             JSONObject graph = (JSONObject) jsonObject.get("graph");
 
             InfluenceGraph influenceGraph = new InfluenceGraph(graphName, userEmail);
-            influenceGraphDAO.saveInfluenceGraph(influenceGraph);
-            result = save(influenceGraph, graph);
-
-            if (Integer.parseInt(result.get("graph_id").toString()) <= 0) {
+            try {
+                if(influenceGraphDAO.saveInfluenceGraph(influenceGraph) != 0) {
+                    throw new Exception("fail to saveas the graph");
+                }
+                result = save(influenceGraph, graph);
+            } catch (Exception e) {
                 result = new JSONObject();
                 result.put("result", "fail");
-                result.put("message", "Save as server error.");
+                result.put("message", e.getMessage());
             }
         } else if (action.equals("maxinfluence")) {
             int graphId = 0, n1Id = 0, n2Id = 0, edgeTypeId = 0;
@@ -290,6 +320,7 @@ public class GraphServlet extends HttpServlet {
                     edgeJSONObject.put("influence_value", e.getInfluenceValue());
                     edgeListJSONArray.add(edgeJSONObject);
                 }
+                result.put("max_influence_value", maxInfluencePath.getInfluenceValue());
                 result.put("edge_list", edgeListJSONArray);
                 result.put("result", "success");
             } catch (Exception e) {
@@ -549,14 +580,12 @@ public class GraphServlet extends HttpServlet {
                         nodeType = currentGraph.getNodeType(nodetypeId);
                         if(nodeType != null) {
                             node = new Node(domainId, nodeType, name, x, y);
-//                            nodeDAO.saveNode(node, currentGraph.getId());
                             if(currentGraph.addNode(node) == false) {
                                 throw new Exception("failt to add a node");
                             }
                         }
                         else {
                             node = new Node(domainId, null, name, x, y);
-//                            nodeDAO.saveNode(node, currentGraph.getId());
                             if(currentGraph.addNode(node) == false) {
                                 throw new Exception("failt to add a node");
                             }
@@ -568,14 +597,12 @@ public class GraphServlet extends HttpServlet {
                         if (hasId) {    //old node, new node type
                             node = currentGraph.getNode(id);
                             node.setNodeType(nodeType);
-//                            nodeDAO.updateNode(node);
                             if(currentGraph.updateNode(node) == false) {
                                 throw new Exception("failt to update a node");
                             }
                         }
                         else {           //new node, new node type
                             node = new Node(domainId, nodeType, name, x, y);
-//                            nodeDAO.saveNode(node, currentGraph.getId());
                             if(currentGraph.updateNode(node) == false) {
                                 throw new Exception("failt to update a node");
                             }
@@ -781,7 +808,7 @@ public class GraphServlet extends HttpServlet {
             result.put("result", "fail");
             result.put("message", e.getMessage());
         }
-        return  result;
+        return result;
     }
 }
 
