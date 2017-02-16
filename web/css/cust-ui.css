@@ -28,3 +28,30 @@
     border-radius: 6px;
     min-width: 160px;
 }
+
+.toast.fixed-toast {
+    top: 120px;
+    right: 10px;
+    left: auto;
+    z-index: 1900;
+}
+
+.toast.fixed-toast .toast-wrapper {
+    min-width: 320px;
+    max-width: 480px;
+    margin: 0;
+}
+
+.toast.fixed-toast .toast-wrapper .toast-alert {
+    text-align: left;
+}
+
+.toast.fixed-toast .toast-wrapper .toast-alert .toast-body {
+    min-width: 320px;
+    width: 100%;
+}
+
+.toast.fixed-toast .close {
+    color: #fff;
+    opacity: .5;
+}
