@@ -1441,9 +1441,11 @@ function initFindMaxInfluencePathUI() {
                                     targetNode = networkGraph.getNodeById(targetId);
                                 var edgeType = null;
                                 if (edgeTypeId != 'default') {
-                                    edgeTypeId = parseInt(edgeTypeId)
+                                    edgeTypeId = parseInt(edgeTypeId);
                                     edgeType = edgeTypes[edgeTypeId];
                                 }
+                                var edgeTypeServerId = null;
+                                if (edgeType != null) edgeTypeServerId = edgeType.serverId;
 
                                 $.ajax("/graph", {
                                     method: 'POST',
@@ -1453,7 +1455,7 @@ function initFindMaxInfluencePathUI() {
                                         graph_id: nowGraphInfo.graphId,
                                         n1_id: sourceNode.serverId,
                                         n2_id: targetNode.serverId,
-                                        edge_type_id: edgeType.serverId
+                                        edge_type_id: edgeTypeServerId
                                     }),
                                     success: function (res) {
                                         $.LoadingOverlay('hide');
@@ -1621,8 +1623,6 @@ function initControllers() {
         $('.graph-close-overlay > h4').css('margin-top', graphOverlayTextMarginTop);
     });
 
-    // getSesison();
-
     $('.main-menu > .dropdown > .dropdown-toggle').attr('disabled', true)
         .addClass('disabled');
     $('#signinForm').on('submit', function (e) {
@@ -1645,22 +1645,6 @@ function initControllers() {
         signup();
     });
 
-    //for test
-    user = {user_name: 'sm', email: 'sm@gmail.com'}
-    $('#menuSignin').hide();
-    $('#menuUserWelcome').text("Welcome " + user.user_name + "!");
-    $('#menuUser').show();
-    $('.content').show();
-    $('.welcome-overlay').hide();
-    $('.main-menu > .dropdown > .dropdown-toggle')
-        .attr('disabled', false).removeClass('disabled');
-    setGraphUIEnable(false);
-
-    //for test 2
-    setGraphUIEnable(true);
-    $('#graphName').text("GRAPH");
-    nowGraphInfo = {graphId: 1234, graphName: "GRAPH"};
-
     $('#btnNewGraph').click(function() {
         var newGraphName = $('#newGraphName').val();
         if (newGraphName!=null && /\S/.test(newGraphName)) {
@@ -1680,7 +1664,6 @@ function initControllers() {
             }
         } else openAlertModal("Please input a graph name.", "Create Error");
     });
-
     $('#btnOpenGraph').click(function() {
         var selectedGraphId = parseInt($('#graphList .list-group-item.active').data('graphid'));
         if (!isNaN(selectedGraphId) && isFinite(selectedGraphId))  {
@@ -1696,7 +1679,6 @@ function initControllers() {
             }
         } else openAlertModal("Please select a graph.", "Open Error");
     });
-
     $('#btnSaveAsGraph').click(function() {
         var graphName = $('#saveAsGraphName').val();
         if(/\S/.test(graphName)) {
@@ -1706,6 +1688,24 @@ function initControllers() {
             openAlertModal("Graph name is empty!", "Save As Failure");
         }
     });
+
+    getSession();
+
+    //for test
+    /*user = {user_name: 'sm', email: 'sm@gmail.com'}
+    $('#menuSignin').hide();
+    $('#menuUserWelcome').text("Welcome " + user.user_name + "!");
+    $('#menuUser').show();
+    $('.content').show();
+    $('.welcome-overlay').hide();
+    $('.main-menu > .dropdown > .dropdown-toggle')
+        .attr('disabled', false).removeClass('disabled');
+    setGraphUIEnable(false);
+
+    //for test 2
+    setGraphUIEnable(true);
+    $('#graphName').text("GRAPH");
+    nowGraphInfo = {graphId: 1234, graphName: "GRAPH"};*/
 }
 
 function setGraphUIEnable(enable) {
@@ -1775,7 +1775,7 @@ function signup() {
     }
 }
 
-function getSesison() {
+function getSession() {
     $.LoadingOverlay('show');
     $.ajax("/session", {
         method: 'GET',
