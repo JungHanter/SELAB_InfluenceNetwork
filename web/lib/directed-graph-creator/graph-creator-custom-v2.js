@@ -75,11 +75,19 @@ document.onload = (function(d3, saveAs, Blob, undefined){
             .attr('orient', 'auto')
             .append('svg:path')
             .attr('d', 'M0,-5L10,0L0,5');
-
         defs.append('svg:marker')
             .attr('id', 'end-arrow-hover')
             .attr('viewBox', '-1 -5 10 10')
             .attr('refX', "32")
+            .attr('markerWidth', 3.5)
+            .attr('markerHeight', 3.5)
+            .attr('orient', 'auto')
+            .append('svg:path')
+            .attr('d', 'M0,-5L10,0L0,5');
+        defs.append('svg:marker')
+            .attr('id', 'end-arrow-highlight')
+            .attr('viewBox', '-1 -5 10 10')
+            .attr('refX', "26")
             .attr('markerWidth', 3.5)
             .attr('markerHeight', 3.5)
             .attr('orient', 'auto')
@@ -169,6 +177,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
     GraphCreator.prototype.consts =  {
         selectedClass: "selected",
         unviewedClass: "unviewed",
+        hightlightClass: "highlight",
         connectClass: "connect-node",
         circleGClass: "conceptG",
         typeColorHead: "type-color-",
@@ -704,9 +713,10 @@ document.onload = (function(d3, saveAs, Blob, undefined){
     // call to propagate changes to graph
     GraphCreator.prototype.updateGraph = function(){
         var thisGraph = this,
-                consts = thisGraph.consts,
-                state = thisGraph.state;
+            consts = thisGraph.consts,
+            state = thisGraph.state;
 
+        // update existing path
         thisGraph.paths = thisGraph.paths.data(thisGraph.edges, function(d){
             return String(d.source.id) + "+" + String(d.target.id)
                 + "+" + String(d.type);
@@ -751,7 +761,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
             selTypePaths.each(function(d) {
                 d3.select(this.parentNode).classed(consts.unviewedClass, false);
             });
-            selTypePaths.select("path")
+            selTypePaths
                 .classed(consts.selectedClass, function(d){
                     return d === state.selectedEdge;
                 })
@@ -764,7 +774,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                         }
                     });
                     // console.log("(update)" + d.source.id + " -> " + d.target.id);
-                    console.log(filtRes);
+                    // console.log(filtRes);
                     if(filtRes[0].length == 1) {    //bi-direct
                         d.bilateral = true;
                         var x = d.source.x - d.target.x;
@@ -1214,14 +1224,14 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         return null;
     };
 
-    GraphCreator.prototype.getEdge = function(sourceId, targetId, type) {
+    GraphCreator.prototype.getEdge = function(sourceId, targetId, edgeTypeId) {
         var source = this.getNodeById(sourceId),
             target = this.getNodeById(targetId);
         if (source == null || target == null) return null;
         for (var i=0; i<this.edges.length; i++) {
             var edge = this.edges[i];
             if (edge.source == source && edge.target == target
-                && edge.type == type) return edge;
+                && edge.type == edgeTypeId) return edge;
         }
         return null;
     };
@@ -1268,21 +1278,53 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                     thisGraph.edgeTypeSelectedList.push(edgeType);
                 }
                 thisGraph.edgeInfPathList = [];
+                thisGraph.highlightPath();
                 break;
             case thisGraph.EDGE_VIEW_MODE_SELECTED:
                 thisGraph.edgeViewMode = mode;
                 thisGraph.edgeTypeSelectedList = selectedList;  //edge type list
                 thisGraph.edgeInfPathList = [];
+                thisGraph.highlightPath();
                 break;
             case thisGraph.EDGE_VIEW_MODE_PATH:
                 thisGraph.edgeViewMode = mode;
                 thisGraph.edgeTypeSelectedList = [];
                 thisGraph.edgeInfPathList = selectedList;   //edge list in path
+                thisGraph.highlightPath(selectedList);
                 break;
         }
         thisGraph.unselect();
         thisGraph.updateGraph();
         thisGraph.updateEdgeType(this.paths);
+    };
+
+    GraphCreator.prototype.highlightPath = function(edgeList) {
+        var thisGraph = this,
+            consts = thisGraph.consts;
+        var circles = thisGraph.circles;
+        var paths = thisGraph.paths;
+        if (!edgeList) edgeList = [];
+
+        var allPaths = paths.select("path");
+        allPaths.each(function(d) {
+            if (isIncludeArray(edgeList, d))
+                d3.select(this.parentNode).classed(consts.hightlightClass, true);
+            else d3.select(this.parentNode).classed(consts.hightlightClass, false);
+        });
+
+        if (edgeList.length >= 1) {
+            var startNode = edgeList[0].source;
+            var endNode = edgeList[edgeList.length - 1].target;
+            circles.each(function (d) {
+                if (d == startNode || d == endNode)
+                    d3.select(this).classed(consts.hightlightClass, true);
+                else d3.select(this).classed(consts.hightlightClass, false);
+            });
+        } else {
+            circles.each(function (d) {
+                d3.select(this).classed(consts.hightlightClass, false);
+            });
+        }
     };
 
     GraphCreator.prototype.deleteNode = function() {

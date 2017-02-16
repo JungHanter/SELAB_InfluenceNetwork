@@ -776,6 +776,21 @@
   </div>
 </div>
 
+<div id="infPathFixedToast" class="toast fixed-toast" role="alert">
+  <div class="toast-wrapper">
+    <div class="toast-alert" role="document">
+      <div class="toast-body">
+        <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <div id="infPathFixedInfo">
+          Max Influence Path from &lt;A&gt; to &lt;B&gt; <br/>
+          Max Influence Value : 0.2561 <br/>
+          Edge Type: Sample Type
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="alertToast" class="toast" role="alert">
   <div class="toast-wrapper">
     <div class="toast-alert" role="document">
