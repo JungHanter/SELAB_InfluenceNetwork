@@ -25,9 +25,8 @@ import java.util.Set;
 public class GraphServlet extends HttpServlet {
 
     InfluenceGraph graph = null;
-    InfluenceGraphDAO influenceGraphDAO = new InfluenceGraphDAO();
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) {
 
         /* check session */
 //        JSONObject session = SessionServlet.getSession(request);
@@ -36,7 +35,14 @@ public class GraphServlet extends HttpServlet {
 //            return;
 //        }
 
-        PrintWriter out = response.getWriter();
+        InfluenceGraphDAO influenceGraphDAO = new InfluenceGraphDAO();
+        PrintWriter out = null;
+        try {
+            out = response.getWriter();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         String id = request.getParameter("graph_id");
         String email = request.getParameter("email");
         JSONObject result = new JSONObject();
@@ -180,6 +186,7 @@ public class GraphServlet extends HttpServlet {
 //            return;
 //        }
 
+        InfluenceGraphDAO influenceGraphDAO = new InfluenceGraphDAO();
         BufferedReader br = null;
         PrintWriter out = null;
         String json = "";
@@ -300,9 +307,13 @@ public class GraphServlet extends HttpServlet {
                 graphId = Integer.parseInt(jsonObject.get("graph_id").toString());
                 n1Id = Integer.parseInt(jsonObject.get("n1_id").toString());
                 n2Id = Integer.parseInt(jsonObject.get("n2_id").toString());
-                edgeTypeId = Integer.parseInt(jsonObject.get("edge_type_id").toString());
-
                 InfluenceGraph influenceGraph = influenceGraphDAO.getInfluenceGraph(graphId);
+
+                if(jsonObject.get("edge_type_id") != null)
+                    edgeTypeId = Integer.parseInt(jsonObject.get("edge_type_id").toString());
+                else
+                    edgeTypeId = influenceGraph.getDefaultEdgeType().getId();
+
                 maxInfluencePath = influenceGraph.maxInfluencePath(influenceGraph.getNode(n1Id), influenceGraph.getNode(n2Id), influenceGraph.getEdgeType(edgeTypeId));
                 if(maxInfluencePath == null)
                     throw new Exception("No Path");
