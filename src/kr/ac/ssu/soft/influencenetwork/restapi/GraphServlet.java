@@ -25,7 +25,6 @@ import java.util.Set;
 public class GraphServlet extends HttpServlet {
 
     InfluenceGraph graph = null;
-    InfluenceGraphDAO influenceGraphDAO = new InfluenceGraphDAO();
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {
 
@@ -35,6 +34,8 @@ public class GraphServlet extends HttpServlet {
 //        if (result.equals("fail")) {
 //            return;
 //        }
+
+        InfluenceGraphDAO influenceGraphDAO = new InfluenceGraphDAO();
         PrintWriter out = null;
         try {
             out = response.getWriter();
@@ -185,6 +186,7 @@ public class GraphServlet extends HttpServlet {
 //            return;
 //        }
 
+        InfluenceGraphDAO influenceGraphDAO = new InfluenceGraphDAO();
         BufferedReader br = null;
         PrintWriter out = null;
         String json = "";
