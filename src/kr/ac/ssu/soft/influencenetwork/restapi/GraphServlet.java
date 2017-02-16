@@ -27,7 +27,7 @@ public class GraphServlet extends HttpServlet {
     InfluenceGraph graph = null;
     InfluenceGraphDAO influenceGraphDAO = new InfluenceGraphDAO();
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) {
 
         /* check session */
 //        JSONObject session = SessionServlet.getSession(request);
@@ -35,8 +35,13 @@ public class GraphServlet extends HttpServlet {
 //        if (result.equals("fail")) {
 //            return;
 //        }
+        PrintWriter out = null;
+        try {
+            out = response.getWriter();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        PrintWriter out = response.getWriter();
         String id = request.getParameter("graph_id");
         String email = request.getParameter("email");
         JSONObject result = new JSONObject();
