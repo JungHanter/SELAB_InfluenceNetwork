@@ -1443,7 +1443,7 @@ function initFindMaxInfluencePathUI() {
                                 if (edgeTypeId != 'default') {
                                     edgeTypeId = parseInt(edgeTypeId);
                                     edgeType = edgeTypes[edgeTypeId];
-                                }
+                                } else edgeTypeId = null;
                                 var edgeTypeServerId = null;
                                 if (edgeType != null) edgeTypeServerId = edgeType.serverId;
 
@@ -1483,10 +1483,6 @@ function initFindMaxInfluencePathUI() {
                                                 var edgeList = [];
                                                 for (var i=0; i<edgeServerList.length; i++) {
                                                     var edgeTypeServer = edgeServerList[i];
-                                                    // var edgeTypeServerId = edgeTypeServer['edge_type_id'];
-                                                    // var edgeTypeId = null;
-                                                    // if (edgeTypeServerId != null)
-                                                    //     edgeTypeId = edgeTypeServerIdMap[edgeTypeServerId];
                                                     var sourceId = nodeServerIdMap[edgeTypeServer['n1_id']];
                                                     var targetId = nodeServerIdMap[edgeTypeServer['n2_id']];
                                                     edgeList.push(networkGraph.getEdge(sourceId, targetId, edgeTypeId));
