@@ -238,10 +238,14 @@ public class GraphServlet extends HttpServlet {
             }
         }
         else if (action.equals("save")) {
-            JSONObject graph = (JSONObject)jsonObject.get("graph");
-            int graphId = Integer.parseInt(graph.get("graph_id").toString());
-            InfluenceGraph influenceGraph = influenceGraphDAO.getInfluenceGraph(graphId);
-            result = save(influenceGraph, graph);
+            try {
+                JSONObject graph = (JSONObject)jsonObject.get("graph");
+                int graphId = Integer.parseInt(graph.get("graph_id").toString());
+                InfluenceGraph influenceGraph = influenceGraphDAO.getInfluenceGraph(graphId);
+                result = save(influenceGraph, graph);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         else if (action.equals("saveas")) {
             String userEmail = jsonObject.get("email").toString();
@@ -345,7 +349,9 @@ public class GraphServlet extends HttpServlet {
                         nodeType.setColor(color);
                         nodeType.setName(name);
 
-                        currentGraph.updateNodeType(nodeType);
+                        if (currentGraph.updateNodeType(nodeType) == false) {
+                            throw new Exception("fail to update a node type");
+                        }
                     }
                 } else {
 
@@ -353,7 +359,10 @@ public class GraphServlet extends HttpServlet {
                     nodeType = new NodeType(color, name);
 
                     /* save new node type(both memory and DB) */
-                    currentGraph.addNodeType(nodeType);  //add exception handling when update node type error.
+                    if (currentGraph.addNodeType(nodeType) == false) {
+                        throw new Exception("fail to add a node type");
+                    }
+
                     clientIdNodetypeMap.put(clientId, nodeType);
                 }
                 nodeTypeRecievedSet.add(nodeType);
@@ -413,7 +422,8 @@ public class GraphServlet extends HttpServlet {
 
                         /* update confidence*/
                         confidence.setConfidenceValue(confidenceValue);
-                        currentGraph.updateConfidence(confidence);
+                        if(currentGraph.updateConfidence(confidence) == false)
+                            throw new Exception("fail to update a confidence");
                     }
                 } else {
                     NodeType nt1=null, nt2=null;
@@ -431,7 +441,8 @@ public class GraphServlet extends HttpServlet {
                     confidence = new Confidence(nt1, nt2, confidenceValue);
 
                     /* save node type(both memory and DB) */
-                    currentGraph.addConfidence(confidence); //add exception handling when update node type error.
+                    if(currentGraph.addConfidence(confidence) == false)
+                        throw new Exception("fail to add a confidence");
                 }
 
                 confidenceRecievedSet.add(confidence);
@@ -528,7 +539,9 @@ public class GraphServlet extends HttpServlet {
                         isUpdated = true;
                     }
                     if (isUpdated) {
-                        nodeDAO.updateNode(node);
+                        if (currentGraph.updateNode(node) == false) {
+                            throw new Exception("fail to update a node");
+                        }
                     }
                 } else {    // (hasId && hasTypeId) is false
                     NodeType nodeType = null;
@@ -536,11 +549,17 @@ public class GraphServlet extends HttpServlet {
                         nodeType = currentGraph.getNodeType(nodetypeId);
                         if(nodeType != null) {
                             node = new Node(domainId, nodeType, name, x, y);
-                            nodeDAO.saveNode(node, currentGraph.getId());
+//                            nodeDAO.saveNode(node, currentGraph.getId());
+                            if(currentGraph.addNode(node) == false) {
+                                throw new Exception("failt to add a node");
+                            }
                         }
                         else {
                             node = new Node(domainId, null, name, x, y);
-                            nodeDAO.saveNode(node, currentGraph.getId());
+//                            nodeDAO.saveNode(node, currentGraph.getId());
+                            if(currentGraph.addNode(node) == false) {
+                                throw new Exception("failt to add a node");
+                            }
                         }
                         clientIdNodeMap.put(clientId, node);
                     }
@@ -549,11 +568,17 @@ public class GraphServlet extends HttpServlet {
                         if (hasId) {    //old node, new node type
                             node = currentGraph.getNode(id);
                             node.setNodeType(nodeType);
-                            nodeDAO.updateNode(node);
+//                            nodeDAO.updateNode(node);
+                            if(currentGraph.updateNode(node) == false) {
+                                throw new Exception("failt to update a node");
+                            }
                         }
                         else {           //new node, new node type
                             node = new Node(domainId, nodeType, name, x, y);
-                            nodeDAO.saveNode(node, currentGraph.getId());
+//                            nodeDAO.saveNode(node, currentGraph.getId());
+                            if(currentGraph.updateNode(node) == false) {
+                                throw new Exception("failt to update a node");
+                            }
                             clientIdNodeMap.put(clientId, node);
                         }
                     }
@@ -568,7 +593,9 @@ public class GraphServlet extends HttpServlet {
             deletingNodeSet.removeAll(nodeRecievedSet);
 
             for (Node n : deletingNodeSet) {
-                currentGraph.deleteNode(n);
+                if (currentGraph.deleteNode(n) == false) {
+                    throw new Exception("fail to delete a node");
+                }
             }
 
             /* Node clientid : nodeid JSONobject*/
@@ -611,7 +638,9 @@ public class GraphServlet extends HttpServlet {
                         edgeType.setColor(color);
                         edgeType.setName(name);
 
-                        currentGraph.updateEdgeType(edgeType);
+                        if (currentGraph.updateEdgeType(edgeType) == false) {
+                            throw new Exception("fail to update a edge type");
+                        }
                     }
                 } else {
 
@@ -619,7 +648,9 @@ public class GraphServlet extends HttpServlet {
                     edgeType = new EdgeType(color, name);
 
                     /* save node type(both memory and DB) */
-                    currentGraph.addEdgeType(edgeType);  //add exception handling when update node type error.
+                    if (currentGraph.addEdgeType(edgeType) == false) {
+                        throw new Exception("fail to add a edge type");
+                    }
                     clientIdEdgetypeMap.put(clientId, edgeType);
                 }
 
@@ -634,7 +665,9 @@ public class GraphServlet extends HttpServlet {
             deletingEdgetypeSet.remove(currentGraph.getDefaultEdgeType());
 
             for (EdgeType et : deletingEdgetypeSet) {
-                currentGraph.deleteEdgeType(et);
+                if (currentGraph.deleteEdgeType(et) == false) {
+                    throw new Exception("fail to delete a edge type");
+                }
             }
 
             /* NodeType clientid : edgetypeid JSONobject*/
@@ -693,9 +726,11 @@ public class GraphServlet extends HttpServlet {
 
                     /* update Edge*/
                     edge = currentGraph.getEdge(currentGraph.getNode(n1Id), currentGraph.getNode(n2Id), currentGraph.getEdgeType(edgeTypeId));
-                    if (edge.getInfluenceValue() != influenceValue) { //TODO fix
+                    if (edge.getInfluenceValue() != influenceValue) {
                         edge.setInfluenceValue(influenceValue);
-                        currentGraph.updateEdge(edge);
+                        if (currentGraph.updateEdge(edge) == false) {
+                            throw new Exception("fail to update a edge");
+                        }
                     }
                 } else {
 
@@ -719,7 +754,9 @@ public class GraphServlet extends HttpServlet {
                     edge = new Edge(et, n1, n2, influenceValue);
 
                     /* save edge(both memory and DB) */
-                    currentGraph.addEdge(edge); //add exception handling when update node type error.
+                    if (currentGraph.addEdge(edge) == false) {
+                        throw new Exception("fail to add a edge");
+                    }
                 }
                 edgeRecievedSet.add(edge);
             }
@@ -731,7 +768,9 @@ public class GraphServlet extends HttpServlet {
             deletingEdgeSet.removeAll(edgeRecievedSet);
 
             for (Edge e : deletingEdgeSet) {
-                currentGraph.deleteEdge(e);
+                if (currentGraph.deleteEdge(e) == false) {
+                    throw new Exception("fail to delete a edge");
+                }
             }
 
             result.put("graph_id", currentGraph.getId());
