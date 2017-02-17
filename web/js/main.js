@@ -31,6 +31,7 @@ var edgeTypes = {
 };
 var edgeTypeCnt = 0;
 var viewedEdgeTypes = [networkGraph.EDGE_TYPE_DEFAULT, 0, 1];
+var isChanged = false;
 
 //remove defaults
 nodeTypes = {};
@@ -54,6 +55,7 @@ function updateNodeTypes() {
     networkGraph.setNodeTypes(nodeTypes);
     updateNodeList();
     networkGraph.updateGraph();
+    isChanged = true;
 }
 function updateNodeList(event, updatedData) {  //if updatedData is null, all data update
     if (event == undefined || updatedData == undefined)
@@ -170,6 +172,7 @@ function updateNodeList(event, updatedData) {  //if updatedData is null, all dat
             }
         });
     }
+    isChanged = true;
 }
 
 function updateEdgeTypes() {
@@ -196,6 +199,7 @@ function updateEdgeTypes() {
     networkGraph.setEdgeTypes(edgeTypes);
     updateEdgeList();
     networkGraph.updateGraph();
+    isChanged = true;
 }
 
 function updateEdgeList(event, updatedData) {
@@ -276,6 +280,7 @@ function updateEdgeList(event, updatedData) {
             }
         });
     }
+    isChanged = true;
 }
 
 var selectedNode = null;
@@ -416,6 +421,7 @@ function createNode() {
     var createdNode = networkGraph.createNode();
     updateNodeList('created', createdNode);
     networkGraph.selectNode(createdNode.id);
+    isChanged = true;
 }
 function editNode() {
     if (selectedNode != null) {
@@ -452,6 +458,7 @@ function editNode() {
         }
         networkGraph.updateGraph();
         updateNodeList('updated', selectedNode.nodeData);
+        isChanged = true;
     }
 }
 function deleteNode() {
@@ -460,6 +467,7 @@ function deleteNode() {
         networkGraph.deleteNode();
         setUnselected();
         updateNodeList('deleted', deletedNode);
+        isChanged = true;
     }
 }
 
@@ -476,6 +484,7 @@ function createEdge() {
         $('#newEdgeDlgTarget').addClass('unselected').html("Select Target Node");
         $('#newEdgeDlgType').addClass('unselected').html("Select Type");
         $('#newEdgeModal').modal();
+        isChanged = true;
     }
 }
 function createEdgeConfirm() {
@@ -548,6 +557,7 @@ function editEdge() {
         }
         networkGraph.updateGraph();
         updateEdgeList('updated', selectedEdge.edgeData);
+        isChanged = true;
     }
 }
 function deleteEdge() {
@@ -556,6 +566,7 @@ function deleteEdge() {
         networkGraph.deleteEdge();
         setUnselected();
         updateEdgeList('deleted', deletedEdge);
+        isChanged = true;
     }
 }
 function validEdge(sourceNode, targetNode, type) {
@@ -1271,6 +1282,7 @@ function addNodeTypeConfidence(typeid) {
         }
         nodeConfidences[sourceId][targetId] = confidence;
     });
+    isChanged = true;
 }
 
 function editNodeTypeConfidenceName(typeid) {
@@ -1290,6 +1302,7 @@ function editNodeTypeConfidenceName(typeid) {
                 .text(nodeTypes[typeid]['name']);
         }
     });
+    isChanged = true;
 }
 
 function deleteNodeTypeConfidence(typeid) {
@@ -1334,6 +1347,7 @@ function deleteNodeTypeConfidence(typeid) {
     for (var source in nodeConfidences) {
         delete nodeConfidences[source][typeid];
     }
+    isChanged = true;
 }
 
 function initManageEdgeTypeViewUI() {
@@ -1414,112 +1428,122 @@ function initFindMaxInfluencePathUI() {
         } else if($('#findMaxInfDlgEdgeType').hasClass('unselected')) {
             openAlertModal("Please select edge type.");
         } else {
-            openConfirmModal("Before finding max influence path, the graph must be saved. Do you wish to continue?",
-                "Save Confirm", function() {
-                    $.LoadingOverlay('show');
-                    var graphJson = generateSaveGraphJson();
-                    console.log(graphJson);
-                    $.ajax("/graph", {
-                        method: 'POST',
-                        dataType: 'json',
-                        data: JSON.stringify({
-                            action: 'save',
-                            email: user.email,
-                            graph: graphJson
-                        }),
-                        success: function (res) {
-                            console.log(res);
-                            if (res['result'] == 'success') {
-                                assignSaveIdMaps(res);
-                                toast('Saved');
 
-                                //find max influence path
-                                var sourceId = parseInt($('#findMaxInfDlgSource .nodeName').data('nodeid')),
-                                    targetId = parseInt($('#findMaxInfDlgTarget .nodeName').data('nodeid')),
-                                    edgeTypeId = $('#findMaxInfDlgEdgeType').find('> .edgeTypeId').text();
-                                var sourceNode = networkGraph.getNodeById(sourceId),
-                                    targetNode = networkGraph.getNodeById(targetId);
-                                var edgeType = null;
-                                if (edgeTypeId != 'default') {
-                                    edgeTypeId = parseInt(edgeTypeId);
-                                    edgeType = edgeTypes[edgeTypeId];
-                                } else edgeTypeId = null;
-                                var edgeTypeServerId = null;
-                                if (edgeType != null) edgeTypeServerId = edgeType.serverId;
+            //find max influence path
+            var sourceId = parseInt($('#findMaxInfDlgSource .nodeName').data('nodeid')),
+                targetId = parseInt($('#findMaxInfDlgTarget .nodeName').data('nodeid')),
+                edgeTypeId = $('#findMaxInfDlgEdgeType').find('> .edgeTypeId').text();
+            var sourceNode = networkGraph.getNodeById(sourceId),
+                targetNode = networkGraph.getNodeById(targetId);
+            var edgeType = null;
+            if (edgeTypeId != 'default') {
+                edgeTypeId = parseInt(edgeTypeId);
+                edgeType = edgeTypes[edgeTypeId];
+            } else edgeTypeId = null;
+            var edgeTypeServerId = null;
+            if (edgeType != null) edgeTypeServerId = edgeType.serverId;
+            var isConfirm = false;
+            if(isChanged) {
+                openConfirmModal("Before finding max influence path, the graph must be saved. Do you wish to continue?",
+                    "Save Confirm", function () {
+                        $.LoadingOverlay('show');
+                        isConfirm = true;
+                        var graphJson = generateSaveGraphJson();
+                        console.log(graphJson);
+                        $.ajax("/graph", {
+                            method: 'POST',
+                            dataType: 'json',
+                            data: JSON.stringify({
+                                action: 'save',
+                                email: user.email,
+                                graph: graphJson
+                            }),
+                            success: function (res) {
+                                console.log(res);
+                                isChanged = false;
+                                if (res['result'] == 'success') {
+                                    assignSaveIdMaps(res);
+                                    toast('Saved');
 
-                                $.ajax("/graph", {
-                                    method: 'POST',
-                                    dataType: 'json',
-                                    data: JSON.stringify({
-                                        action: 'maxinfluence',
-                                        graph_id: nowGraphInfo.graphId,
-                                        n1_id: sourceNode.serverId,
-                                        n2_id: targetNode.serverId,
-                                        edge_type_id: edgeTypeServerId
-                                    }),
-                                    success: function (res) {
-                                        $.LoadingOverlay('hide');
-                                        $('#findMaxInfPathModal').modal('hide');
-                                        console.log(res);
-
-                                        //find max influence path
-                                        if (res['result'] == 'success') {
-                                            if(!res['edge_list'] || res['edge_list'].length == 0) {
-                                                openAlertModal("There is NO path from " + sourceNode.title
-                                                    + " to " + targetNode.title + ".");
-                                            } else {
-                                                var edgeServerList = res['edge_list'];
-                                                var maxInfValue = res['max_influence_value'];
-
-                                                var nodeServerIdMap = {};
-                                                for (var i=0; i<networkGraph.nodes.length; i++) {
-                                                    var node = networkGraph.nodes[i];
-                                                    nodeServerIdMap[node.serverId] = node.id;
-                                                }
-                                                var edgeTypeServerIdMap = {};
-                                                for (var k in edgeTypes) {
-                                                    edgeTypeServerIdMap[edgeTypes[k].serverId] = k;
-                                                }
-                                                var edgeList = [];
-                                                for (var i=0; i<edgeServerList.length; i++) {
-                                                    var edgeTypeServer = edgeServerList[i];
-                                                    var sourceId = nodeServerIdMap[edgeTypeServer['n1_id']];
-                                                    var targetId = nodeServerIdMap[edgeTypeServer['n2_id']];
-                                                    edgeList.push(networkGraph.getEdge(sourceId, targetId, edgeTypeId));
-                                                }
-                                                setUnselected(true);
-                                                var edgeTypeName = 'Default';
-                                                if (edgeType != null) edgeTypeName = edgeType.name;
-                                                infPathToast(sourceNode.title, targetNode.title, maxInfValue, edgeTypeName);
-                                                console.log(edgeList);
-                                                networkGraph.setEdgeViewMode(networkGraph.EDGE_VIEW_MODE_PATH, edgeList);
-                                            }
-                                        } else {
-                                            openAlertModal(res['message'], 'Find Max Influence Path Failure');
-                                        }
-
-                                    }, error: function (xhr, status, error) {
-                                        console.log(xhr);
-                                        $.LoadingOverlay('hide');
-                                        $('#findMaxInfPathModal').modal('hide');
-                                        openAlertModal(xhr.statusText, 'Find Max Influence Path Failure');
-                                    }
-                                });
-
-                            } else {
+                                } else {
+                                    $.LoadingOverlay('hide');
+                                    $('#findMaxInfPathModal').modal('hide');
+                                    openAlertModal(res['message'], 'Save Graph Failure');
+                                }
+                            }, error: function (xhr, status, error) {
+                                console.log(xhr);
                                 $.LoadingOverlay('hide');
                                 $('#findMaxInfPathModal').modal('hide');
-                                openAlertModal(res['message'], 'Save Graph Failure');
+                                openAlertModal(xhr.statusText, 'Save Graph Failure');
                             }
-                        }, error: function (xhr, status, error) {
-                            console.log(xhr);
-                            $.LoadingOverlay('hide');
-                            $('#findMaxInfPathModal').modal('hide');
-                            openAlertModal(xhr.statusText, 'Save Graph Failure');
-                        }
+                        });
                     });
-                });
-        };
+                if(isConfirm == false) {
+                    console.log("isConfirm == false");
+                    return;
+                }
+            }
+            $.LoadingOverlay('hide');
+            $('#findMaxInfPathModal').modal('hide');
+
+            $.ajax("/graph", {
+                method: 'POST',
+                dataType: 'json',
+                data: JSON.stringify({
+                    action: 'maxinfluence',
+                    graph_id: nowGraphInfo.graphId,
+                    n1_id: sourceNode.serverId,
+                    n2_id: targetNode.serverId,
+                    edge_type_id: edgeTypeServerId
+                }),
+                success: function (res) {
+
+                    console.log(res);
+
+                    //find max influence path
+                    if (res['result'] == 'success') {
+                        if (!res['edge_list'] || res['edge_list'].length == 0) {
+                            openAlertModal("There is NO path from " + sourceNode.title
+                                + " to " + targetNode.title + ".");
+                        } else {
+                            var edgeServerList = res['edge_list'];
+                            var maxInfValue = res['max_influence_value'];
+
+                            var nodeServerIdMap = {};
+                            for (var i = 0; i < networkGraph.nodes.length; i++) {
+                                var node = networkGraph.nodes[i];
+                                nodeServerIdMap[node.serverId] = node.id;
+                            }
+                            var edgeTypeServerIdMap = {};
+                            for (var k in edgeTypes) {
+                                edgeTypeServerIdMap[edgeTypes[k].serverId] = k;
+                            }
+                            var edgeList = [];
+                            for (var i = 0; i < edgeServerList.length; i++) {
+                                var edgeTypeServer = edgeServerList[i];
+                                var sourceId = nodeServerIdMap[edgeTypeServer['n1_id']];
+                                var targetId = nodeServerIdMap[edgeTypeServer['n2_id']];
+                                edgeList.push(networkGraph.getEdge(sourceId, targetId, edgeTypeId));
+                            }
+                            setUnselected(true);
+                            var edgeTypeName = 'Default';
+                            if (edgeType != null) edgeTypeName = edgeType.name;
+                            infPathToast(sourceNode.title, targetNode.title, maxInfValue, edgeTypeName);
+                            console.log(edgeList);
+                            networkGraph.setEdgeViewMode(networkGraph.EDGE_VIEW_MODE_PATH, edgeList);
+                        }
+                    } else {
+                        openAlertModal(res['message'], 'Find Max Influence Path Failure');
+                    }
+
+                }, error: function (xhr, status, error) {
+                    console.log(xhr);
+                    $.LoadingOverlay('hide');
+                    $('#findMaxInfPathModal').modal('hide');
+                    openAlertModal(xhr.statusText, 'Find Max Influence Path Failure');
+                }
+            });
+        }
     });
     $('#findMaxInfPathModal').on('show.bs.modal', function (e) {
         $('#findMaxInfDlgSource').addClass('unselected').html("Select Source Node");
@@ -2157,6 +2181,7 @@ function loadGraph(graphData) {
     }
     updateEdgeList();
     networkGraph.updateGraph();
+    isChanged = false;
 }
 
 function generateSaveGraphJson(saveAs=false) {
