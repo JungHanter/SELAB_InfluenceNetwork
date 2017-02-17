@@ -17,6 +17,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
 
     // define graphcreator object
     var GraphCreator = function(svg, nodes, edges, nodeTypes, edgeTypes){
+        var isChanged = false;
         var thisGraph = this;
         thisGraph.idct = 0;
         thisGraph.edgect = 0;
@@ -242,7 +243,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
     };
 
     GraphCreator.prototype.insertEdgeName = function (gEl, d) {
-        var thisGraph = this;
+        var i = this;
 
         //set edge name position
         var vx=(d.target.x - d.source.x), vy=(d.target.y - d.source.y);
@@ -290,9 +291,10 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                     .attr("transform", "translate(" + tx + "," + ty + ")")
                     .attr("dy", "10")
                     .on("mousedown", function(d) {
-                        thisGraph.pathTextMouseDown.call(thisGraph, d3.select(this), d);
+                        i.pathTextMouseDown.call(i, d3.select(this), d);
                     });
         var tspan = el.append('tspan').text(d.name);
+        this.isChanged = true;
     };
 
 
@@ -444,6 +446,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                 }
                 thisGraph.onNodeChanged('updated', d);
             });
+        this.isChanged= true;
         return d3txt;
     };
 
@@ -502,6 +505,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                 thisGraph.updateGraph();    //SURE?
                 thisGraph.onEdgeChanged('updated', d);
             });
+        this.isChanged = true;
         return d3txt;
     };
 
@@ -1019,6 +1023,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
             }
         });
         // if (type != undefin/this.consts.typeColorHead + type, true);
+        this.isChanged = true;
     };
 
     GraphCreator.prototype.updateEdges = function () {
@@ -1043,6 +1048,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                 d.type = null;
             }
         });
+        this.isChanged = true;
         // if (type != undefin/this.consts.typeColorHead + type, true);
     };
 
@@ -1079,11 +1085,13 @@ document.onload = (function(d3, saveAs, Blob, undefined){
     GraphCreator.prototype.changeNodeTitle = function(d3node, title) {
         d3node.selectAll("text").remove();
         this.insertTitleLinebreaks(d3node, title);
+        this.isChanged = true;
     }
 
     GraphCreator.prototype.changeEdgeName = function(d3pathG, edgeData) {
         d3pathG.selectAll("text").remove();
         this.insertEdgeName(d3pathG, edgeData);
+        this.isChanged = true;
     }
 
     GraphCreator.prototype.createNode = function(updating=true) {
@@ -1119,7 +1127,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         //     return cd.id === newNodeData.id;
         // });
         // thisGraph.replaceSelectNode(d3Node, newNodeData);
-
+        this.isChanged = true;
         return newNodeData;
     };
 
@@ -1127,6 +1135,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         var thisGraph = this;
         newNodeData.id = thisGraph.idct++;
         thisGraph.nodes.push(newNodeData);
+        this.isChanged = true;
         return newNodeData;
     };
 
@@ -1155,6 +1164,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                 thisGraph.selectElementContents(txtEdge);
                 txtEdge.focus();
             }
+            this.isChanged = true;
             return newEdge;
         }
         return null;
@@ -1336,6 +1346,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
             state.selectedNode = null;
             thisGraph.updateGraph();
         }
+        this.isChanged = true;
     };
 
     GraphCreator.prototype.deleteEdge = function() {
@@ -1346,17 +1357,19 @@ document.onload = (function(d3, saveAs, Blob, undefined){
             state.selectedEdge = null;
             thisGraph.updateGraph();
         }
-
+        this.isChanged = true;
     };
 
     GraphCreator.prototype.setNodeTypes = function(types) {
         this.nodeTypes = types;
         this.updateNodeType(this.circles);
+        this.isChanged = true;;
     };
 
     GraphCreator.prototype.setEdgeTypes = function(types) {
         this.edgeTypes = types;
         this.updateEdgeType(this.paths);
+        this.isChanged = true;
     };
 
     GraphCreator.prototype.resetTransform = function() {
