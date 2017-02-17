@@ -243,7 +243,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
     };
 
     GraphCreator.prototype.insertEdgeName = function (gEl, d) {
-        var i = this;
+        var thisGraph = this;
 
         //set edge name position
         var vx=(d.target.x - d.source.x), vy=(d.target.y - d.source.y);
@@ -291,7 +291,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                     .attr("transform", "translate(" + tx + "," + ty + ")")
                     .attr("dy", "10")
                     .on("mousedown", function(d) {
-                        i.pathTextMouseDown.call(i, d3.select(this), d);
+                        thisGraph.pathTextMouseDown.call(thisGraph, d3.select(this), d);
                     });
         var tspan = el.append('tspan').text(d.name);
         this.isChanged = true;
