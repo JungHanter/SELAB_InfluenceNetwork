@@ -466,7 +466,6 @@ public class InfluenceGraph {
                     maxInfluencePath = path;
                 }
             }
-//            maxInfluencePath = pathArrayList.get(maxIndex);
             return maxInfluencePath;
         }
         return null;

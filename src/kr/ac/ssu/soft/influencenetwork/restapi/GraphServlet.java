@@ -27,14 +27,6 @@ public class GraphServlet extends HttpServlet {
     InfluenceGraph graph = null;
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {
-
-        /* check session */
-//        JSONObject session = SessionServlet.getSession(request);
-//        String result = session.get("result");
-//        if (result.equals("fail")) {
-//            return;
-//        }
-
         InfluenceGraphDAO influenceGraphDAO = new InfluenceGraphDAO();
         PrintWriter out = null;
         try {
@@ -46,6 +38,13 @@ public class GraphServlet extends HttpServlet {
         String id = request.getParameter("graph_id");
         String email = request.getParameter("email");
         JSONObject result = new JSONObject();
+
+        /* check session */
+        JSONObject session = SessionServlet.getSession(request);
+        String res = session.get("result").toString();
+        if (res.equals("fail")) {
+            return;
+        }
 
         if (id==null && email != null) {
 
@@ -178,19 +177,18 @@ public class GraphServlet extends HttpServlet {
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response){
-
-        /* check session */
-//        JSONObject session = SessionServlet.getSession(request);
-//        String result = session.get("result");
-//        if (result.equals("fail")) {
-//            return;
-//        }
-
         InfluenceGraphDAO influenceGraphDAO = new InfluenceGraphDAO();
         BufferedReader br = null;
         PrintWriter out = null;
         String json = "";
         JSONObject result = new JSONObject();
+
+        /* check session */
+        JSONObject session = SessionServlet.getSession(request);
+        String res = session.get("result").toString();
+        if (res.equals("fail")) {
+            return;
+        }
 
         try {
             br = new BufferedReader(new InputStreamReader(request.getInputStream()));
