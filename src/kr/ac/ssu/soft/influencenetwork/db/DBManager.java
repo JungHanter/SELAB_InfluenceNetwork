@@ -10,9 +10,9 @@ public class DBManager {
 		PreparedStatement pstmt = null;
 		
 		String jdbcDriver = "com.mysql.jdbc.Driver";
-		String jdbcUrl = "jdbc:mysql://203.253.23.18:3306/influencegraph";
+		String jdbcUrl = "jdbc:mysql://203.253.23.7:3306/influencegraph";
 		String jdbcId = "root";
-		String jdbcPw = "1001";
+		String jdbcPw = "slab2016";
 		
 		try{
 			Class.forName(jdbcDriver);

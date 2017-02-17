@@ -1977,6 +1977,8 @@ function closeGraph() {
     edgeTypes = {};
     edgeTypeCnt = 0;
     viewedEdgeTypes = [networkGraph.EDGE_TYPE_DEFAULT];
+    networkGraph.setEdgeViewMode(networkGraph.EDGE_VIEW_MODE_SELECTED, viewedEdgeTypes);
+    $('#infPathFixedToast').hide();
     updateNodeTypes();
     updateEdgeTypes();
     updateEdgeList();
