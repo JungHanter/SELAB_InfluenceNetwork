@@ -314,9 +314,11 @@ public class GraphServlet extends HttpServlet {
                 else
                     edgeTypeId = influenceGraph.getDefaultEdgeType().getId();
 
-                maxInfluencePath = influenceGraph.maxInfluencePath(influenceGraph.getNode(n1Id), influenceGraph.getNode(n2Id), influenceGraph.getEdgeType(edgeTypeId));
+                Node n1 = influenceGraph.getNode(n1Id);
+                Node n2 = influenceGraph.getNode(n2Id);
+                maxInfluencePath = influenceGraph.maxInfluencePath(n1, n2, influenceGraph.getEdgeType(edgeTypeId));
                 if(maxInfluencePath == null)
-                    throw new Exception("No Path");
+                    throw new Exception("There is no path from " + n1.getName() + " to " + n2.getName() + ".");
                 maxInfluenceEdgeList = maxInfluencePath.getEdgeArrayList();
 
                 JSONArray edgeListJSONArray = new JSONArray();
