@@ -1657,15 +1657,15 @@ function infPathToast(node1Name, node2Name, infValue, edgeTypeName, edgeList) {
         + "&gt; to &lt;" + node2Name + "&gt; <br/>"
         + "Max Influence Value: " + infValue
         + "<br/>Edge Type: " + edgeTypeName
-        + "<br/>" + "Route" + ": ";
+        + "<br/>" + "Path" + ": ";
 
     for (var i = 0; i < edgeList.length; i++) {
         if (i==0) {
             infoHtml += edgeList[i].source.title;
-            infoHtml += " -> ";
+            infoHtml += " ▷ ";
             infoHtml += edgeList[i].target.title;
         } else {
-            infoHtml += " -> ";
+            infoHtml += " ▷ ";
             infoHtml += edgeList[i].target.title;
         }
     }
