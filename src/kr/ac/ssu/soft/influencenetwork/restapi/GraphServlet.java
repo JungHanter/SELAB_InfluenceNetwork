@@ -16,10 +16,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @WebServlet (description = "create/retrieve/update/delete/find", urlPatterns = { "/graph" })
 public class GraphServlet extends HttpServlet {
@@ -184,11 +181,11 @@ public class GraphServlet extends HttpServlet {
         JSONObject result = new JSONObject();
 
         /* check session */
-        JSONObject session = SessionServlet.getSession(request);
-        String res = session.get("result").toString();
-        if (res.equals("fail")) {
-            return;
-        }
+//        JSONObject session = SessionServlet.getSession(request);
+//        String res = session.get("result").toString();
+//        if (res.equals("fail")) {
+//            return;
+//        }
 
         try {
             br = new BufferedReader(new InputStreamReader(request.getInputStream()));
@@ -333,6 +330,60 @@ public class GraphServlet extends HttpServlet {
                 }
                 result.put("max_influence_value", maxInfluencePath.getInfluenceValue());
                 result.put("edge_list", edgeListJSONArray);
+                result.put("result", "success");
+            } catch (Exception e) {
+                e.printStackTrace();
+                result = new JSONObject();
+                result.put("result", "fail");
+                result.put("message", e.getMessage());
+            }
+        } else if (action.equals("mostsuminfnode")) {
+            try {
+                int graphId = Integer.parseInt(jsonObject.get("graph_id").toString());
+                int num = Integer.parseInt(jsonObject.get("num").toString());
+                int edgeTypeId = Integer.parseInt(jsonObject.get("edge_type_id").toString());
+                InfluenceGraph influenceGraph = influenceGraphDAO.getInfluenceGraph(graphId);
+                EdgeType edgeType = influenceGraph.getEdgeType(edgeTypeId);
+
+                TreeMap<Float, Node> sumInfNodeMap = influenceGraph.mostSumInfNode(num, edgeType);
+                JSONArray nodeListJSONArray = new JSONArray();
+                for (Map.Entry<Float, Node> entry : sumInfNodeMap.entrySet()) {
+                    JSONObject nodeInfJSONObject = new JSONObject();
+                    float sumInf = entry.getKey();
+                    Node node = entry.getValue();
+                    nodeInfJSONObject.put("node_id", node.getId());
+                    nodeInfJSONObject.put("sum_influence_value", sumInf);
+                    nodeListJSONArray.add(nodeInfJSONObject);
+                }
+                System.out.println(nodeListJSONArray);
+                result.put("node_list", nodeListJSONArray);
+                result.put("result", "success");
+            } catch (Exception e) {
+                e.printStackTrace();
+                result = new JSONObject();
+                result.put("result", "fail");
+                result.put("message", e.getMessage());
+            }
+        } else if (action.equals("mostavginfnode")) {
+            try {
+                int graphId = Integer.parseInt(jsonObject.get("graph_id").toString());
+                int num = Integer.parseInt(jsonObject.get("num").toString());
+                int edgeTypeId = Integer.parseInt(jsonObject.get("edge_type_id").toString());
+                InfluenceGraph influenceGraph = influenceGraphDAO.getInfluenceGraph(graphId);
+                EdgeType edgeType = influenceGraph.getEdgeType(edgeTypeId);
+
+                TreeMap<Float, Node> avgInfNodeMap = influenceGraph.mostAvgInfNode(num, edgeType);
+                JSONArray nodeListJSONArray = new JSONArray();
+                for (Map.Entry<Float, Node> entry : avgInfNodeMap.entrySet()) {
+                    JSONObject nodeInfJSONObject = new JSONObject();
+                    float avgInf = entry.getKey();
+                    Node node = entry.getValue();
+                    nodeInfJSONObject.put("node_id", node.getId());
+                    nodeInfJSONObject.put("avg_influence_value", avgInf);
+                    nodeListJSONArray.add(nodeInfJSONObject);
+                }
+                System.out.println(nodeListJSONArray);
+                result.put("node_list", nodeListJSONArray);
                 result.put("result", "success");
             } catch (Exception e) {
                 e.printStackTrace();

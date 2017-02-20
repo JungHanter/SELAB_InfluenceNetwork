@@ -471,8 +471,8 @@ public class InfluenceGraph {
         return null;
     }
 
-    public TreeMap<Float, Node> mostSumInfNode(EdgeType et) {
-        TreeMap<Float, Node> sumInfNodeMap = new TreeMap<>();
+    public TreeMap<Float, Node> mostSumInfNode(int num, EdgeType et) {
+        TreeMap<Float, Node> sumInfNodeMap = new TreeMap<>(Collections.reverseOrder());
 
         for(Node n1 : nodeSet) {
             float sum = 0;
@@ -485,20 +485,32 @@ public class InfluenceGraph {
             sumInfNodeMap.put(sum, n1);
         }
 
-        return sumInfNodeMap;
+        TreeMap<Float, Node> result = new TreeMap<>(Collections.reverseOrder());
+        int i = 0;
+        for(Map.Entry<Float, Node> entry : sumInfNodeMap.entrySet()) {
+            if(i == num)
+                break;
+            i++;
+            float sumInf = entry.getKey();
+            Node node = entry.getValue();
+            result.put(sumInf, node);
+        }
+        return result;
     }
 
-    public TreeMap<Float, Node> mostAvgInfNode(EdgeType et) {
-        TreeMap<Float, Node> sumInfNodeMap = mostSumInfNode(et);
-        TreeMap<Float, Node> avgInfNodeMap = new TreeMap<>();
+    public TreeMap<Float, Node> mostAvgInfNode(int num, EdgeType et) {
+        TreeMap<Float, Node> sumInfNodeMap = mostSumInfNode(num, et);
+        TreeMap<Float, Node> avgInfNodeMap = new TreeMap<>(Collections.reverseOrder());
+
         for(Map.Entry<Float, Node> entry : sumInfNodeMap.entrySet()) {
             float sumInf = entry.getKey();
             Node node = entry.getValue();
-            float avgInf = sumInf / nodeSet.size()-1; // except same node.
+            float avgInf = sumInf / (nodeSet.size()-1); // except same node.
             avgInfNodeMap.put(avgInf, node);
         }
         return avgInfNodeMap;
     }
+
     /**
      * ETC Methods
      */
