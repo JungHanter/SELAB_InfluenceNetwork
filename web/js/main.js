@@ -645,6 +645,8 @@ $(document).ready(function() {
     $('.menuAbout').click(menuAbout);
 
     $('.menuMaxInfluence').click(menuFindMaxInfluence);
+    $('.menuMostSumInfluence').click(menuFindMostSumInfluence);
+    $('.menuMostAverageInfluence').click(menuFindMostAverageInfluence);
 
 });
 
@@ -674,6 +676,7 @@ function initUI() {
     initManageConfidenceUI();
     initManageEdgeTypeViewUI();
     initFindMaxInfluencePathUI();
+    initFindMostSumInfluenceNodeUI();
     initControllers();
 }
 
@@ -1662,11 +1665,207 @@ function initFindMaxInfluencePathUI() {
     });
 }
 
+function initFindMostSumInfluenceNodeUI() {
+    $('#btnFindMostInfNodeConfirm').click(function() {
+        if($('#findMostInfDlgEdgeType').hasClass('unselected')) {
+            openAlertModal("Please select edge type.");
+        } else if(networkGraph.isChanged) {
+            console.log("isChanged");
+            openConfirmModal("Before finding max influence path, the graph must be saved. Do you wish to continue?",
+                "Save Confirm", function() {
+                    $.LoadingOverlay('show');
+                    var graphJson = generateSaveGraphJson();
+                    console.log(graphJson);
+                    $.ajax("/graph", {
+                        method: 'POST',
+                        dataType: 'json',
+                        data: JSON.stringify({
+                            action: 'save',
+                            email: user.email,
+                            graph: graphJson
+                        }),
+                        success: function (res) {
+                            console.log(res);
+                            if (res['result'] == 'success') {
+                                assignSaveIdMaps(res);
+                                toast('Saved');
+
+                                var nodeNumber = $('#mostSumInfNodeNumber').val();
+                                var edgeTypeId = $('#findMostInfDlgEdgeType').find('> .edgeTypeId').text();
+                                var edgeType = null;
+                                if (edgeTypeId != 'default') {
+                                    edgeTypeId = parseInt(edgeTypeId);
+                                    edgeType = edgeTypes[edgeTypeId];
+                                } else edgeTypeId = null;
+                                var edgeTypeServerId = null;
+                                if (edgeType != null) edgeTypeServerId = edgeType.serverId;
+
+                                $.ajax("/graph", {
+                                    method: 'POST',
+                                    dataType: 'json',
+                                    data: JSON.stringify({
+                                        action: 'mostsuminfnode',
+                                        graph_id: nowGraphInfo.graphId,
+                                        num : nodeNumber,
+                                        edge_type_id: edgeTypeServerId
+                                    }),
+                                    success: function (res) {
+                                        $.LoadingOverlay('hide');
+                                        $('#findMaxInfPathModal').modal('hide');
+                                        console.log(res);
+
+                                        if (res['result'] == 'success') {
+                                            var nodeServerList = res['node_list'];
+
+                                            var nodeServerIdMap = {}; // 서버아이디에 대응되는 노드아이디를 저장하는 맵. 노드리스트를 초기화 하기위해 만듬.
+                                            for (var i=0; i < networkGraph.nodes.length; i++) {
+                                                var node = networkGraph.nodes[i];
+                                                nodeServerIdMap[node.serverId] = node.id;
+                                            }
+
+                                            var nodeList = []; // 최종 결과 노드 리스트.
+                                            for(var i=0; i < nodeServerList.length; i++) {
+                                                var nodeServerId = nodeServerList['node_id'];
+                                                nodeList.push(networkGraph.getNodeById(nodeServerIdMap[nodeServerId]));
+                                            }
+
+                                            setUnselected(true);
+
+                                            console.log(nodeList);
+                                            // networkGraph.setEdgeViewMode(networkGraph.EDGE_VIEW_MODE_PATH, edgeList);
+                                        } else {
+                                            openAlertModal(res['message'], 'Find Most Sum Influence Node Failure');
+                                        }
+                                        networkGraph.isChanged = false;
+                                    }, error: function (xhr, status, error) {
+                                        console.log(xhr);
+                                        $.LoadingOverlay('hide');
+                                        $('#findMaxInfPathModal').modal('hide');
+                                        openAlertModal(xhr.statusText, 'Find Most Sum Influence Node Failure');
+                                        networkGraph.isChanged = false;
+                                    }
+                                });
+                            } else {
+                                $.LoadingOverlay('hide');
+                                $('#findMaxInfPathModal').modal('hide');
+                                openAlertModal(res['message'], 'Save Graph Failure');
+                                networkGraph.isChanged = false;
+                            }
+                        }, error: function (xhr, status, error) {
+                            console.log(xhr);
+                            $.LoadingOverlay('hide');
+                            $('#findMaxInfPathModal').modal('hide');
+                            openAlertModal(xhr.statusText, 'Save Graph Failure');
+                            networkGraph.isChanged = false;
+                        }
+                    });
+                });
+            networkGraph.isChanged = false;
+        } else {
+            var nodeNumber = $('#mostSumInfNodeNumber').val();
+            var edgeTypeId = $('#findMostInfDlgEdgeType').find('> .edgeTypeId').text();
+            var edgeType = null;
+            if (edgeTypeId != 'default') {
+                edgeTypeId = parseInt(edgeTypeId);
+                edgeType = edgeTypes[edgeTypeId];
+            } else edgeTypeId = null;
+            var edgeTypeServerId = null;
+            if (edgeType != null) edgeTypeServerId = edgeType.serverId;
+
+            $.ajax("/graph", {
+                method: 'POST',
+                dataType: 'json',
+                data: JSON.stringify({
+                    action: 'mostsuminfnode',
+                    graph_id: nowGraphInfo.graphId,
+                    num : nodeNumber,
+                    edge_type_id: edgeTypeServerId
+                }),
+                success: function (res) {
+                    $.LoadingOverlay('hide');
+                    $('#findMaxInfPathModal').modal('hide');
+                    console.log(res);
+
+                    if (res['result'] == 'success') {
+                        var nodeServerList = res['node_list'];
+                        var nodeServerIdMap = {}; // 서버아이디에 대응되는 노드아이디를 저장하는 맵. 노드리스트를 초기화 하기위해 만듬.
+                        for (var i=0; i < networkGraph.nodes.length; i++) {
+                            var node = networkGraph.nodes[i];
+                            nodeServerIdMap[node.serverId] = node.id;
+                        }
+                        var nodeList = []; // 최종 결과 노드 리스트.
+                        for(var i=0; i < nodeServerList.length; i++) {
+                            var nodeServerId = nodeServerList[i]['node_id'];
+                            var node = {};
+                            node['node'] = networkGraph.getNodeById(nodeServerIdMap[nodeServerId]);
+                            node['sum_influence_value'] = nodeServerList[i]['sum_influence_value'];
+                            nodeList.push(node);
+                        }
+                        setUnselected(true);
+
+                        console.log(nodeList);
+                        // networkGraph.setEdgeViewMode(networkGraph.EDGE_VIEW_MODE_PATH, edgeList);
+                    } else {
+                        openAlertModal(res['message'], 'Find Most Sum Influence Node Failure');
+                    }
+                    networkGraph.isChanged = false;
+                }, error: function (xhr, status, error) {
+                    console.log(xhr);
+                    $.LoadingOverlay('hide');
+                    $('#findMaxInfPathModal').modal('hide');
+                    openAlertModal(xhr.statusText, 'Find Most Sum Influence Node Failure');
+                    networkGraph.isChanged = false;
+                }
+            });
+            networkGraph.isChanged = false;
+        }
+    });
+    $('#findMostSumInfNodeModal').on('show.bs.modal', function (e) {
+
+        $('#findMostInfDlgEdgeType').addClass('unselected').html("Select Type");
+        $('#findMostInfDlgEdgeTypeDropdown').empty();
+        $('#findMostInfDlgEdgeTypeDropdown').append("<li><a href='#'>"
+            + edgeTypeToSubMenuHtml(null) + "</a></li>");
+        for (var tid in edgeTypes) {
+            $('#findMostInfDlgEdgeTypeDropdown').append("<li><a href='#'>"
+                + edgeTypeToSubMenuHtml(tid) + "</a></li>");
+        }
+        $('#findMostInfDlgEdgeTypeDropdown > li > a').off('click').unbind('click').click(function() {
+            var selItem = $(this);
+            $('#findMostInfDlgEdgeType').removeClass('unselected').html(selItem.html());
+        });
+    });
+    $('#findMostSumInfNodeModal').on('hide.bs.modal', function (e) {
+        $('#findMaxInfDlgEdgeTypeDropdown').empty();
+    });
+
+    // $('#infPathFixedToast .close').click(function() {
+    //     networkGraph.setEdgeViewMode(networkGraph.EDGE_VIEW_MODE_SELECTED, viewedEdgeTypes);
+    //     $('#infPathFixedToast').hide();
+    // });
+}
+
 function menuFindMaxInfluence() {
     if (networkGraph.nodes.length < 2) {
         openAlertModal("Finding max influence path can be performed when there are more than two nodes.");
     } else {
         $('#findMaxInfPathModal').modal('show');
+    }
+}
+
+function menuFindMostSumInfluence() {
+    if (networkGraph.nodes.length < 2) {
+        openAlertModal("Finding max sum influence nodes can be performed when there are more than two nodes.");
+    } else {
+        $('#findMostSumInfNodeModal').modal('show');
+    }
+}
+
+function menuFindMostAverageInfluence() {
+    if (networkGraph.nodes.length < 2) {
+        openAlertModal("Finding max average influence nodes can be performed when there are more than two nodes.");
+    } else {
+        $('#findMostAvgInfNodeModal').modal('show');
     }
 }
 
