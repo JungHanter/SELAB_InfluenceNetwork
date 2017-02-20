@@ -471,6 +471,34 @@ public class InfluenceGraph {
         return null;
     }
 
+    public TreeMap<Float, Node> mostSumInfNode(EdgeType et) {
+        TreeMap<Float, Node> sumInfNodeMap = new TreeMap<>();
+
+        for(Node n1 : nodeSet) {
+            float sum = 0;
+            for(Node n2 : nodeSet) {
+                if(n1 == n2) // except same node.
+                    continue;
+                Path path = maxInfluencePath(n1, n2, et);
+                sum += path.getInfluenceValue();
+            }
+            sumInfNodeMap.put(sum, n1);
+        }
+
+        return sumInfNodeMap;
+    }
+
+    public TreeMap<Float, Node> mostAvgInfNode(EdgeType et) {
+        TreeMap<Float, Node> sumInfNodeMap = mostSumInfNode(et);
+        TreeMap<Float, Node> avgInfNodeMap = new TreeMap<>();
+        for(Map.Entry<Float, Node> entry : sumInfNodeMap.entrySet()) {
+            float sumInf = entry.getKey();
+            Node node = entry.getValue();
+            float avgInf = sumInf / nodeSet.size()-1; // except same node.
+            avgInfNodeMap.put(avgInf, node);
+        }
+        return avgInfNodeMap;
+    }
     /**
      * ETC Methods
      */
