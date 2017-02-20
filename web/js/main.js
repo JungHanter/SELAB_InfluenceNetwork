@@ -1,5 +1,6 @@
 var user = null;
 var nowGraphInfo = null;
+var isCheckRemember = false;
 
 var typeColors = [
     'red', 'pink', 'purple', 'deep-purple', 'indigo', 'blue',
@@ -585,8 +586,20 @@ function manageConfidence() {
 function manageEdgeTypeView() {
     $('#manageEdgeTypeViewModal').modal();
 }
-
+$(function () {
+    console.log("d");
+    if ($.cookie('check_remember') == "true") {
+        $('#checkRemember').attr("checked", true);
+        $('#signinEmail').val($.cookie('email'));
+    }
+});
 $(document).ready(function() {
+
+    if ($.cookie('check_remember') == true) {
+        $('#checkRemember').attr("checked", true);
+        $('#signinEmail').val($.cookie('email'));
+    }
+
     setUnselected();
     updateNodeTypes();
     updateEdgeTypes();
@@ -632,6 +645,7 @@ $(document).ready(function() {
     $('.menuAbout').click(menuAbout);
 
     $('.menuMaxInfluence').click(menuFindMaxInfluence);
+
 });
 
 var selectedNodeTypeElem = null;
@@ -1909,6 +1923,16 @@ function signin() {
             $.LoadingOverlay('hide');
             console.log(res);
             if (res['result'] == 'success') {
+
+                if($('#checkRemember').is(":checked") == true) {
+                    $.cookie('check_remember', true);
+                    $.cookie('email', email);
+                } else {
+                    $.cookie('check_remember', null);
+                    $.cookie('email', null);
+                    $("#signinEmail").val("");
+                    $("#signinPassword").val("");
+                }
                 user = res['user'];
                 openAlertModal("Welcome " + user.user_name + "!", 'Login Success');
                 $('#menuSignin').hide();

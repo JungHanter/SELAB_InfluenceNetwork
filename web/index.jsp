@@ -801,8 +801,8 @@
   </div>
 </div>
 
-
 <script src="lib/jquery/jquery-3.1.1.min.js"></script>
+<script src="js/jquery.cookie.js"></script>
 <script src="lib/jquery/plugin/loadingoverlay.min.js"></script>
 <script src="js/jquery_extends.js"></script>
 <script src="lib/bootstrap/js/bootstrap.min.js"></script>
