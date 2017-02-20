@@ -115,7 +115,7 @@
         <span>Domain ID : </span>
       </div>
       <div class="sub-menu-field">
-        <input id="subMenuDomainId" type="text" class="form-control" placeholder="">
+        <input id="subMenuDomainId" type="text" class="form-control" placeholder="Domain ID">
       </div>
       <div class="sub-menu-divider"></div>
       <div class="sub-menu-name">
