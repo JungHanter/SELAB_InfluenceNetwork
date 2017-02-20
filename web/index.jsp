@@ -115,14 +115,14 @@
         <span>Domain ID : </span>
       </div>
       <div class="sub-menu-field">
-        <input id="subMenuDomainId" type="text" class="form-control" placeholder="Domain ID">
+        <input id="subMenuDomainId" type="text" class="form-control" placeholder="">
       </div>
       <div class="sub-menu-divider"></div>
       <div class="sub-menu-name">
         <span>Name : </span>
       </div>
       <div class="sub-menu-field">
-        <input id="subMenuNodeName" type="text" class="form-control" placeholder="Node Name">
+        <input id="subMenuNodeName" type="text" class="form-control" placeholder="New Node">
       </div>
       <div class="sub-menu-divider"></div>
       <div class="sub-menu-name">

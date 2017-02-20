@@ -289,7 +289,10 @@ function setSelectedNode(d3Node, nodeData) {
     $('.menuDeleteEdge').attr('disabled', true);
     $('.menuDeleteEdge').addClass('disabled');
 
-    $('#subMenuNodeName').val(nodeData.title);
+    if(nodeData.title != "New Node")
+        $('#subMenuNodeName').val(nodeData.title);
+    else
+        $('#subMenuNodeName').val('');
     if ('domainId' in nodeData && nodeData.domainId != null)
         $('#subMenuDomainId').val(nodeData.domainId);
     else $('#subMenuDomainId').val('');
@@ -420,7 +423,8 @@ function createNode() {
 function editNode() {
     if (selectedNode != null) {
         var originalType = selectedNode.nodeData.type;
-        selectedNode.nodeData.title = $('#subMenuNodeName').val();
+        if($('#subMenuNodeName').val() != '')
+            selectedNode.nodeData.title = $('#subMenuNodeName').val();
         // selectedNode.nodeData.type = $('#subMenuNodeType .nodeTypeName').text();
         selectedNode.nodeData.type = parseInt($('#subMenuNodeType .nodeTypeId').text());
 
