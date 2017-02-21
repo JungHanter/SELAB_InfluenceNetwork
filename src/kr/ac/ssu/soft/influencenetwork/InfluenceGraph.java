@@ -480,7 +480,8 @@ public class InfluenceGraph {
                 if(n1 == n2) // except same node.
                     continue;
                 Path path = maxInfluencePath(n1, n2, et);
-                sum += path.getInfluenceValue();
+                if(path != null)
+                    sum += path.getInfluenceValue();
             }
             sumInfNodeMap.put(sum, n1);
         }
