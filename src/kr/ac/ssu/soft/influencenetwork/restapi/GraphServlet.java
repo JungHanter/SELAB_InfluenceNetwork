@@ -222,7 +222,7 @@ public class GraphServlet extends HttpServlet {
             return;
         }
 
-        String action = jsonObject.get("action").toString();
+        String action = jsonObject.get("action").toString().toLowerCase();
 
         /* choose action */
         if (action.equals("create")) {
@@ -338,13 +338,18 @@ public class GraphServlet extends HttpServlet {
                 result.put("message", e.getMessage());
             }
         } else if (action.equals("mostsuminfnode")) {
+            int graphId = 0, num = 1, edgeTypeId = 0;
             try {
-                int graphId = Integer.parseInt(jsonObject.get("graph_id").toString());
-                int num = Integer.parseInt(jsonObject.get("num").toString());
-                int edgeTypeId = Integer.parseInt(jsonObject.get("edge_type_id").toString());
-                InfluenceGraph influenceGraph = influenceGraphDAO.getInfluenceGraph(graphId);
-                EdgeType edgeType = influenceGraph.getEdgeType(edgeTypeId);
+                graphId = Integer.parseInt(jsonObject.get("graph_id").toString());
+                num = Integer.parseInt(jsonObject.get("num").toString());
 
+                InfluenceGraph influenceGraph = influenceGraphDAO.getInfluenceGraph(graphId);
+                if(jsonObject.get("edge_type_id") != null)
+                    edgeTypeId = Integer.parseInt(jsonObject.get("edge_type_id").toString());
+                else
+                    edgeTypeId = influenceGraph.getDefaultEdgeType().getId();
+
+                EdgeType edgeType = influenceGraph.getEdgeType(edgeTypeId);
                 TreeMap<Float, Node> sumInfNodeMap = influenceGraph.mostSumInfNode(num, edgeType);
                 JSONArray nodeListJSONArray = new JSONArray();
                 for (Map.Entry<Float, Node> entry : sumInfNodeMap.entrySet()) {

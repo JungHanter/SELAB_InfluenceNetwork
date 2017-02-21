@@ -306,7 +306,9 @@ body {
 #subMenuEdgeType .edgeTypeColor,
 #newEdgeDlgType .edgeTypeColor,
 .findMaxInfDlgNode .nodeTypeColor,
-#findMaxInfDlgEdgeType .edgeTypeColor {
+#findMaxInfDlgEdgeType .edgeTypeColor,
+#findSumInfDlgEdgeType .edgeTypeColor,
+#findAvgInfDlgEdgeType .edgeTypeColor{
     width: 20px;
     margin-right: 8px;
     display: inline-block;
@@ -317,7 +319,9 @@ body {
 #subMenuEdgeTypeDropdown .edgeTypeColor,
 #newEdgeDlgTypeDropdown .edgeTypeColor,
 .findMaxInfDlgNodeDropdown .nodeTypeColor,
-#findMaxInfDlgEdgeTypeDropdown .edgeTypeColor {
+#findMaxInfDlgEdgeTypeDropdown .edgeTypeColor,
+#findSumInfDlgEdgeTypeDropdown .edgeTypeColor,
+#findAvgInfDlgEdgeTypeDropdown .edgeTypeColor{
     width: 20px;
     margin-right: 8px;
     display: inline-block;
@@ -336,7 +340,11 @@ body {
 .findMaxInfDlgNode .nodeTypeId,
 .findMaxInfDlgNodeDropdown .nodeTypeId,
 #findMaxInfDlgEdgeType .edgeTypeId,
-#findMaxInfDlgEdgeTypeDropdown .edgeTypeId {
+#findMaxInfDlgEdgeTypeDropdown .edgeTypeId,
+#findSumInfDlgEdgeType .edgeTypeId,
+#findSumInfDlgEdgeTypeDropdown .edgeTypeId,
+#findAvgInfDlgEdgeType .edgeTypeId,
+#findAvgInfDlgEdgeTypeDropdown .edgeTypeId{
     display: none;
 }
 

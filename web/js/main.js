@@ -676,7 +676,8 @@ function initUI() {
     initManageConfidenceUI();
     initManageEdgeTypeViewUI();
     initFindMaxInfluencePathUI();
-    initFindMostSumInfluenceNodeUI();
+    initFindMostInfluenceNodeUI("Sum");
+    initFindMostInfluenceNodeUI("Avg");
     initControllers();
 }
 
@@ -1665,12 +1666,13 @@ function initFindMaxInfluencePathUI() {
     });
 }
 
-function initFindMostSumInfluenceNodeUI() {
-    $('#btnFindMostInfNodeConfirm').click(function() {
-        if($('#findMostInfDlgEdgeType').hasClass('unselected')) {
+function initFindMostInfluenceNodeUI(type) {
+    $('#btnFind' + type + 'InfNodeConfirm').click(function() {
+        if($('#most' + type + 'InfNodeNumber').val() == "") {
+            openAlertModal("Please input the number of node.");
+        } else if($('#find' + type + 'InfDlgEdgeType').hasClass('unselected')) {
             openAlertModal("Please select edge type.");
         } else if(networkGraph.isChanged) {
-            console.log("isChanged");
             openConfirmModal("Before finding max influence path, the graph must be saved. Do you wish to continue?",
                 "Save Confirm", function() {
                     $.LoadingOverlay('show');
@@ -1690,8 +1692,9 @@ function initFindMostSumInfluenceNodeUI() {
                                 assignSaveIdMaps(res);
                                 toast('Saved');
 
-                                var nodeNumber = $('#mostSumInfNodeNumber').val();
-                                var edgeTypeId = $('#findMostInfDlgEdgeType').find('> .edgeTypeId').text();
+                                var nodeNumber = $('#most' + type + 'InfNodeNumber').val();
+                                var edgeTypeName = $('#find' + type + 'InfDlgEdgeType').find('> .edgeTypeName').text();
+                                var edgeTypeId = $('#find' + type + 'InfDlgEdgeType').find('> .edgeTypeId').text();
                                 var edgeType = null;
                                 if (edgeTypeId != 'default') {
                                     edgeTypeId = parseInt(edgeTypeId);
@@ -1704,57 +1707,57 @@ function initFindMostSumInfluenceNodeUI() {
                                     method: 'POST',
                                     dataType: 'json',
                                     data: JSON.stringify({
-                                        action: 'mostsuminfnode',
+                                        action: 'most' + type.toLowerCase() + 'infnode',
                                         graph_id: nowGraphInfo.graphId,
                                         num : nodeNumber,
                                         edge_type_id: edgeTypeServerId
                                     }),
                                     success: function (res) {
                                         $.LoadingOverlay('hide');
-                                        $('#findMaxInfPathModal').modal('hide');
+                                        $('#findMost' + type + 'InfNodeModal').modal('hide');
                                         console.log(res);
 
                                         if (res['result'] == 'success') {
                                             var nodeServerList = res['node_list'];
-
                                             var nodeServerIdMap = {}; // 서버아이디에 대응되는 노드아이디를 저장하는 맵. 노드리스트를 초기화 하기위해 만듬.
                                             for (var i=0; i < networkGraph.nodes.length; i++) {
                                                 var node = networkGraph.nodes[i];
                                                 nodeServerIdMap[node.serverId] = node.id;
                                             }
-
                                             var nodeList = []; // 최종 결과 노드 리스트.
                                             for(var i=0; i < nodeServerList.length; i++) {
-                                                var nodeServerId = nodeServerList['node_id'];
-                                                nodeList.push(networkGraph.getNodeById(nodeServerIdMap[nodeServerId]));
+                                                var nodeServerId = nodeServerList[i]['node_id'];
+                                                var node = {};
+                                                node['node'] = networkGraph.getNodeById(nodeServerIdMap[nodeServerId]);
+                                                node[type.toLowerCase() + '_influence_value'] = nodeServerList[i][type.toLowerCase() + '_influence_value'];
+                                                nodeList.push(node);
                                             }
-
                                             setUnselected(true);
-
+                                            maxInfNodeToast(type, edgeTypeName, nodeList);
                                             console.log(nodeList);
                                             // networkGraph.setEdgeViewMode(networkGraph.EDGE_VIEW_MODE_PATH, edgeList);
                                         } else {
-                                            openAlertModal(res['message'], 'Find Most Sum Influence Node Failure');
+                                            openAlertModal(res['message'], 'Find Most ' + type + ' Influence Node Failure');
                                         }
                                         networkGraph.isChanged = false;
                                     }, error: function (xhr, status, error) {
                                         console.log(xhr);
                                         $.LoadingOverlay('hide');
-                                        $('#findMaxInfPathModal').modal('hide');
-                                        openAlertModal(xhr.statusText, 'Find Most Sum Influence Node Failure');
+                                        $('#findMost' + type + 'InfNodeModal').modal('hide');
+                                        openAlertModal(xhr.statusText, 'Find Most ' + type + ' Influence Node Failure');
                                         networkGraph.isChanged = false;
                                     }
                                 });
                             } else {
                                 $.LoadingOverlay('hide');
-                                $('#findMaxInfPathModal').modal('hide');
+                                $('#findMost' + type + 'InfNodeModal').modal('hide');
                                 openAlertModal(res['message'], 'Save Graph Failure');
                                 networkGraph.isChanged = false;
                             }
                         }, error: function (xhr, status, error) {
                             console.log(xhr);
                             $.LoadingOverlay('hide');
-                            $('#findMaxInfPathModal').modal('hide');
+                            $('#findMost' + type + 'InfNodeModal').modal('hide');
                             openAlertModal(xhr.statusText, 'Save Graph Failure');
                             networkGraph.isChanged = false;
                         }
@@ -1762,8 +1765,9 @@ function initFindMostSumInfluenceNodeUI() {
                 });
             networkGraph.isChanged = false;
         } else {
-            var nodeNumber = $('#mostSumInfNodeNumber').val();
-            var edgeTypeId = $('#findMostInfDlgEdgeType').find('> .edgeTypeId').text();
+            var nodeNumber = $('#most' + type + 'InfNodeNumber').val();
+            var edgeTypeName = $('#find' + type + 'InfDlgEdgeType').find('> .edgeTypeName').text();
+            var edgeTypeId = $('#find' + type + 'InfDlgEdgeType').find('> .edgeTypeId').text();
             var edgeType = null;
             if (edgeTypeId != 'default') {
                 edgeTypeId = parseInt(edgeTypeId);
@@ -1776,14 +1780,14 @@ function initFindMostSumInfluenceNodeUI() {
                 method: 'POST',
                 dataType: 'json',
                 data: JSON.stringify({
-                    action: 'mostsuminfnode',
+                    action: 'most' + type.toLowerCase() + 'infnode',
                     graph_id: nowGraphInfo.graphId,
                     num : nodeNumber,
                     edge_type_id: edgeTypeServerId
                 }),
                 success: function (res) {
                     $.LoadingOverlay('hide');
-                    $('#findMaxInfPathModal').modal('hide');
+                    $('#findMost' + type + 'InfNodeModal').modal('hide');
                     console.log(res);
 
                     if (res['result'] == 'success') {
@@ -1798,51 +1802,48 @@ function initFindMostSumInfluenceNodeUI() {
                             var nodeServerId = nodeServerList[i]['node_id'];
                             var node = {};
                             node['node'] = networkGraph.getNodeById(nodeServerIdMap[nodeServerId]);
-                            node['sum_influence_value'] = nodeServerList[i]['sum_influence_value'];
+                            node[type.toLowerCase() + '_influence_value'] = nodeServerList[i][type.toLowerCase() + '_influence_value'];
                             nodeList.push(node);
                         }
                         setUnselected(true);
-
+                        maxInfNodeToast(type, edgeTypeName, nodeList);
                         console.log(nodeList);
-                        // networkGraph.setEdgeViewMode(networkGraph.EDGE_VIEW_MODE_PATH, edgeList);
                     } else {
-                        openAlertModal(res['message'], 'Find Most Sum Influence Node Failure');
+                        openAlertModal(res['message'], 'Find Most ' + type + ' Influence Node Failure');
                     }
                     networkGraph.isChanged = false;
                 }, error: function (xhr, status, error) {
                     console.log(xhr);
                     $.LoadingOverlay('hide');
-                    $('#findMaxInfPathModal').modal('hide');
-                    openAlertModal(xhr.statusText, 'Find Most Sum Influence Node Failure');
+                    $('#findMost' + type + 'InfNodeModal').modal('hide');
+                    openAlertModal(xhr.statusText, 'Find Most ' + type + ' Influence Node Failure');
                     networkGraph.isChanged = false;
                 }
             });
             networkGraph.isChanged = false;
         }
     });
-    $('#findMostSumInfNodeModal').on('show.bs.modal', function (e) {
-
-        $('#findMostInfDlgEdgeType').addClass('unselected').html("Select Type");
-        $('#findMostInfDlgEdgeTypeDropdown').empty();
-        $('#findMostInfDlgEdgeTypeDropdown').append("<li><a href='#'>"
+    $('#findMost' + type + 'InfNodeModal').on('show.bs.modal', function (e) {
+        $('#find' + type + 'InfDlgEdgeType').addClass('unselected').html("Select Type");
+        $('#find' + type + 'InfDlgEdgeTypeDropdown').empty();
+        $('#find' + type + 'InfDlgEdgeTypeDropdown').append("<li><a href='#'>"
             + edgeTypeToSubMenuHtml(null) + "</a></li>");
         for (var tid in edgeTypes) {
-            $('#findMostInfDlgEdgeTypeDropdown').append("<li><a href='#'>"
+            $('#find' + type + 'InfDlgEdgeTypeDropdown').append("<li><a href='#'>"
                 + edgeTypeToSubMenuHtml(tid) + "</a></li>");
         }
-        $('#findMostInfDlgEdgeTypeDropdown > li > a').off('click').unbind('click').click(function() {
+        $('#find' + type + 'InfDlgEdgeTypeDropdown > li > a').off('click').unbind('click').click(function() {
             var selItem = $(this);
-            $('#findMostInfDlgEdgeType').removeClass('unselected').html(selItem.html());
+            $('#find' + type + 'InfDlgEdgeType').removeClass('unselected').html(selItem.html());
         });
     });
-    $('#findMostSumInfNodeModal').on('hide.bs.modal', function (e) {
-        $('#findMaxInfDlgEdgeTypeDropdown').empty();
+    $('#findMost' + type + 'InfNodeModal').on('hide.bs.modal', function (e) {
+        $('#find' + type + 'InfDlgEdgeTypeDropdown').empty();
     });
 
-    // $('#infPathFixedToast .close').click(function() {
-    //     networkGraph.setEdgeViewMode(networkGraph.EDGE_VIEW_MODE_SELECTED, viewedEdgeTypes);
-    //     $('#infPathFixedToast').hide();
-    // });
+    $('#' + type.toLowerCase() + 'InfNodeFixedToast .close').click(function() {
+        $('#' + type.toLowerCase() + 'InfNodeFixedToast').hide();
+    });
 }
 
 function menuFindMaxInfluence() {
@@ -1879,10 +1880,10 @@ function infPathToast(node1Name, node2Name, infValue, edgeTypeName, edgeList) {
     for (var i = 0; i < edgeList.length; i++) {
         if (i==0) {
             infoHtml += edgeList[i].source.title;
-            infoHtml += " ▷ ";
+            infoHtml += " ▶ ";
             infoHtml += edgeList[i].target.title;
         } else {
-            infoHtml += " ▷ ";
+            infoHtml += " ▶ ";
             infoHtml += edgeList[i].target.title;
         }
     }
@@ -1890,6 +1891,23 @@ function infPathToast(node1Name, node2Name, infValue, edgeTypeName, edgeList) {
     $('#infPathFixedInfo').html(infoHtml);
     $('#infPathFixedToast').show();
 }
+
+function maxInfNodeToast(type, edgeTypeName, nodeList) {
+    var infoHtml = "Max " + type + " Influence Node <br/>"
+        + "The number of node : " + nodeList.length
+        + "<br/>Edge Type: " + edgeTypeName
+        + "<br/>" + "Ranking" + "<br/>";
+
+    for (var i = 0; i < nodeList.length; i++) {
+        infoHtml += i+1 + ". ";
+        infoHtml += "node : " + nodeList[i].node.title + "&nbsp&nbsp value : " + nodeList[i][type.toLowerCase() + '_influence_value'];
+        infoHtml += "<br/>";
+    }
+    $('#' + type.toLowerCase() + 'InfNodeFixedInfo').html(infoHtml);
+    $('#' + type.toLowerCase() + 'InfNodeFixedToast').show();
+}
+
+
 
 function openAlertModal(msg, title) {
     if (title == undefined || title == null || !/\S/.test(title)) {
@@ -2301,6 +2319,8 @@ function closeGraph() {
     viewedEdgeTypes = [networkGraph.EDGE_TYPE_DEFAULT];
     networkGraph.setEdgeViewMode(networkGraph.EDGE_VIEW_MODE_SELECTED, viewedEdgeTypes);
     $('#infPathFixedToast').hide();
+    $('#sumInfNodeFixedToast').hide();
+    $('#avgInfNodeFixedToast').hide();
     updateNodeTypes();
     updateEdgeTypes();
     updateEdgeList();
