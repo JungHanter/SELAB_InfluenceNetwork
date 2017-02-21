@@ -1515,6 +1515,7 @@ function initFindMaxInfluencePathUI() {
                                                 setUnselected(true);
                                                 var edgeTypeName = 'Default';
                                                 if (edgeType != null) edgeTypeName = edgeType.name;
+                                                closeAnalysisToast();
                                                 infPathToast(sourceNode.title, targetNode.title, maxInfValue, edgeTypeName, edgeList);
                                                 console.log(edgeList);
                                                 networkGraph.setEdgeViewMode(networkGraph.EDGE_VIEW_MODE_PATH, edgeList);
@@ -1605,6 +1606,7 @@ function initFindMaxInfluencePathUI() {
                             setUnselected(true);
                             var edgeTypeName = 'Default';
                             if (edgeType != null) edgeTypeName = edgeType.name;
+                            closeAnalysisToast();
                             infPathToast(sourceNode.title, targetNode.title, maxInfValue, edgeTypeName, edgeList);
                             console.log(edgeList);
                             networkGraph.setEdgeViewMode(networkGraph.EDGE_VIEW_MODE_PATH, edgeList);
@@ -1664,6 +1666,13 @@ function initFindMaxInfluencePathUI() {
         networkGraph.setEdgeViewMode(networkGraph.EDGE_VIEW_MODE_SELECTED, viewedEdgeTypes);
         $('#infPathFixedToast').hide();
     });
+}
+
+function closeAnalysisToast() {
+    networkGraph.setEdgeViewMode(networkGraph.EDGE_VIEW_MODE_SELECTED, viewedEdgeTypes);
+    $('#infPathFixedToast').hide();
+    $('#sumInfNodeFixedToast').hide();
+    $('#avgInfNodeFixedToast').hide();
 }
 
 function initFindMostInfluenceNodeUI(type) {
@@ -1733,6 +1742,7 @@ function initFindMostInfluenceNodeUI(type) {
                                                 nodeList.push(node);
                                             }
                                             setUnselected(true);
+                                            closeAnalysisToast(); // 새로운 토스트를 열기전에 이전의 토스트를 다 닫는다.
                                             maxInfNodeToast(type, edgeTypeName, nodeList);
                                             console.log(nodeList);
                                             // networkGraph.setEdgeViewMode(networkGraph.EDGE_VIEW_MODE_PATH, edgeList);
@@ -1806,6 +1816,7 @@ function initFindMostInfluenceNodeUI(type) {
                             nodeList.push(node);
                         }
                         setUnselected(true);
+                        closeAnalysisToast();
                         maxInfNodeToast(type, edgeTypeName, nodeList);
                         console.log(nodeList);
                     } else {
