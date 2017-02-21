@@ -400,7 +400,8 @@ public class InfluenceGraph {
 
                     /* To check cycle in edgelist */
                     for (Edge e2 : edgelist) {
-                        if (e.getDestination() == e2.getOrigin() && e2.getEdgeType() == et) {
+//                        if (e.getDestination() == e2.getOrigin() && e2.getEdgeType() == et) {
+                        if (e.getDestination() == e2.getOrigin()) {
                             cycle = true;
                             break;
                         }
@@ -410,6 +411,42 @@ public class InfluenceGraph {
                         new_edgelist.addAll(edgelist);
                         new_edgelist.add(e);
                         findPathSet(e.getDestination(), target, new_edgelist, pathlist, et);
+                    }
+                }
+            }
+        }
+    }
+
+    public void newFindPathSet(Node next, Node target, ArrayList<Edge> edgelist, ArrayList<Path> pathlist, Set<EdgeType> edgeTypeSet) {
+
+        /* Exit Condition of Recursive Function */
+        if(next == target) {
+            Path path = new Path(edgelist);
+            pathlist.add(path);
+            return;
+        } else {
+
+            /* To find edge connected with node*/
+            for (Edge e : edgeSet) {
+                if(e.getOrigin() == next) {
+                    for(EdgeType et : edgeTypeSet) { // to find the edge having same edge type.
+                        if(e.getEdgeType() == et) {
+                            boolean cycle = false;
+
+                             /* To check cycle in edgelist */
+                            for (Edge e2 : edgelist) {
+                                if (e.getDestination() == e2.getOrigin()) {
+                                    cycle = true;
+                                    break;
+                                }
+                            }
+                            if (cycle==false) {
+                                ArrayList<Edge> new_edgelist = new ArrayList<Edge>();
+                                new_edgelist.addAll(edgelist);
+                                new_edgelist.add(e);
+                                findPathSet(e.getDestination(), target, new_edgelist, pathlist, et);
+                            }
+                        }
                     }
                 }
             }
@@ -440,6 +477,21 @@ public class InfluenceGraph {
             for (int i = 0; i < edgeArrayList.size(); i++) {
                 confidence = getConfidenceValue(edgeArrayList.get(i).getOrigin().getNodeType(), edgeArrayList.get(i).getDestination().getNodeType());
                 influence *= edgeArrayList.get(i).getInfluenceValue() * confidence;
+            }
+            return influence;
+        }
+        return (float)0.0;
+    }
+
+    public float newInfluence(Path path) { //return influence value of path & confidence(x)
+        ArrayList<Edge> edgeArrayList = path.getEdgeArrayList();
+        if (edgeArrayList != null) {
+            float influence = 1;
+            float confidence = 1;
+            for (int i = 0; i < edgeArrayList.size(); i++) {
+//                confidence = getConfidenceValue(edgeArrayList.get(i).getOrigin().getNodeType(), edgeArrayList.get(i).getDestination().getNodeType());
+//                influence *= edgeArrayList.get(i).getInfluenceValue() * confidence;
+                influence *= edgeArrayList.get(i).getInfluenceValue();
             }
             return influence;
         }
