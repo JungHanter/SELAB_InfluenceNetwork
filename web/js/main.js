@@ -649,6 +649,8 @@ $(document).ready(function() {
     $('.menuMostSumInfluence').click(menuFindMostSumInfluence);
     $('.menuMostAverageInfluence').click(menuFindMostAverageInfluence);
 
+    $('.menuNewModal').click(menuNewModal);
+
 });
 
 var selectedNodeTypeElem = null;
@@ -680,6 +682,8 @@ function initUI() {
     initFindMostInfluenceNodeUI("Sum");
     initFindMostInfluenceNodeUI("Avg");
     initControllers();
+
+    // initNewModalUI();
 }
 
 function initManageNodeTypeUI() {
@@ -1430,6 +1434,14 @@ function initManageEdgeTypeViewUI() {
     })
 }
 
+function initNewModalUI() {
+    $('.edgetype-checkbox-group').empty();
+    $('.edgetype-checkbox-group').append("<input type=\"checkbox\">" + edgeTypeToSubMenuHtml(null));
+    for (var tid in edgeTypes) {
+        $('.edgetype-checkbox-group').append("<input type=\"checkbox\">" + edgeTypeToSubMenuHtml(tid));
+    }
+}
+
 function initFindMaxInfluencePathUI() {
     $('#btnFindMaxInfPathConfirm').click(function() {
         if($('#findMaxInfDlgSource').hasClass('unselected')) {
@@ -1463,6 +1475,9 @@ function initFindMaxInfluencePathUI() {
                                 var sourceId = parseInt($('#findMaxInfDlgSource .nodeName').data('nodeid')),
                                     targetId = parseInt($('#findMaxInfDlgTarget .nodeName').data('nodeid')),
                                     edgeTypeId = $('#findMaxInfDlgEdgeType').find('> .edgeTypeId').text();
+
+                                var edgeTypeIdList = [];
+
                                 var sourceNode = networkGraph.getNodeById(sourceId),
                                     targetNode = networkGraph.getNodeById(targetId);
                                 var edgeType = null;
@@ -1472,6 +1487,9 @@ function initFindMaxInfluencePathUI() {
                                 } else edgeTypeId = null;
                                 var edgeTypeServerId = null;
                                 if (edgeType != null) edgeTypeServerId = edgeType.serverId;
+
+                                var edgeTypeIdList = [];
+                                // edgeTypeServerIdList.add(edgeTypeServerId);
 
                                 $.ajax("/graph", {
                                     method: 'POST',
@@ -1645,18 +1663,11 @@ function initFindMaxInfluencePathUI() {
             $('#findMaxInfDlgTarget').removeClass('unselected').html(selItem.html());
         });
 
-        $('#findMaxInfDlgEdgeType').addClass('unselected').html("Select Type");
-        $('#findMaxInfDlgEdgeTypeDropdown').empty();
-        $('#findMaxInfDlgEdgeTypeDropdown').append("<li><a href='#'>"
-            + edgeTypeToSubMenuHtml(null) + "</a></li>");
+        $('.edgetype-checkbox-group').empty();
+        $('.edgetype-checkbox-group').append("<input type=\"checkbox\">" + edgeTypeToSubMenuHtml(null));
         for (var tid in edgeTypes) {
-            $('#findMaxInfDlgEdgeTypeDropdown').append("<li><a href='#'>"
-                + edgeTypeToSubMenuHtml(tid) + "</a></li>");
+            $('.edgetype-checkbox-group').append("<input type=\"checkbox\">" + edgeTypeToSubMenuHtml(tid));
         }
-        $('#findMaxInfDlgEdgeTypeDropdown > li > a').off('click').unbind('click').click(function() {
-            var selItem = $(this);
-            $('#findMaxInfDlgEdgeType').removeClass('unselected').html(selItem.html());
-        });
     });
     $('#findMaxInfPathModal').on('hide.bs.modal', function (e) {
         $('.findMaxInfDlgNodeDropdown').empty();
@@ -1880,6 +1891,11 @@ function menuFindMostAverageInfluence() {
     } else {
         $('#findMostAvgInfNodeModal').modal('show');
     }
+}
+
+function menuNewModal() {
+    initNewModalUI();
+    $('#newModal').modal('show');
 }
 
 function infPathToast(node1Name, node2Name, infValue, edgeTypeName, edgeList) {
