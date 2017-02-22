@@ -308,7 +308,8 @@ body {
 .findMaxInfDlgNode .nodeTypeColor,
 #findMaxInfDlgEdgeType .edgeTypeColor,
 #findSumInfDlgEdgeType .edgeTypeColor,
-#findAvgInfDlgEdgeType .edgeTypeColor{
+#findAvgInfDlgEdgeType .edgeTypeColor,
+.edgetype-checkbox-group .edgeTypeColor{
     width: 20px;
     margin-right: 8px;
     display: inline-block;
@@ -321,7 +322,8 @@ body {
 .findMaxInfDlgNodeDropdown .nodeTypeColor,
 #findMaxInfDlgEdgeTypeDropdown .edgeTypeColor,
 #findSumInfDlgEdgeTypeDropdown .edgeTypeColor,
-#findAvgInfDlgEdgeTypeDropdown .edgeTypeColor{
+#findAvgInfDlgEdgeTypeDropdown .edgeTypeColor,
+.edgetype-checkbox-group .edgeTypeColor{
     width: 20px;
     margin-right: 8px;
     display: inline-block;
@@ -344,7 +346,8 @@ body {
 #findSumInfDlgEdgeType .edgeTypeId,
 #findSumInfDlgEdgeTypeDropdown .edgeTypeId,
 #findAvgInfDlgEdgeType .edgeTypeId,
-#findAvgInfDlgEdgeTypeDropdown .edgeTypeId{
+#findAvgInfDlgEdgeTypeDropdown .edgeTypeId,
+.edgetype-checkbox-group .edgeTypeId{
     display: none;
 }
 

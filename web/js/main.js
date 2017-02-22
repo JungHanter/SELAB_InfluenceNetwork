@@ -650,6 +650,7 @@ $(document).ready(function() {
     $('.menuMostAverageInfluence').click(menuFindMostAverageInfluence);
 
     $('.menuNewModal').click(menuNewModal);
+    $('.menuMaxInfluenceTable').click(menuFindMaxInfluenceTable);
 
 });
 
@@ -1896,6 +1897,16 @@ function menuFindMostAverageInfluence() {
 function menuNewModal() {
     initNewModalUI();
     $('#newModal').modal('show');
+}
+
+function menuFindMaxInfluenceTable() {
+    if (networkGraph.nodes.length < 2) {
+        openAlertModal("Finding max influence path can be performed when there are more than two nodes.");
+    } else {
+        var popUrl = "max_influence_table.jsp";
+        var popOption = "width=500, height=500, resizable=no, scrollbars=no, status=no;";
+        window.open(popUrl,"",popOption);
+    }
 }
 
 function infPathToast(node1Name, node2Name, infValue, edgeTypeName, edgeList) {

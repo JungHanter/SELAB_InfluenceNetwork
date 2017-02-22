@@ -62,12 +62,15 @@
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Analyze</a>
           <ul class="dropdown-menu">
+            <li><a class="menuNewModal" href="#">test</a></li>
             <li><a class="menuSummary" href="#">Summary</a></li>
             <li><a class="menuStatistics" href="#">Statistics</a></li>
             <li role="separator" class="divider"></li>
             <li><a class="menuMaxInfluence" href="#">Max Influence</a></li>
             <li><a class="menuMostSumInfluence" href="#">Most Sum Influence</a></li>
             <li><a class="menuMostAverageInfluence" href="#">Most Average Influence</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a class="menuMaxInfluenceTable" href="#">Max Influence Table</a></li>
           </ul>
         </li>
         <li class="dropdown">
@@ -722,16 +725,15 @@
         </div>
         <br/>
         <div>
-          <span>Edge Type : </span><br/>
-          <div class="btn-group">
-            <div id="findMaxInfDlgEdgeType" class="btn btn-default btn-selection long-length unselected">Select Type</div>
-            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <span class="caret"></span>
-              <span class="sr-only">Toggle Dropdown</span>
-            </button>
-            <ul id="findMaxInfDlgEdgeTypeDropdown" class="dropdown-menu">
-              <li><a href="#"><span class="edgeTypeColor type-color-bg">&nbsp;</span><span class="edgeTypeName">Type1</span></a></li>
-            </ul>
+          <div class="confidence-div">
+            <input type="checkbox"><span>Confidence</span>
+          </div>
+          <div class="edgetype-div">
+            <span>Edge Type : </span><br/>
+            <div class="edgetype-checkbox-group"></div>
+          </div>
+          <div class="etc-div">
+            <input type="checkbox"><span>All</span>
           </div>
         </div>
       </div>
@@ -814,6 +816,41 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
         <button type="button" id="btnFindAvgInfNodeConfirm" class="btn btn-dark">Find</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="newModal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Find Most Average Influence Node</h4>
+      </div>
+      <div class="modal-body">
+        <div>
+          <span>Node Number : </span><br/>
+          <div>
+            <input type="number" step=1 min=1 max=1000 id="mostNodeNumber" class="form-control" placeholder="Node Number"
+                   style="width: 200px;">
+          </div>
+        </div>
+        <br/>
+        <div class="confidence-div">
+          <input type="checkbox"><span>Confidence</span>
+        </div>
+        <div class="edgetype-div">
+          <span>Edge Type : </span><br/>
+          <div class="edgetype-checkbox-group"></div>
+        </div>
+        <div class="etc-div">
+          <input type="checkbox"><span>All</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="button" id="btnConfirm" class="btn btn-dark">Find</button>
       </div>
     </div>
   </div>
