@@ -594,6 +594,7 @@ $(function () {
     }
 });
 $(document).ready(function() {
+    // console.log(this.resp[])
 
     if ($.cookie('check_remember') == true) {
         $('#checkRemember').attr("checked", true);
@@ -2097,7 +2098,8 @@ function signup() {
             }), success: function(res) {
                 $.LoadingOverlay('hide');
                 if (res['result'] == 'success') {
-                    openAlertModal("Hello, " + name + "! Welcome to Influence Network.", "Signup Success")
+                    // openAlertModal("Hello, " + name + "! Welcome to Influence Network.", "Signup Success");
+                    openAlertModal("Please check the email to activate your account.", "Signup Success");
                 } else {
                     console.log(res);
                     openAlertModal(res['message'], 'Signup Failure');
