@@ -56,21 +56,14 @@ public class UserServlet extends HttpServlet {
         String email = request.getParameter("email");
         String hash = request.getParameter("hash");
         JSONObject result = new JSONObject();
-        try {
-            if (userDAO.activateUser(email, hash) == true) {
-                result.put("email", email);
-                result.put("result", "success");
-                request.getRequestDispatcher("/index.jsp").forward(request,response);
-            } else {
-                result.put("result", "fail");
-                result.put("message", "Already your account is activated.");
-            }
-        } catch (Exception e) {
-            result.put("result", "fail");
-            result.put("message", e.getMessage());
-            e.printStackTrace();
-        }
 
+        if (userDAO.isVerifiedUser(email) == false) {
+            userDAO.activateUser(email, hash);
+            result.put("result", "success");
+        } else {
+            result.put("result", "fail");
+            result.put("message", "Already your account is activated.");
+        }
         out.write(result.toJSONString());
         out.close();
     }
@@ -157,7 +150,7 @@ public class UserServlet extends HttpServlet {
                     message.setSubject("Welcome to Influencenet");
                     message.setContent("Thanks for signing up!<br>" +
                                     "Your account has been created, you can login after activating your account by pressing the link below.<br>" +
-                                    "<a target=\"_blank\" href=\"http://www.influencenet.net/user?email="+email+"&hash="+hash+"\">Activate Your Account</a>",
+                                    "<a target=\"_blank\" href=\"http://www.influencenet.net/email_verification.jsp?email="+email+"&hash="+hash+"\">Activate Your Account</a>",
                             "text/html; charset=utf-8");
                     Transport.send(message);
                     System.out.println("Done");

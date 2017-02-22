@@ -92,6 +92,26 @@ public class UserDAO {
         return false;
     }
 
+    public boolean isVerifiedUser(String email) {
+        conn = DBManager.getConnection();
+        String sql = "SELECT verified FROM user WHERE email = ?";
+        try {
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, email);
+            rs = pstmt.executeQuery();
+            if (rs != null && rs.next()) {
+                int verified = rs.getInt(1);
+                if(verified == 1) return true;
+                else return false;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println(e.getErrorCode() +" " + e.getMessage());
+        }
+        DBManager.closeConnection(conn, pstmt);
+        return false;
+    }
+
 //    public int updateUser(String email, String pw, String newPw, String name) {
 //        conn = DBManager.getConnection();
 //        String sqlPw = "UPDATE user SET pw=? WHERE id=? and pw=?";
