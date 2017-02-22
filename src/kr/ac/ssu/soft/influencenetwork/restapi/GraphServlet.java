@@ -337,6 +337,8 @@ public class GraphServlet extends HttpServlet {
                 result.put("result", "fail");
                 result.put("message", e.getMessage());
             }
+        } else if (action.equals("allmaxinfluence")) {
+
         } else if (action.equals("mostsuminfnode")) {
             int graphId = 0, num = 1, edgeTypeId = 0;
             try {

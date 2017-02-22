@@ -523,6 +523,21 @@ public class InfluenceGraph {
         return null;
     }
 
+    public ArrayList<Path> allMaxInfluencePath(EdgeType et) {
+        ArrayList<Path> result = new ArrayList<>();
+        for(Node n1 : nodeSet) {
+            for(Node n2 : nodeSet) {
+                if(n1 == n2) {
+                    continue;
+                }
+                Path maxInfluencePath = maxInfluencePath(n1, n2, et);
+                if(maxInfluencePath != null)
+                    result.add(maxInfluencePath);
+            }
+        }
+        return result;
+    }
+
     public TreeMap<Float, Node> mostSumInfNode(int num, EdgeType et) {
         TreeMap<Float, Node> sumInfNodeMap = new TreeMap<>(Collections.reverseOrder());
 

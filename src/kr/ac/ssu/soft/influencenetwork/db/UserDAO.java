@@ -15,8 +15,8 @@ public class UserDAO {
     public static int UNVALID_VALUE = 10;
 
     public int saveUser (User user) {
-        String sql = "insert into user(email, pw, name) " +
-                "values(?,?,?)";
+        String sql = "insert into user(email, pw, name, hash) " +
+                "values(?,?,?,?)";
         conn = DBManager.getConnection();
 
         try{
@@ -24,6 +24,7 @@ public class UserDAO {
             pstmt.setString(1, user.getEmail());
             pstmt.setString(2, user.getPw());
             pstmt.setString(3, user.getName());
+            pstmt.setString(4, user.getHash());
 
             pstmt.executeUpdate();
 
@@ -46,7 +47,7 @@ public class UserDAO {
 
     public User getUser(String email, String pw) {
         conn = DBManager.getConnection();
-        String sql = "SELECT email, pw, name FROM user WHERE email=? and pw=?";
+        String sql = "SELECT email, pw, name, verified FROM user WHERE email=? and pw=?";
         ResultSet rs = null;
         try {
             pstmt = conn.prepareStatement(sql);
@@ -55,10 +56,13 @@ public class UserDAO {
             rs = pstmt.executeQuery();
             if (rs != null && rs.next()) {
                 String savedName = null, savedEmail = null, savedPw = null;
+                int savedVerified = 0;
                 savedEmail = rs.getString(1);
                 savedPw = rs.getString(2);
                 savedName = rs.getString(3);
+                savedVerified = rs.getInt(4);
                 User user = new User(savedEmail, savedPw, savedName);
+                user.setVerified(savedVerified);
                 DBManager.closeConnection(conn,pstmt);
                 return user;
             }
@@ -68,6 +72,24 @@ public class UserDAO {
             System.out.println(e.getErrorCode() +" " + e.getMessage());
         }
         return null;
+    }
+
+    public boolean activateUser(String email, String hash) {
+        conn = DBManager.getConnection();
+        String sql = "UPDATE user SET verified = 1 WHERE email = ? AND hash = ?";
+        try {
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, email);
+            pstmt.setString(2, hash);
+            pstmt.executeUpdate();
+            pstmt.close();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println(e.getErrorCode() +" " + e.getMessage());
+        }
+        DBManager.closeConnection(conn, pstmt);
+        return false;
     }
 
 //    public int updateUser(String email, String pw, String newPw, String name) {

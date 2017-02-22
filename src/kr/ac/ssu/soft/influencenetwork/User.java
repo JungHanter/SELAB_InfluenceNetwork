@@ -3,8 +3,10 @@ package kr.ac.ssu.soft.influencenetwork;
 public class User {
 
     private String email;
-    private String pw;
     private String name;
+    private String pw;
+    private int verified = 0;
+    private String hash;
 
 
     public User (String email, String pw) {
@@ -39,6 +41,22 @@ public class User {
 
     public void setPw(String pw) {
         this.pw = pw;
+    }
+
+    public int getVerified() {
+        return verified;
+    }
+
+    public void setVerified(int verified) {
+        this.verified = verified;
+    }
+
+    public String getHash() {
+        return hash;
+    }
+
+    public void setHash(String hash) {
+        this.hash = hash;
     }
 
 }

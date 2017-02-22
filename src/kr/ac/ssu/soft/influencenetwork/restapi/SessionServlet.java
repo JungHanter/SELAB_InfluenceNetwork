@@ -88,14 +88,19 @@ public class SessionServlet extends HttpServlet {
         user = userDAO.getUser(email, pw);
 
         if (user != null) {
-            JSONObject userJson = new JSONObject();
-            userJson.put("email", user.getEmail());
-            userJson.put("user_name", user.getName());
-            result.put("user", userJson);
-            result.put("result", "success");
+            if(user.getVerified() == 0) {
+                result.put("result", "fail");
+                result.put("message", "Account is not activated yet. Please check your email to activate account");
+            } else {
+                JSONObject userJson = new JSONObject();
+                userJson.put("email", user.getEmail());
+                userJson.put("user_name", user.getName());
+                result.put("user", userJson);
+                result.put("result", "success");
 
-            HttpSession session = request.getSession();
-            session.setAttribute("user", user);
+                HttpSession session = request.getSession();
+                session.setAttribute("user", user);
+            }
         } else {
             result.put("result", "fail");
             result.put("message", "wrong id or pw");

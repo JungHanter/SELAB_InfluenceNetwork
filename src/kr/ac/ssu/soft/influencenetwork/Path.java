@@ -38,4 +38,12 @@ public class Path {
 	public void setInfluenceValue(float totalInfluenceValue) {
 		this.influenceValue = totalInfluenceValue;
 	}
+
+	public Node getOriginNode () {
+		return edgeArrayList.get(0).getOrigin();
+	}
+
+	public Node getDestinationNode() {
+		return edgeArrayList.get(edgeArrayList.size()-1).getDestination();
+	}
 }
