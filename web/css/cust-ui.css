@@ -55,3 +55,62 @@
     color: #fff;
     opacity: .5;
 }
+
+/* maxInfluenceTable Toast */
+
+.toast2 {
+    position: fixed;
+    bottom: 0px;
+    right: 0;
+    left: 0;
+    z-index: 2000;
+    display: none;
+}
+
+.toast2 .toast-wrapper {
+    min-width: 200px;
+    max-width: 640px;
+    margin: 20px auto
+}
+
+.toast2 .toast-wrapper .toast-alert {
+    text-align: center;
+}
+
+.toast2 .toast-wrapper .toast-alert .toast-body {
+    background-color: #424242;
+    padding: 14px 20px;
+    -webkit-box-shadow: 2px 2px 6px #888888;
+    -moz-box-shadow: 2px 2px 6px #888888;
+    box-shadow: 2px 2px 6px #888888;
+    display: inline-block;
+    border-radius: 6px;
+    min-width: 160px;
+}
+
+.toast2 .fixed-toast {
+    bottom: 120px;
+    right: 10px;
+    left: auto;
+    z-index: 1900;
+}
+
+.toast2 .fixed-toast .toast-wrapper {
+    min-width: 320px;
+    max-width: 480px;
+    margin: 0;
+}
+
+.toast2 .fixed-toast .toast-wrapper .toast-alert {
+    text-align: left;
+}
+
+.toast2 .fixed-toast .toast-wrapper .toast-alert .toast-body {
+    min-width: 320px;
+    width: 100%;
+}
+
+.toast2 .fixed-toast .close {
+    color: #fff;
+    opacity: .5;
+}

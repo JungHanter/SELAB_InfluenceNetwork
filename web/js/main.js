@@ -680,9 +680,12 @@ function initUI() {
     initManageConfidenceUI();
     initManageEdgeTypeViewUI();
     initFindMaxInfluencePathUI();
+    initMaxInfluenceTableUI();
     initFindMostInfluenceNodeUI("Sum");
     initFindMostInfluenceNodeUI("Avg");
     initControllers();
+
+
 
     // initNewModalUI();
 }
@@ -1219,6 +1222,7 @@ function addNodeTypeConfidence(typeid) {
         + "' data-typeid=" + typeid + ">" + nodeType['name'] + "</th></tr>"
     );
 
+    /* Input cell */
     $('#confidenceTable .fixedTable-body tbody tr').each(function (idx, elem) {
         var sourceId = prevTypeIds[idx];
         var defaultConfidence = 0.5;
@@ -1474,23 +1478,26 @@ function initFindMaxInfluencePathUI() {
 
                                 //find max influence path
                                 var sourceId = parseInt($('#findMaxInfDlgSource .nodeName').data('nodeid')),
-                                    targetId = parseInt($('#findMaxInfDlgTarget .nodeName').data('nodeid')),
-                                    edgeTypeId = $('#findMaxInfDlgEdgeType').find('> .edgeTypeId').text();
-
-                                var edgeTypeIdList = [];
-
+                                    targetId = parseInt($('#findMaxInfDlgTarget .nodeName').data('nodeid'));
                                 var sourceNode = networkGraph.getNodeById(sourceId),
                                     targetNode = networkGraph.getNodeById(targetId);
-                                var edgeType = null;
-                                if (edgeTypeId != 'default') {
-                                    edgeTypeId = parseInt(edgeTypeId);
-                                    edgeType = edgeTypes[edgeTypeId];
-                                } else edgeTypeId = null;
-                                var edgeTypeServerId = null;
-                                if (edgeType != null) edgeTypeServerId = edgeType.serverId;
-
+                                var isConfidence = false;
+                                if($('.confidence-div > input').is(":checked"))
+                                    isConfidence = true;
                                 var edgeTypeIdList = [];
-                                // edgeTypeServerIdList.add(edgeTypeServerId);
+                                $('.checkbox_span').each(function (index) {
+                                    if ($(this).find('input').is(":checked")) {
+                                        var edgeTypeId = $(this).find('> .edgeTypeId').text();
+                                        var edgeType = null;
+                                        if (edgeTypeId != 'default') {
+                                            edgeTypeId = parseInt(edgeTypeId);
+                                            edgeType = edgeTypes[edgeTypeId];
+                                        } else edgeTypeId = null;
+                                        var edgeTypeServerId = null;
+                                        if (edgeType != null) edgeTypeServerId = edgeType.serverId;
+                                        edgeTypeIdList.push(edgeTypeServerId);
+                                    }
+                                });
 
                                 $.ajax("/graph", {
                                     method: 'POST',
@@ -1500,7 +1507,8 @@ function initFindMaxInfluencePathUI() {
                                         graph_id: nowGraphInfo.graphId,
                                         n1_id: sourceNode.serverId,
                                         n2_id: targetNode.serverId,
-                                        edge_type_id: edgeTypeServerId
+                                        edge_type_id_list: edgeTypeIdList,
+                                        is_confidence: isConfidence
                                     }),
                                     success: function (res) {
                                         $.LoadingOverlay('hide');
@@ -1528,10 +1536,12 @@ function initFindMaxInfluencePathUI() {
                                                 var edgeList = [];
                                                 for (var i=0; i<edgeServerList.length; i++) {
                                                     var edgeTypeServer = edgeServerList[i];
+                                                    var edgeTypeId = edgeTypeServerIdMap[edgeTypeServer.edge_type_id];
                                                     var sourceId = nodeServerIdMap[edgeTypeServer['n1_id']];
                                                     var targetId = nodeServerIdMap[edgeTypeServer['n2_id']];
                                                     edgeList.push(networkGraph.getEdge(sourceId, targetId, edgeTypeId));
                                                 }
+                                                console.log(edgeList);
                                                 setUnselected(true);
                                                 var edgeTypeName = 'Default';
                                                 if (edgeType != null) edgeTypeName = edgeType.name;
@@ -1571,18 +1581,26 @@ function initFindMaxInfluencePathUI() {
         } else {
             //find max influence path
             var sourceId = parseInt($('#findMaxInfDlgSource .nodeName').data('nodeid')),
-                targetId = parseInt($('#findMaxInfDlgTarget .nodeName').data('nodeid')),
-                edgeTypeId = $('#findMaxInfDlgEdgeType').find('> .edgeTypeId').text();
+                targetId = parseInt($('#findMaxInfDlgTarget .nodeName').data('nodeid'));
             var sourceNode = networkGraph.getNodeById(sourceId),
                 targetNode = networkGraph.getNodeById(targetId);
-            var edgeType = null;
-            if (edgeTypeId != 'default') {
-                edgeTypeId = parseInt(edgeTypeId);
-                edgeType = edgeTypes[edgeTypeId];
-            } else edgeTypeId = null;
-            var edgeTypeServerId = null;
-            if (edgeType != null) edgeTypeServerId = edgeType.serverId;
-
+            var isConfidence = false;
+            if($('.confidence-div > input').is(":checked"))
+                isConfidence = true;
+            var edgeTypeIdList = [];
+            $('.checkbox_span').each(function (index) {
+                if ($(this).find('input').is(":checked")) {
+                    var edgeTypeId = $(this).find('> .edgeTypeId').text();
+                    var edgeType = null;
+                    if (edgeTypeId != 'default') {
+                        edgeTypeId = parseInt(edgeTypeId);
+                        edgeType = edgeTypes[edgeTypeId];
+                    } else edgeTypeId = null;
+                    var edgeTypeServerId = null;
+                    if (edgeType != null) edgeTypeServerId = edgeType.serverId;
+                    edgeTypeIdList.push(edgeTypeServerId);
+                }
+            });
             $.ajax("/graph", {
                 method: 'POST',
                 dataType: 'json',
@@ -1591,7 +1609,8 @@ function initFindMaxInfluencePathUI() {
                     graph_id: nowGraphInfo.graphId,
                     n1_id: sourceNode.serverId,
                     n2_id: targetNode.serverId,
-                    edge_type_id: edgeTypeServerId
+                    edge_type_id_list: edgeTypeIdList,
+                    is_confidence: isConfidence
                 }),
                 success: function (res) {
                     $.LoadingOverlay('hide');
@@ -1619,13 +1638,16 @@ function initFindMaxInfluencePathUI() {
                             var edgeList = [];
                             for (var i=0; i<edgeServerList.length; i++) {
                                 var edgeTypeServer = edgeServerList[i];
+                                var edgeTypeId = edgeTypeServerIdMap[edgeTypeServer.edge_type_id];
                                 var sourceId = nodeServerIdMap[edgeTypeServer['n1_id']];
                                 var targetId = nodeServerIdMap[edgeTypeServer['n2_id']];
                                 edgeList.push(networkGraph.getEdge(sourceId, targetId, edgeTypeId));
                             }
+                            var edgeType = edgeList[0].type;
+
                             setUnselected(true);
                             var edgeTypeName = 'Default';
-                            if (edgeType != null) edgeTypeName = edgeType.name;
+                            if (edgeType != null) edgeTypeName = edgeTypes[edgeType].name;
                             closeAnalysisToast();
                             infPathToast(sourceNode.title, targetNode.title, maxInfValue, edgeTypeName, edgeList);
                             console.log(edgeList);
@@ -1665,9 +1687,9 @@ function initFindMaxInfluencePathUI() {
         });
 
         $('.edgetype-checkbox-group').empty();
-        $('.edgetype-checkbox-group').append("<input type=\"checkbox\">" + edgeTypeToSubMenuHtml(null));
+        $('.edgetype-checkbox-group').append("<span class='checkbox_span'><input type=\"checkbox\">" + edgeTypeToSubMenuHtml(null) + "</span>");
         for (var tid in edgeTypes) {
-            $('.edgetype-checkbox-group').append("<input type=\"checkbox\">" + edgeTypeToSubMenuHtml(tid));
+            $('.edgetype-checkbox-group').append("<span class='checkbox_span'><input type=\"checkbox\">" + edgeTypeToSubMenuHtml(tid) + "</span>");
         }
     });
     $('#findMaxInfPathModal').on('hide.bs.modal', function (e) {
@@ -1681,11 +1703,172 @@ function initFindMaxInfluencePathUI() {
     });
 }
 
-function closeAnalysisToast() {
-    networkGraph.setEdgeViewMode(networkGraph.EDGE_VIEW_MODE_SELECTED, viewedEdgeTypes);
-    $('#infPathFixedToast').hide();
-    $('#sumInfNodeFixedToast').hide();
-    $('#avgInfNodeFixedToast').hide();
+function initMaxInfluenceTableUI() {
+
+    $('#btnFindAllMaxInfConfirm').click(function() {
+        if(getCheckedBoxNumber($('.checkbox_span')) == 0) { // checked box is none.
+            openAlertModal("Please select edgetype more than 1.");
+        } else if(networkGraph.isChanged) {
+            console.log("isChanged");
+            openConfirmModal("Before finding max influence path, the graph must be saved. Do you wish to continue?",
+                "Save Confirm", function() {
+                    $.LoadingOverlay('show');
+                    var graphJson = generateSaveGraphJson();
+                    console.log(graphJson);
+                    $.ajax("/graph", {
+                        method: 'POST',
+                        dataType: 'json',
+                        data: JSON.stringify({
+                            action: 'save',
+                            email: user.email,
+                            graph: graphJson
+                        }),
+                        success: function (res) {
+                            console.log(res);
+                            if (res['result'] == 'success') {
+                                assignSaveIdMaps(res);
+                                toast('Saved');
+
+                                /* find all max influence */
+                                var sourceId = parseInt($('#findMaxInfDlgSource .nodeName').data('nodeid')),
+                                    targetId = parseInt($('#findMaxInfDlgTarget .nodeName').data('nodeid'));
+                                var sourceNode = networkGraph.getNodeById(sourceId),
+                                    targetNode = networkGraph.getNodeById(targetId);
+                                var isConfidence = false;
+                                if($('.confidence-div > input').is(":checked"))
+                                    isConfidence = true;
+                                var edgeTypeIdList = [];
+                                $('.checkbox_span').each(function (index) {
+                                    if ($(this).find('input').is(":checked")) {
+                                        var edgeTypeId = $(this).find('> .edgeTypeId').text();
+                                        var edgeType = null;
+                                        if (edgeTypeId != 'default') {
+                                            edgeTypeId = parseInt(edgeTypeId);
+                                            edgeType = edgeTypes[edgeTypeId];
+                                        } else edgeTypeId = null;
+                                        var edgeTypeServerId = null;
+                                        if (edgeType != null) edgeTypeServerId = edgeType.serverId;
+                                        edgeTypeIdList.push(edgeTypeServerId);
+                                    }
+                                });
+
+                                $.ajax("/graph", {
+                                    method: 'POST',
+                                    dataType: 'json',
+                                    data: JSON.stringify({
+                                        action: 'allmaxinfluence',
+                                        graph_id: nowGraphInfo.graphId,
+                                        edge_type_id_list: edgeTypeIdList,
+                                        is_confidence: isConfidence
+                                    }),
+                                    success: function (res) {
+                                        $.LoadingOverlay('hide');
+                                        $('#findAllMaxInfModal').modal('hide');
+                                        console.log(res);
+                                        // add exception handling about result
+                                        var maxInfluenceList = res['max_influence_list'];
+                                        var nodeSet = res['node_set'];
+                                        allMaxInfToast(maxInfluenceList, nodeSet);
+                                        networkGraph.isChanged = false;
+                                    }, error: function (xhr, status, error) {
+                                        console.log(xhr);
+                                        $.LoadingOverlay('hide');
+                                        $('#findMaxInfPathModal').modal('hide');
+                                        openAlertModal(xhr.statusText, 'Find Max Influence Path Failure');
+                                        networkGraph.isChanged = false;
+                                    }
+                                });
+                            } else {
+                                $.LoadingOverlay('hide');
+                                $('#findAllMaxInfModal').modal('hide');
+                                openAlertModal(res['message'], 'Save Graph Failure');
+                                networkGraph.isChanged = false;
+                            }
+                        }, error: function (xhr, status, error) {
+                            console.log(xhr);
+                            $.LoadingOverlay('hide');
+                            $('#findAllMaxInfModal').modal('hide');
+                            openAlertModal(xhr.statusText, 'Save Graph Failure');
+                            networkGraph.isChanged = false;
+                        }
+                    });
+                });
+            networkGraph.isChanged = false;
+        } else {
+            /* find all max influence */
+            var sourceId = parseInt($('#findMaxInfDlgSource .nodeName').data('nodeid')),
+                targetId = parseInt($('#findMaxInfDlgTarget .nodeName').data('nodeid'));
+            var sourceNode = networkGraph.getNodeById(sourceId),
+                targetNode = networkGraph.getNodeById(targetId);
+            var isConfidence = false;
+            if($('.confidence-div > input').is(":checked"))
+                isConfidence = true;
+            var edgeTypeIdList = [];
+            $('.checkbox_span').each(function (index) {
+                if ($(this).find('input').is(":checked")) {
+                    var edgeTypeId = $(this).find('> .edgeTypeId').text();
+                    var edgeType = null;
+                    if (edgeTypeId != 'default') {
+                        edgeTypeId = parseInt(edgeTypeId);
+                        edgeType = edgeTypes[edgeTypeId];
+                    } else edgeTypeId = null;
+                    var edgeTypeServerId = null;
+                    if (edgeType != null) edgeTypeServerId = edgeType.serverId;
+                    edgeTypeIdList.push(edgeTypeServerId);
+                }
+            });
+            $.ajax("/graph", {
+                method: 'POST',
+                dataType: 'json',
+                data: JSON.stringify({
+                    action: 'allmaxinfluence',
+                    graph_id: nowGraphInfo.graphId,
+                    edge_type_id_list: edgeTypeIdList,
+                    is_confidence: isConfidence
+                }),
+                success: function (res) {
+                    $.LoadingOverlay('hide');
+                    $('#findAllMaxInfModal').modal('hide');
+                    console.log(res);
+                    // add exception handling about result
+                    var maxInfluenceList = res['max_influence_list'];
+                    var nodeSet = res['node_set'];
+                    allMaxInfToast(maxInfluenceList, nodeSet);
+                    networkGraph.isChanged = false;
+                }, error: function (xhr, status, error) {
+                    console.log(xhr);
+                    $.LoadingOverlay('hide');
+                    $('#findMaxInfPathModal').modal('hide');
+                    openAlertModal(xhr.statusText, 'Find Max Influence Path Failure');
+                    networkGraph.isChanged = false;
+                }
+            });
+            networkGraph.isChanged = false;
+        }
+    });
+    $('#findAllMaxInfModal').on('show.bs.modal', function (e) {
+        $('.edgetype-checkbox-group').empty();
+        $('.edgetype-checkbox-group').append("<span class='checkbox_span'><input type=\"checkbox\">" + edgeTypeToSubMenuHtml(null) + "</span>");
+        for (var tid in edgeTypes) {
+            $('.edgetype-checkbox-group').append("<span class='checkbox_span'><input type=\"checkbox\">" + edgeTypeToSubMenuHtml(tid) + "</span>");
+        }
+    });
+    $('#findAllMaxInfModal').on('hide.bs.modal', function (e) {
+        $('.edgetype-checkbox-group').empty();
+    });
+    $('#maxInfTableFixedToast .close').click(function() {
+        $('#maxInfTableFixedToast').hide();
+    });
+}
+
+function getCheckedBoxNumber(id) {
+    var number = 0;
+    id.each(function (index) {
+        if ($(this).find('input').is(":checked")) {
+            number++;
+        }
+    })
+    return number;
 }
 
 function initFindMostInfluenceNodeUI(type) {
@@ -1870,6 +2053,13 @@ function initFindMostInfluenceNodeUI(type) {
     });
 }
 
+function closeAnalysisToast() {
+    networkGraph.setEdgeViewMode(networkGraph.EDGE_VIEW_MODE_SELECTED, viewedEdgeTypes);
+    $('#infPathFixedToast').hide();
+    $('#sumInfNodeFixedToast').hide();
+    $('#avgInfNodeFixedToast').hide();
+}
+
 function menuFindMaxInfluence() {
     if (networkGraph.nodes.length < 2) {
         openAlertModal("Finding max influence path can be performed when there are more than two nodes.");
@@ -1903,9 +2093,12 @@ function menuFindMaxInfluenceTable() {
     if (networkGraph.nodes.length < 2) {
         openAlertModal("Finding max influence path can be performed when there are more than two nodes.");
     } else {
-        var popUrl = "max_influence_table.jsp";
-        var popOption = "width=500, height=500, resizable=no, scrollbars=no, status=no;";
-        window.open(popUrl,"",popOption);
+
+        // $('#maxInfTableFixedToast').show();
+        $('#findAllMaxInfModal').modal('show');
+        // var popUrl = "max_influence_table.jsp";
+        // var popOption = "width=500, height=500, resizable=no, scrollbars=no, status=no, location=no;";
+        // window.open(popUrl,"",popOption);
     }
 }
 
@@ -1946,7 +2139,52 @@ function maxInfNodeToast(type, edgeTypeName, nodeList) {
     $('#' + type.toLowerCase() + 'InfNodeFixedToast').show();
 }
 
+function allMaxInfToast(maxInfluenceList, nodeSet) {
 
+    $('#maxInfluenceTable .fixedTable-body').css('width','auto');
+    $('#maxInfluenceTable .fixedTable-body').css('height','auto');
+    $('#maxInfluenceTable .fixedTable-sidebar').css('height','auto');
+    $('#maxInfluenceTable .fixedTable-sidebar').css('height','auto');
+
+    $('#maxInfluenceTable .fixedTable-header thead tr').empty();
+    $('#maxInfluenceTable .fixedTable-sidebar tbody').empty();
+    $('#maxInfluenceTable .fixedTable-body tbody').empty();
+
+    for (var n1 in nodeSet) {
+        $('#maxInfluenceTable .fixedTable-header thead tr').append(
+            "<th class='type-color-bg type-color-text type-color-blue-grey'>" + nodeSet[n1].node_name + "</th>"
+        );
+
+        $('#maxInfluenceTable .fixedTable-sidebar tbody').append(
+            "<tr><th class='type-color-bg type-color-text type-color-blue-grey'>" + nodeSet[n1].node_name + "</th></tr>"
+        );
+    }
+
+    for (var n1 in nodeSet) {
+        $('#maxInfluenceTable .fixedTable-body tbody').append("<tr>");
+        for(var n2 in nodeSet) {
+            $('#maxInfluenceTable .fixedTable-body tbody tr').each(function (index) {
+                if (n1 == index) {
+                    var value = null;
+                    for (var i in maxInfluenceList) {
+                        if ((maxInfluenceList[i].origin_name == nodeSet[n1].node_name)
+                            && (maxInfluenceList[i].destination_name == nodeSet[n2].node_name)) {
+                            value = Math.floor(maxInfluenceList[i].influence_value*100)/100;
+                            break;
+                        }
+                    }
+                    if(value != null)
+                        $(this).append("<td>" + value + "</td>");
+                    else
+                        $(this).append("<td class=\"td-empty\"></td>");
+
+                }
+            });
+        }
+    }
+
+    $('#maxInfTableFixedToast').show();
+}
 
 function openAlertModal(msg, title) {
     if (title == undefined || title == null || !/\S/.test(title)) {

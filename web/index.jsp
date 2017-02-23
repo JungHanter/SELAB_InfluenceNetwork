@@ -821,6 +821,35 @@
   </div>
 </div>
 
+<div id="findAllMaxInfModal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Find Max Influence Path</h4>
+      </div>
+      <div class="modal-body">
+        <div>
+          <div class="confidence-div">
+            <input type="checkbox"><span>Confidence</span>
+          </div>
+          <div class="edgetype-div">
+            <span>Edge Type : </span><br/>
+            <div class="edgetype-checkbox-group"></div>
+          </div>
+          <div class="etc-div">
+            <input type="checkbox"><span>All</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="button" id="btnFindAllMaxInfConfirm" class="btn btn-dark">Find</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="newModal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -926,6 +955,58 @@
         <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <div id="avgInfNodeFixedInfo">
           Max Average Influence Node
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="maxInfTableFixedToast" class="toast2 fixed-toast" role="alert">
+  <div class="toast-wrapper">
+    <div class="toast-alert" role="document">
+      <div class="toast-body">
+        <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <div id="maxInfTableFixedInfo">
+          <div class="table-container" >
+            <div id="maxInfluenceTable">
+              <header class="fixedTable-header">
+                <table class="table table-bordered">
+                  <thead>
+                  <tr>
+                    <th class="type-color-bg type-color-text type-color-red">A</th>
+                    <th class="type-color-bg type-color-text type-color-blue">B</th>
+                  </tr>
+                  </thead>
+                </table>
+              </header>
+              <aside class="fixedTable-sidebar">
+                <table class="table table-bordered">
+                  <tbody>
+                  <tr>
+                    <th class="type-color-bg type-color-text type-color-red">A</th>
+                  </tr>
+                  <tr>
+                    <th class="type-color-bg type-color-text type-color-blue">B</th>
+                  </tr>
+                  </tbody>
+                </table>
+              </aside>
+              <div class="fixedTable-body">
+                <table class="table table-bordered">
+                  <tbody>
+                  <tr>
+                    <td class="td-empty"></td>
+                    <td class="td-input"><input type="number" step=0.01 min=0 max=1 /></td>
+                  </tr>
+                  <tr>
+                    <td class="td-input"><input type="number" step=0.01 min=0 max=1 /></td>
+                    <td class="td-empty"></td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

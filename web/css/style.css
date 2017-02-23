@@ -483,6 +483,54 @@ body {
     text-align: center;
 }
 
+#maxInfluenceTable .table {
+    color : white;
+    width: auto;
+}
+#maxInfluenceTable .table tr td,
+#maxInfluenceTable .table tr th {
+    min-width: 70px;
+    max-width: 70px;
+    width: 70px;
+    min-height: 27px;
+    max-height: 27px;
+    height: 27px;
+    padding: 3px;
+    text-align: center;
+
+    overflow-x: hidden;
+    text-overflow-ellipsis: true;
+    text-overflow-mode: ellipsis;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#maxInfluenceTable .fixedTable-header {
+    width: auto;
+    height: 29px;
+    margin-left: 71px;
+    overflow: hidden;
+    /*border-bottom: 1px solid #CCC;*/
+}
+
+#maxInfluenceTable .fixedTable-sidebar {
+    width: 71px;
+    height: 310px;
+    float: left;
+    overflow: hidden;
+    /*border-right: 1px solid #CCC;*/
+}
+
+#maxInfluenceTable .fixedTable-body {
+    overflow: auto;
+    width: calc(100% - 120px);
+    height: 310px;
+    float: left;
+}
+
+#maxInfTableFixedInfo {
+    margin-top: 30px;
+}
 
 /*signin form*/
 #menuSignin {
