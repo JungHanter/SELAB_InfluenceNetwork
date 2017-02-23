@@ -365,10 +365,10 @@ public class InfluenceGraph {
      * @param target       Target node of pathList.
      * @return pathList    All paths from source to target.
      */
-    public ArrayList<Path> pathSet(Node source, Node target, EdgeType et) {
+    public ArrayList<Path> pathSet(Node source, Node target, Set<EdgeType> edgeTypeSet) {
         ArrayList<Path> pathArrayList = new ArrayList<Path>();
 
-        findPathSet(source, target, new ArrayList<Edge>(), pathArrayList, et);
+        newFindPathSet(source, target, new ArrayList<Edge>(), pathArrayList, edgeTypeSet);
 
         if (pathArrayList.size() != 0) {
             return pathArrayList;
@@ -469,37 +469,26 @@ public class InfluenceGraph {
             System.out.println("This Path has no edges.");
     }
 
-    public float influence(Path path) { //return influence value of path
+    public float influence(Path path, boolean isConfidence) { //return influence value of path
         ArrayList<Edge> edgeArrayList = path.getEdgeArrayList();
         if (edgeArrayList != null) {
             float influence = 1;
             float confidence = 1;
             for (int i = 0; i < edgeArrayList.size(); i++) {
-                confidence = getConfidenceValue(edgeArrayList.get(i).getOrigin().getNodeType(), edgeArrayList.get(i).getDestination().getNodeType());
-                influence *= edgeArrayList.get(i).getInfluenceValue() * confidence;
+                if (isConfidence) {
+                    confidence = getConfidenceValue(edgeArrayList.get(i).getOrigin().getNodeType(), edgeArrayList.get(i).getDestination().getNodeType());
+                    influence *= edgeArrayList.get(i).getInfluenceValue() * confidence;
+                } else {
+                    influence *= edgeArrayList.get(i).getInfluenceValue();
+                }
             }
             return influence;
         }
         return (float)0.0;
     }
 
-    public float newInfluence(Path path) { //return influence value of path & confidence(x)
-        ArrayList<Edge> edgeArrayList = path.getEdgeArrayList();
-        if (edgeArrayList != null) {
-            float influence = 1;
-            float confidence = 1;
-            for (int i = 0; i < edgeArrayList.size(); i++) {
-//                confidence = getConfidenceValue(edgeArrayList.get(i).getOrigin().getNodeType(), edgeArrayList.get(i).getDestination().getNodeType());
-//                influence *= edgeArrayList.get(i).getInfluenceValue() * confidence;
-                influence *= edgeArrayList.get(i).getInfluenceValue();
-            }
-            return influence;
-        }
-        return (float)0.0;
-    }
-
-    public Path maxInfluencePath(Node source, Node target, EdgeType et) { //among all path which connect two node, return path which have maximum value of influence
-        ArrayList<Path> pathArrayList = pathSet(source, target, et);
+    public Path maxInfluencePath(Node source, Node target, Set<EdgeType> edgeTypeSet, boolean isConfidence) { //among all path which connect two node, return path which have maximum value of influence
+        ArrayList<Path> pathArrayList = pathSet(source, target, edgeTypeSet);
         float max = 0;
         int maxIndex = 0;
         Path maxInfluencePath = null;
@@ -509,7 +498,7 @@ public class InfluenceGraph {
         if (pathArrayList.size()!=0) {
             for (int i = 0; i < pathArrayList.size(); i++) {
                 Path path = pathArrayList.get(i);
-                float influenceValue = influence(path);
+                float influenceValue = influence(path, isConfidence);
                 path.setInfluenceValue(influenceValue);
 
                 if (influenceValue > max) {
@@ -523,14 +512,14 @@ public class InfluenceGraph {
         return null;
     }
 
-    public ArrayList<Path> allMaxInfluencePath(EdgeType et) {
+    public ArrayList<Path> allMaxInfluencePath(Set<EdgeType> edgeTypeSet, boolean isConfidence) {
         ArrayList<Path> result = new ArrayList<>();
         for(Node n1 : nodeSet) {
             for(Node n2 : nodeSet) {
                 if(n1 == n2) {
                     continue;
                 }
-                Path maxInfluencePath = maxInfluencePath(n1, n2, et);
+                Path maxInfluencePath = maxInfluencePath(n1, n2, edgeTypeSet, isConfidence);
                 if(maxInfluencePath != null)
                     result.add(maxInfluencePath);
             }
@@ -538,7 +527,7 @@ public class InfluenceGraph {
         return result;
     }
 
-    public TreeMap<Float, Node> mostSumInfNode(int num, EdgeType et) {
+    public TreeMap<Float, Node> mostSumInfNode(int num, Set<EdgeType> edgeTypeSet, boolean isConfidence) {
         TreeMap<Float, Node> sumInfNodeMap = new TreeMap<>(Collections.reverseOrder());
 
         for(Node n1 : nodeSet) {
@@ -546,7 +535,7 @@ public class InfluenceGraph {
             for(Node n2 : nodeSet) {
                 if(n1 == n2) // except same node.
                     continue;
-                Path path = maxInfluencePath(n1, n2, et);
+                Path path = maxInfluencePath(n1, n2, edgeTypeSet, isConfidence);
                 if(path != null)
                     sum += path.getInfluenceValue();
             }
@@ -566,8 +555,8 @@ public class InfluenceGraph {
         return result;
     }
 
-    public TreeMap<Float, Node> mostAvgInfNode(int num, EdgeType et) {
-        TreeMap<Float, Node> sumInfNodeMap = mostSumInfNode(num, et);
+    public TreeMap<Float, Node> mostAvgInfNode(int num, Set<EdgeType> edgeTypeSet, boolean isConfidence) {
+        TreeMap<Float, Node> sumInfNodeMap = mostSumInfNode(num, edgeTypeSet, isConfidence);
         TreeMap<Float, Node> avgInfNodeMap = new TreeMap<>(Collections.reverseOrder());
 
         for(Map.Entry<Float, Node> entry : sumInfNodeMap.entrySet()) {
