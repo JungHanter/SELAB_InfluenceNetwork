@@ -512,7 +512,26 @@ public class InfluenceGraph {
         return null;
     }
 
-    public ArrayList<Path> allMaxInfluencePath(Set<EdgeType> edgeTypeSet, boolean isConfidence) {
+    public float maxInfluenceAvearge(Node n1, Node n2, Set<EdgeType> edgeTypeSet, boolean isConfidence) {
+        float sum = 0;
+        int totalNum = 0;
+        float average = 0;
+        for(EdgeType et : edgeTypeSet) {
+            TreeSet<EdgeType> ets = new TreeSet<>();
+            ets.add(et);
+            Path p = maxInfluencePath(n1, n2, ets, isConfidence);
+            if (p != null) {
+                totalNum++;
+                sum += p.getInfluenceValue();
+            }
+        }
+        if(totalNum == 0)
+            return 0;
+        average = sum / totalNum;
+        return average;
+    }
+
+    public ArrayList<Path> allMaxInfluencePath(Set<EdgeType> edgeTypeSet, boolean isConfidence, boolean isAverage) {
         ArrayList<Path> result = new ArrayList<>();
         for(Node n1 : nodeSet) {
             for(Node n2 : nodeSet) {
@@ -520,14 +539,20 @@ public class InfluenceGraph {
                     continue;
                 }
                 Path maxInfluencePath = maxInfluencePath(n1, n2, edgeTypeSet, isConfidence);
-                if(maxInfluencePath != null)
-                    result.add(maxInfluencePath);
+                if(maxInfluencePath != null) {
+                    if(isAverage) {
+                        float averageValue = maxInfluenceAvearge(n1, n2, edgeTypeSet, isConfidence);
+                        maxInfluencePath.setInfluenceValue(averageValue);
+                        result.add(maxInfluencePath);
+                    } else
+                        result.add(maxInfluencePath);
+                }
             }
         }
         return result;
     }
 
-    public TreeMap<Float, Node> mostSumInfNode(int num, Set<EdgeType> edgeTypeSet, boolean isConfidence) {
+    public TreeMap<Float, Node> mostSumInfNode(int num, Set<EdgeType> edgeTypeSet, boolean isConfidence, boolean isAverage) {
         TreeMap<Float, Node> sumInfNodeMap = new TreeMap<>(Collections.reverseOrder());
 
         for(Node n1 : nodeSet) {
@@ -536,8 +561,14 @@ public class InfluenceGraph {
                 if(n1 == n2) // except same node.
                     continue;
                 Path path = maxInfluencePath(n1, n2, edgeTypeSet, isConfidence);
-                if(path != null)
-                    sum += path.getInfluenceValue();
+                if(path != null) {
+                    if(isAverage) {
+                        float averageValue = maxInfluenceAvearge(n1, n2, edgeTypeSet, isConfidence);
+                        sum += averageValue;
+                    } else
+                        sum += path.getInfluenceValue();
+                }
+
             }
             sumInfNodeMap.put(sum, n1);
         }
@@ -555,8 +586,8 @@ public class InfluenceGraph {
         return result;
     }
 
-    public TreeMap<Float, Node> mostAvgInfNode(int num, Set<EdgeType> edgeTypeSet, boolean isConfidence) {
-        TreeMap<Float, Node> sumInfNodeMap = mostSumInfNode(num, edgeTypeSet, isConfidence);
+    public TreeMap<Float, Node> mostAvgInfNode(int num, Set<EdgeType> edgeTypeSet, boolean isConfidence, boolean isAverage) {
+        TreeMap<Float, Node> sumInfNodeMap = mostSumInfNode(num, edgeTypeSet, isConfidence, isAverage);
         TreeMap<Float, Node> avgInfNodeMap = new TreeMap<>(Collections.reverseOrder());
 
         for(Map.Entry<Float, Node> entry : sumInfNodeMap.entrySet()) {

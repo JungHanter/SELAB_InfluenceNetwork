@@ -296,7 +296,7 @@ public class GraphServlet extends HttpServlet {
 
         } else if (action.equals("maxinfluence")) {
             int graphId = 0, n1Id = 0, n2Id = 0;
-            boolean isCofidence = false, isAverage = false;
+            boolean isConfidence = false, isAverage = false;
             TreeSet<EdgeType> edgeTypeSet = null;
 
             Path maxInfluencePath = null;
@@ -307,10 +307,10 @@ public class GraphServlet extends HttpServlet {
                 InfluenceGraph influenceGraph = influenceGraphDAO.getInfluenceGraph(graphId);
                 n1Id = Integer.parseInt(jsonObject.get("n1_id").toString());
                 n2Id = Integer.parseInt(jsonObject.get("n2_id").toString());
-//                if((boolean) jsonObject.get("is_average") == true)
-//                    isAverage = true;
+                if((boolean) jsonObject.get("is_average") == true)
+                    isAverage = true;
                 if ((boolean) jsonObject.get("is_confidence") == true)
-                    isCofidence = true;
+                    isConfidence = true;
                 if (jsonObject.get("edge_type_id_list") != null) {
                     JSONArray edgeTypeJSONArray;
                     edgeTypeJSONArray = (JSONArray) jsonObject.get("edge_type_id_list");
@@ -325,30 +325,39 @@ public class GraphServlet extends HttpServlet {
                     }
                     System.out.println(edgeTypeSet);
                 }
+                if (isAverage == false) {
+                    Node n1 = influenceGraph.getNode(n1Id);
+                    Node n2 = influenceGraph.getNode(n2Id);
+                    maxInfluencePath = influenceGraph.maxInfluencePath(n1, n2, edgeTypeSet, isConfidence);
+                    if(maxInfluencePath == null)
+                        throw new Exception("There is no path from " + n1.getName() + " to " + n2.getName() + ".");
+                    maxInfluenceEdgeList = maxInfluencePath.getEdgeArrayList();
 
-                Node n1 = influenceGraph.getNode(n1Id);
-                Node n2 = influenceGraph.getNode(n2Id);
-                maxInfluencePath = influenceGraph.maxInfluencePath(n1, n2, edgeTypeSet, isCofidence);
-                if(maxInfluencePath == null)
-                    throw new Exception("There is no path from " + n1.getName() + " to " + n2.getName() + ".");
-                maxInfluenceEdgeList = maxInfluencePath.getEdgeArrayList();
-
-                /* change max influence result to JSONArray */
-                JSONArray edgeListJSONArray = new JSONArray();
-                for (Edge e : maxInfluenceEdgeList) {
-                    JSONObject edgeJSONObject = new JSONObject();
-                    edgeJSONObject.put("n1_id", e.getOrigin().getId());
-                    edgeJSONObject.put("n2_id", e.getDestination().getId());
-                    if (e.getEdgeType() != influenceGraph.getDefaultEdgeType())
-                        edgeJSONObject.put("edge_type_id", e.getEdgeType().getId());
-                    else
-                        edgeJSONObject.put("edge_type_id", null);
-                    edgeJSONObject.put("influence_value", e.getInfluenceValue());
-                    edgeListJSONArray.add(edgeJSONObject);
+                    /* change max influence result to JSONArray */
+                    JSONArray edgeListJSONArray = new JSONArray();
+                    for (Edge e : maxInfluenceEdgeList) {
+                        JSONObject edgeJSONObject = new JSONObject();
+                        edgeJSONObject.put("n1_id", e.getOrigin().getId());
+                        edgeJSONObject.put("n2_id", e.getDestination().getId());
+                        if (e.getEdgeType() != influenceGraph.getDefaultEdgeType())
+                            edgeJSONObject.put("edge_type_id", e.getEdgeType().getId());
+                        else
+                            edgeJSONObject.put("edge_type_id", null);
+                        edgeJSONObject.put("influence_value", e.getInfluenceValue());
+                        edgeListJSONArray.add(edgeJSONObject);
+                    }
+                    result.put("max_influence_value", maxInfluencePath.getInfluenceValue());
+                    result.put("edge_list", edgeListJSONArray);
+                    result.put("result", "success");
+                } else {
+                    Node n1 = influenceGraph.getNode(n1Id);
+                    Node n2 = influenceGraph.getNode(n2Id);
+                    float average = influenceGraph.maxInfluenceAvearge(n1,n2, edgeTypeSet, isConfidence);
+                    if(average == 0)
+                        throw new Exception("There is no path from " + n1.getName() + " to " + n2.getName() + ".");
+                    result.put("max_influence_average_value", average);
+                    result.put("result", "success");
                 }
-                result.put("max_influence_value", maxInfluencePath.getInfluenceValue());
-                result.put("edge_list", edgeListJSONArray);
-                result.put("result", "success");
             } catch (Exception e) {
                 e.printStackTrace();
                 result = new JSONObject();
@@ -358,11 +367,13 @@ public class GraphServlet extends HttpServlet {
 
         } else if (action.equals("allmaxinfluence")) {
             int graphId = 0;
-            boolean isCofidence = false;
+            boolean isCofidence = false, isAverage = false;
             TreeSet<EdgeType> edgeTypeSet = null;
 
             graphId = Integer.parseInt(jsonObject.get("graph_id").toString());
             InfluenceGraph influenceGraph = influenceGraphDAO.getInfluenceGraph(graphId);
+            if((boolean) jsonObject.get("is_average") == true)
+                isAverage = true;
             if ((boolean) jsonObject.get("is_confidence") == true)
                 isCofidence = true;
             if (jsonObject.get("edge_type_id_list") != null) {
@@ -380,7 +391,7 @@ public class GraphServlet extends HttpServlet {
                 System.out.println(edgeTypeSet);
             }
 
-            ArrayList<Path> allMaxInfluencePath = influenceGraph.allMaxInfluencePath(edgeTypeSet, isCofidence);
+            ArrayList<Path> allMaxInfluencePath = influenceGraph.allMaxInfluencePath(edgeTypeSet, isCofidence, isAverage);
 
             /* make max_influence_list & nodeTreeSet */
             JSONArray maxInfluenceJSONArray = new JSONArray();
@@ -407,10 +418,11 @@ public class GraphServlet extends HttpServlet {
             }
             result.put("node_set", nodeJSONArray);
             result.put("result", "success");
+            System.out.println(maxInfluenceJSONArray);
 
         } else if (action.equals("mostsuminfnode")) {
             int graphId = 0, num = 1;
-            boolean isCofidence = false;
+            boolean isCofidence = false, isAverage = false;
             TreeSet<EdgeType> edgeTypeSet = null;
             try {
                 graphId = Integer.parseInt(jsonObject.get("graph_id").toString());
@@ -419,6 +431,8 @@ public class GraphServlet extends HttpServlet {
                 InfluenceGraph influenceGraph = influenceGraphDAO.getInfluenceGraph(graphId);
                 if ((boolean) jsonObject.get("is_confidence") == true)
                     isCofidence = true;
+                if((boolean) jsonObject.get("is_average") == true)
+                    isAverage = true;
                 if (jsonObject.get("edge_type_id_list") != null) {
                     JSONArray edgeTypeJSONArray;
                     edgeTypeJSONArray = (JSONArray) jsonObject.get("edge_type_id_list");
@@ -433,7 +447,7 @@ public class GraphServlet extends HttpServlet {
                     }
                     System.out.println(edgeTypeSet);
                 }
-                TreeMap<Float, Node> sumInfNodeMap = influenceGraph.mostSumInfNode(num, edgeTypeSet, isCofidence);
+                TreeMap<Float, Node> sumInfNodeMap = influenceGraph.mostSumInfNode(num, edgeTypeSet, isCofidence, isAverage);
                 JSONArray nodeListJSONArray = new JSONArray();
                 for (Map.Entry<Float, Node> entry : sumInfNodeMap.entrySet()) {
                     JSONObject nodeInfJSONObject = new JSONObject();
@@ -454,7 +468,7 @@ public class GraphServlet extends HttpServlet {
             }
         } else if (action.equals("mostavginfnode")) {
             int graphId = 0, num = 0;
-            boolean isCofidence = false;
+            boolean isCofidence = false, isAverage = false;
             TreeSet<EdgeType> edgeTypeSet = null;
             try {
                 graphId = Integer.parseInt(jsonObject.get("graph_id").toString());
@@ -462,6 +476,8 @@ public class GraphServlet extends HttpServlet {
                 InfluenceGraph influenceGraph = influenceGraphDAO.getInfluenceGraph(graphId);
                 if ((boolean) jsonObject.get("is_confidence") == true)
                     isCofidence = true;
+                if((boolean) jsonObject.get("is_average") == true)
+                    isAverage = true;
                 if (jsonObject.get("edge_type_id_list") != null) {
                     JSONArray edgeTypeJSONArray;
                     edgeTypeJSONArray = (JSONArray) jsonObject.get("edge_type_id_list");
@@ -477,7 +493,7 @@ public class GraphServlet extends HttpServlet {
                     System.out.println(edgeTypeSet);
                 }
 
-                TreeMap<Float, Node> avgInfNodeMap = influenceGraph.mostAvgInfNode(num, edgeTypeSet, isCofidence);
+                TreeMap<Float, Node> avgInfNodeMap = influenceGraph.mostAvgInfNode(num, edgeTypeSet, isCofidence, isAverage);
                 JSONArray nodeListJSONArray = new JSONArray();
                 for (Map.Entry<Float, Node> entry : avgInfNodeMap.entrySet()) {
                     JSONObject nodeInfJSONObject = new JSONObject();
