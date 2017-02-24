@@ -1441,8 +1441,8 @@ function initFindMaxInfluencePathUI() {
             openAlertModal("Please select source node.");
         } else if($('#findMaxInfDlgTarget').hasClass('unselected')) {
             openAlertModal("Please select target node.");
-        } else if($('#findMaxInfDlgEdgeType').hasClass('unselected')) {
-            openAlertModal("Please select edge type.");
+        } else if(getCheckedBoxNumber($('#findMaxInfPathModal .checkbox_span')) == 0) { // checked box is none.
+            openAlertModal("Please select edgetype more than 1.");
         } else if(networkGraph.isChanged) {
             console.log("isChanged");
             openConfirmModal("Before finding max influence path, the graph must be saved. Do you wish to continue?",
@@ -1472,6 +1472,9 @@ function initFindMaxInfluencePathUI() {
                                 var isConfidence = false;
                                 if($('#findMaxInfPathModal .checkbox-confidence').is(":checked"))
                                     isConfidence = true;
+                                var isAverage = false;
+                                if($('#findMaxInfPathModal .checkbox-average').is(":checked"))
+                                    isAverage = true;
                                 var edgeTypeIdList = [];
                                 $('#findMaxInfPathModal .checkbox_span').each(function (index) {
                                     if ($(this).find('input').is(":checked")) {
@@ -1496,7 +1499,8 @@ function initFindMaxInfluencePathUI() {
                                         n1_id: sourceNode.serverId,
                                         n2_id: targetNode.serverId,
                                         edge_type_id_list: edgeTypeIdList,
-                                        is_confidence: isConfidence
+                                        is_confidence: isConfidence,
+                                        is_average: isAverage
                                     }),
                                     success: function (res) {
                                         $.LoadingOverlay('hide');
@@ -1505,10 +1509,10 @@ function initFindMaxInfluencePathUI() {
 
                                         //find max influence path
                                         if (res['result'] == 'success') {
-                                            if(!res['edge_list'] || res['edge_list'].length == 0) {
+                                            if(isAverage == false && (!res['edge_list'] || res['edge_list'].length == 0)) {
                                                 openAlertModal("There is NO path from " + sourceNode.title
                                                     + " to " + targetNode.title + ".");
-                                            } else {
+                                            } else if(isAverage == false) {
                                                 var edgeServerList = res['edge_list'];
                                                 var maxInfValue = res['max_influence_value'];
 
@@ -1537,6 +1541,17 @@ function initFindMaxInfluencePathUI() {
                                                 infPathToast(sourceNode.title, targetNode.title, maxInfValue, edgeTypeName, edgeList);
                                                 console.log(edgeList);
                                                 networkGraph.setEdgeViewMode(networkGraph.EDGE_VIEW_MODE_PATH, edgeList);
+                                            } else { // isAverage == true
+                                                var averageValue = res['max_influence_average_value'];
+                                                setUnselected(true);
+                                                closeAnalysisToast();
+                                                console.log(sourceNode);
+                                                var infoHtml = "Max Influence Average from &lt;" + sourceNode.title
+                                                    + "&gt; to &lt;" + targetNode.title + "&gt; <br/>"
+                                                    + "Max Influence Average Value: " + averageValue;
+
+                                                $('#infPathFixedInfo').html(infoHtml);
+                                                $('#infPathFixedToast').show();
                                             }
                                         } else {
                                             openAlertModal(res['message'], 'Find Max Influence Path Failure');
@@ -1575,6 +1590,9 @@ function initFindMaxInfluencePathUI() {
             var isConfidence = false;
             if($('#findMaxInfPathModal .checkbox-confidence').is(":checked"))
                 isConfidence = true;
+            var isAverage = false;
+            if($('#findMaxInfPathModal .checkbox-average').is(":checked"))
+                isAverage = true;
             var edgeTypeIdList = [];
             $('#findMaxInfPathModal .checkbox_span').each(function (index) {
                 if ($(this).find('input').is(":checked")) {
@@ -1589,6 +1607,7 @@ function initFindMaxInfluencePathUI() {
                     edgeTypeIdList.push(edgeTypeServerId);
                 }
             });
+
             $.ajax("/graph", {
                 method: 'POST',
                 dataType: 'json',
@@ -1598,7 +1617,8 @@ function initFindMaxInfluencePathUI() {
                     n1_id: sourceNode.serverId,
                     n2_id: targetNode.serverId,
                     edge_type_id_list: edgeTypeIdList,
-                    is_confidence: isConfidence
+                    is_confidence: isConfidence,
+                    is_average: isAverage
                 }),
                 success: function (res) {
                     $.LoadingOverlay('hide');
@@ -1607,10 +1627,10 @@ function initFindMaxInfluencePathUI() {
 
                     //find max influence path
                     if (res['result'] == 'success') {
-                        if(!res['edge_list'] || res['edge_list'].length == 0) {
+                        if(isAverage == false && (!res['edge_list'] || res['edge_list'].length == 0)) {
                             openAlertModal("There is NO path from " + sourceNode.title
                                 + " to " + targetNode.title + ".");
-                        } else {
+                        } else if (isAverage == false) {
                             var edgeServerList = res['edge_list'];
                             var maxInfValue = res['max_influence_value'];
 
@@ -1640,6 +1660,17 @@ function initFindMaxInfluencePathUI() {
                             infPathToast(sourceNode.title, targetNode.title, maxInfValue, edgeTypeName, edgeList);
                             console.log(edgeList);
                             networkGraph.setEdgeViewMode(networkGraph.EDGE_VIEW_MODE_PATH, edgeList);
+                        } else { // isAverage == true
+                            var averageValue = res['max_influence_average_value'];
+                            setUnselected(true);
+                            closeAnalysisToast();
+                            console.log(sourceNode);
+                            var infoHtml = "Max Influence Average from &lt;" + sourceNode.title
+                                + "&gt; to &lt;" + targetNode.title + "&gt; <br/>"
+                                + "Max Influence Average Value: " + averageValue;
+
+                            $('#infPathFixedInfo').html(infoHtml);
+                            $('#infPathFixedToast').show();
                         }
                     } else {
                         openAlertModal(res['message'], 'Find Max Influence Path Failure');
@@ -1714,13 +1745,12 @@ function initMaxInfluenceTableUI() {
                                 toast('Saved');
 
                                 /* find all max influence */
-                                var sourceId = parseInt($('#findMaxInfDlgSource .nodeName').data('nodeid')),
-                                    targetId = parseInt($('#findMaxInfDlgTarget .nodeName').data('nodeid'));
-                                var sourceNode = networkGraph.getNodeById(sourceId),
-                                    targetNode = networkGraph.getNodeById(targetId);
                                 var isConfidence = false;
                                 if($('#findAllMaxInfModal .checkbox-confidence').is(":checked"))
                                     isConfidence = true;
+                                var isAverage = false;
+                                if($('#findAllMaxInfModal .checkbox-average').is(":checked"))
+                                    isAverage = true;
                                 var edgeTypeIdList = [];
                                 $('#findAllMaxInfModal .checkbox_span').each(function (index) {
                                     if ($(this).find('input').is(":checked")) {
@@ -1743,7 +1773,8 @@ function initMaxInfluenceTableUI() {
                                         action: 'allmaxinfluence',
                                         graph_id: nowGraphInfo.graphId,
                                         edge_type_id_list: edgeTypeIdList,
-                                        is_confidence: isConfidence
+                                        is_confidence: isConfidence,
+                                        is_average: isAverage
                                     }),
                                     success: function (res) {
                                         $.LoadingOverlay('hide');
@@ -1779,14 +1810,14 @@ function initMaxInfluenceTableUI() {
                 });
             networkGraph.isChanged = false;
         } else {
+
             /* find all max influence */
-            var sourceId = parseInt($('#findMaxInfDlgSource .nodeName').data('nodeid')),
-                targetId = parseInt($('#findMaxInfDlgTarget .nodeName').data('nodeid'));
-            var sourceNode = networkGraph.getNodeById(sourceId),
-                targetNode = networkGraph.getNodeById(targetId);
             var isConfidence = false;
             if($('#findAllMaxInfModal .checkbox-confidence').is(":checked"))
                 isConfidence = true;
+            var isAverage = false;
+            if($('#findAllMaxInfModal .checkbox-average').is(":checked"))
+                isAverage = true;
             var edgeTypeIdList = [];
             $('#findAllMaxInfModal .checkbox_span').each(function (index) {
                 if ($(this).find('input').is(":checked")) {
@@ -1808,7 +1839,8 @@ function initMaxInfluenceTableUI() {
                     action: 'allmaxinfluence',
                     graph_id: nowGraphInfo.graphId,
                     edge_type_id_list: edgeTypeIdList,
-                    is_confidence: isConfidence
+                    is_confidence: isConfidence,
+                    is_average: isAverage
                 }),
                 success: function (res) {
                     $.LoadingOverlay('hide');
@@ -1822,7 +1854,7 @@ function initMaxInfluenceTableUI() {
                 }, error: function (xhr, status, error) {
                     console.log(xhr);
                     $.LoadingOverlay('hide');
-                    $('#findMaxInfPathModal').modal('hide');
+                    $('#findAllMaxInfModal').modal('hide');
                     openAlertModal(xhr.statusText, 'Find Max Influence Path Failure');
                     networkGraph.isChanged = false;
                 }
@@ -1898,14 +1930,15 @@ function addCheckbox(id) {
         });
     });
     $(id + ' .checkbox-all').prop('checked', true);
+    $(id + ' .checkbox-average').prop('checked', false);
 }
 
 function initFindMostInfluenceNodeUI(type) {
     $('#btnFind' + type + 'InfNodeConfirm').click(function() {
         if($('#most' + type + 'InfNodeNumber').val() == "") {
             openAlertModal("Please input the number of node.");
-        } else if($('#find' + type + 'InfDlgEdgeType').hasClass('unselected')) {
-            openAlertModal("Please select edge type.");
+        } else if(getCheckedBoxNumber($('#findMost' + type + 'InfNodeModal' + ' .checkbox_span')) == 0) { // checked box is none.
+            openAlertModal("Please select edgetype more than 1.");
         } else if(networkGraph.isChanged) {
             openConfirmModal("Before finding max influence path, the graph must be saved. Do you wish to continue?",
                 "Save Confirm", function() {
@@ -1930,6 +1963,9 @@ function initFindMostInfluenceNodeUI(type) {
                                 var isConfidence = false;
                                 if($('#findMost' + type + 'InfNodeModal' + ' .checkbox-confidence').is(":checked"))
                                     isConfidence = true;
+                                var isAverage = false;
+                                if($('#findMost' + type + 'InfNodeModal' + ' .checkbox-average').is(":checked"))
+                                    isAverage = true;
                                 var edgeTypeIdList = [];
                                 $('#findMost' + type + 'InfNodeModal' + ' .checkbox_span').each(function (index) {
                                     if ($(this).find('input').is(":checked")) {
@@ -1953,7 +1989,8 @@ function initFindMostInfluenceNodeUI(type) {
                                         graph_id: nowGraphInfo.graphId,
                                         num : nodeNumber,
                                         edge_type_id_list: edgeTypeIdList,
-                                        is_confidence: isConfidence
+                                        is_confidence: isConfidence,
+                                        is_average: isAverage
                                     }),
                                     success: function (res) {
                                         $.LoadingOverlay('hide');
@@ -2014,6 +2051,9 @@ function initFindMostInfluenceNodeUI(type) {
             var isConfidence = false;
             if($('#findMost' + type + 'InfNodeModal' + ' .checkbox-confidence').is(":checked"))
                 isConfidence = true;
+            var isAverage = false;
+            if($('#findMost' + type + 'InfNodeModal' + ' .checkbox-average').is(":checked"))
+                isAverage = true;
             var edgeTypeIdList = [];
             $('#findMost' + type + 'InfNodeModal' + ' .checkbox_span').each(function (index) {
                 if ($(this).find('input').is(":checked")) {
@@ -2037,7 +2077,8 @@ function initFindMostInfluenceNodeUI(type) {
                     graph_id: nowGraphInfo.graphId,
                     num : nodeNumber,
                     edge_type_id_list: edgeTypeIdList,
-                    is_confidence: isConfidence
+                    is_confidence: isConfidence,
+                    is_average: isAverage
                 }),
                 success: function (res) {
                     $.LoadingOverlay('hide');
@@ -2081,6 +2122,7 @@ function initFindMostInfluenceNodeUI(type) {
         }
     });
     $('#findMost' + type + 'InfNodeModal').on('show.bs.modal', function (e) {
+        $('#most' + type + 'InfNodeNumber').val(1);
         addCheckbox('#findMost' + type + 'InfNodeModal');
     });
     // $('#findMost' + type + 'InfNodeModal').on('hide.bs.modal', function (e) {
@@ -2206,7 +2248,7 @@ function allMaxInfToast(maxInfluenceList, nodeSet) {
                     for (var i in maxInfluenceList) {
                         if ((maxInfluenceList[i].origin_name == nodeSet[n1].node_name)
                             && (maxInfluenceList[i].destination_name == nodeSet[n2].node_name)) {
-                            value = Math.floor(maxInfluenceList[i].influence_value*100)/100;
+                            value = maxInfluenceList[i].influence_value.toFixed(3);
                             break;
                         }
                     }
@@ -2219,7 +2261,6 @@ function allMaxInfToast(maxInfluenceList, nodeSet) {
             });
         }
     }
-
     $('#maxInfTableFixedToast').show();
 }
 

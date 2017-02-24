@@ -734,6 +734,7 @@
           <div class="etc-div">
             <span>ETC : </span><br/>
             <input class="checkbox-confidence" type="checkbox" checked><span>Confidence</span>
+            <input class="checkbox-average" type="checkbox" checked><span>Average</span>
           </div>
         </div>
       </div>
@@ -772,6 +773,7 @@
           <div class="etc-div">
             <span>ETC : </span><br/>
             <input class="checkbox-confidence" type="checkbox" checked><span>Confidence</span>
+            <input class="checkbox-average" type="checkbox" checked><span>Average</span>
           </div>
         </div>
       </div>
@@ -810,6 +812,7 @@
           <div class="etc-div">
             <span>ETC : </span><br/>
             <input class="checkbox-confidence" type="checkbox" checked><span>Confidence</span>
+            <input class="checkbox-average" type="checkbox" checked><span>Average</span>
           </div>
         </div>
       </div>
@@ -840,6 +843,7 @@
           <div class="etc-div">
             <span>ETC : </span><br/>
             <input class="checkbox-confidence" type="checkbox" checked><span>Confidence</span>
+            <input class="checkbox-average" type="checkbox" checked><span>Average</span>
           </div>
         </div>
       </div>
