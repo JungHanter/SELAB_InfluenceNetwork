@@ -110,7 +110,7 @@
     width: 100%;
 }
 
-.toast2 .fixed-toast .close {
+.toast2.fixed-toast .close {
     color: #fff;
     opacity: .5;
 }

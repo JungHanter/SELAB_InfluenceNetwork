@@ -351,6 +351,25 @@ body {
     display: none;
 }
 
+.etc-div {
+    margin-top: 5px;
+}
+
+.edgetype-checkbox-group {
+    margin-top: 5px;
+}
+
+#findMaxInfPathModal .modal-body input,
+#findMostSumInfNodeModal .modal-body input,
+#findMostAvgInfNodeModal .modal-body input,
+#findAllMaxInfModal .modal-body input {
+    margin : 7px 10px 0px 2px;
+}
+
+.checkbox_span {
+    margin-right: 10px;
+}
+
 .btn-group ul.dropdown-menu {
     max-height: 300px;
     overflow-y: scroll;
