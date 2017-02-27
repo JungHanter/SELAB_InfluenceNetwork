@@ -18,7 +18,6 @@ public class InfluenceGraphDAO {
 	public static int UNVALID_VALUE = 10;
 
 	public int saveInfluenceGraph(InfluenceGraph ig) {
-		
 		conn = DBManager.getConnection();
 		String sql = "insert into influencegraph(name, user_email) values(?,?)";
 		
@@ -89,6 +88,7 @@ public class InfluenceGraphDAO {
 		}
 		return null;
 	}
+
 	public InfluenceGraph getInfluenceGraph(int graphId) {
 		conn = DBManager.getConnection();
 		String sql = "SELECT id, name FROM influencegraph WHERE id="+graphId;
@@ -111,6 +111,7 @@ public class InfluenceGraphDAO {
 			return null;
 		}
 	}
+
 	public int updateInfluenceGraph(InfluenceGraph influencegraph, String name) {
 		conn = DBManager.getConnection();
 		String sql = "UPDATE influencegraph SET name="+name;
@@ -133,6 +134,7 @@ public class InfluenceGraphDAO {
 			}
 		}
 	}
+
 	public int deleteInfluenceGraph(int graphId) {
 		
 		conn = DBManager.getConnection();

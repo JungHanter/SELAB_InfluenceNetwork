@@ -224,7 +224,7 @@ public class GraphServlet extends HttpServlet {
 
         String action = jsonObject.get("action").toString().toLowerCase();
 
-        /* choose action */
+        /* Choose action */
         if (action.equals("create")) {
             String userEmail = jsonObject.get("email").toString();
             String graphName = jsonObject.get("graph_name").toString();
@@ -307,10 +307,10 @@ public class GraphServlet extends HttpServlet {
                 InfluenceGraph influenceGraph = influenceGraphDAO.getInfluenceGraph(graphId);
                 n1Id = Integer.parseInt(jsonObject.get("n1_id").toString());
                 n2Id = Integer.parseInt(jsonObject.get("n2_id").toString());
-                if((boolean) jsonObject.get("is_average") == true)
-                    isAverage = true;
-                if ((boolean) jsonObject.get("is_confidence") == true)
-                    isConfidence = true;
+                isAverage = (boolean) jsonObject.get("is_average");
+                isConfidence = (boolean) jsonObject.get("is_confidence");
+
+                /* Change edge type id list JSONArray to Treeset */
                 if (jsonObject.get("edge_type_id_list") != null) {
                     JSONArray edgeTypeJSONArray;
                     edgeTypeJSONArray = (JSONArray) jsonObject.get("edge_type_id_list");
@@ -325,6 +325,7 @@ public class GraphServlet extends HttpServlet {
                     }
                     System.out.println(edgeTypeSet);
                 }
+
                 if (isAverage == false) {
                     Node n1 = influenceGraph.getNode(n1Id);
                     Node n2 = influenceGraph.getNode(n2Id);
@@ -333,7 +334,7 @@ public class GraphServlet extends HttpServlet {
                         throw new Exception("There is no path from " + n1.getName() + " to " + n2.getName() + ".");
                     maxInfluenceEdgeList = maxInfluencePath.getEdgeArrayList();
 
-                    /* change max influence result to JSONArray */
+                    /* Change max influence result to JSONArray */
                     JSONArray edgeListJSONArray = new JSONArray();
                     for (Edge e : maxInfluenceEdgeList) {
                         JSONObject edgeJSONObject = new JSONObject();
@@ -346,6 +347,7 @@ public class GraphServlet extends HttpServlet {
                         edgeJSONObject.put("influence_value", e.getInfluenceValue());
                         edgeListJSONArray.add(edgeJSONObject);
                     }
+
                     result.put("max_influence_value", maxInfluencePath.getInfluenceValue());
                     result.put("edge_list", edgeListJSONArray);
                     result.put("result", "success");
@@ -372,10 +374,10 @@ public class GraphServlet extends HttpServlet {
 
             graphId = Integer.parseInt(jsonObject.get("graph_id").toString());
             InfluenceGraph influenceGraph = influenceGraphDAO.getInfluenceGraph(graphId);
-            if((boolean) jsonObject.get("is_average") == true)
-                isAverage = true;
-            if ((boolean) jsonObject.get("is_confidence") == true)
-                isCofidence = true;
+            isAverage = (boolean) jsonObject.get("is_average");
+            isCofidence = (boolean) jsonObject.get("is_confidence");
+
+            /* Change edgetypeidlist jsonarray to treeset */
             if (jsonObject.get("edge_type_id_list") != null) {
                 JSONArray edgeTypeJSONArray;
                 edgeTypeJSONArray = (JSONArray) jsonObject.get("edge_type_id_list");
@@ -427,12 +429,11 @@ public class GraphServlet extends HttpServlet {
             try {
                 graphId = Integer.parseInt(jsonObject.get("graph_id").toString());
                 num = Integer.parseInt(jsonObject.get("num").toString());
-
                 InfluenceGraph influenceGraph = influenceGraphDAO.getInfluenceGraph(graphId);
-                if ((boolean) jsonObject.get("is_confidence") == true)
-                    isCofidence = true;
-                if((boolean) jsonObject.get("is_average") == true)
-                    isAverage = true;
+                isCofidence = (boolean) jsonObject.get("is_confidence");
+                isAverage = (boolean) jsonObject.get("is_average");
+
+                /* Change edge type id list json array to treeset */
                 if (jsonObject.get("edge_type_id_list") != null) {
                     JSONArray edgeTypeJSONArray;
                     edgeTypeJSONArray = (JSONArray) jsonObject.get("edge_type_id_list");
@@ -447,6 +448,7 @@ public class GraphServlet extends HttpServlet {
                     }
                     System.out.println(edgeTypeSet);
                 }
+
                 TreeMap<Float, Node> sumInfNodeMap = influenceGraph.mostSumInfNode(num, edgeTypeSet, isCofidence, isAverage);
                 JSONArray nodeListJSONArray = new JSONArray();
                 for (Map.Entry<Float, Node> entry : sumInfNodeMap.entrySet()) {
@@ -474,10 +476,10 @@ public class GraphServlet extends HttpServlet {
                 graphId = Integer.parseInt(jsonObject.get("graph_id").toString());
                 num = Integer.parseInt(jsonObject.get("num").toString());
                 InfluenceGraph influenceGraph = influenceGraphDAO.getInfluenceGraph(graphId);
-                if ((boolean) jsonObject.get("is_confidence") == true)
-                    isCofidence = true;
-                if((boolean) jsonObject.get("is_average") == true)
-                    isAverage = true;
+                isCofidence = (boolean) jsonObject.get("is_confidence");
+                isAverage = (boolean) jsonObject.get("is_average");
+
+                /* Change edge type id list JSONArray to treeset */
                 if (jsonObject.get("edge_type_id_list") != null) {
                     JSONArray edgeTypeJSONArray;
                     edgeTypeJSONArray = (JSONArray) jsonObject.get("edge_type_id_list");
@@ -532,7 +534,7 @@ public class GraphServlet extends HttpServlet {
             }
 
             /**
-             * NodeType
+             * Save node type
              */
             HashMap<Integer, NodeType> clientIdNodetypeMap = new HashMap<>(); // for new nodetype.
             JSONArray nodetypeJsonArray = (JSONArray) graph.get("node_type_set");
@@ -601,7 +603,7 @@ public class GraphServlet extends HttpServlet {
             result.put("node_type_id_map", clientIdNodetypeJsonObject);
 
             /**
-             *  confidence
+             *  Save confidence
              */
             JSONArray confidenceJsonArray = (JSONArray) graph.get("confidence_set");
             HashSet<Confidence> confidenceRecievedSet = new HashSet<>();
@@ -673,7 +675,7 @@ public class GraphServlet extends HttpServlet {
             }
 
             /**
-             *  Node
+             *  Save Node
              */
             HashMap<Integer, Node> clientIdNodeMap = new HashMap<>();
             JSONArray nodeJsonArray = (JSONArray) graph.get("node_set");
@@ -817,7 +819,7 @@ public class GraphServlet extends HttpServlet {
             result.put("node_id_map", clientIdNodeJsonObject);
 
             /**
-             * EdgeType
+             * Save edge type
              */
             HashMap<Integer, EdgeType> clientIdEdgetypeMap = new HashMap<>();
             JSONArray edgetypeJsonArray = (JSONArray) graph.get("edge_type_set");
@@ -828,8 +830,8 @@ public class GraphServlet extends HttpServlet {
                 int id = 0, clientId = 0;
                 String color = null, name = null;
                 JSONObject edgetypeJsonObject = (JSONObject) o;
-
                 System.out.println(edgetypeJsonObject.toJSONString());
+
                 if (edgetypeJsonObject.containsKey("edge_type_id")) {
                     id = Integer.parseInt(edgetypeJsonObject.get("edge_type_id").toString());
                     hasId = true;
@@ -889,7 +891,7 @@ public class GraphServlet extends HttpServlet {
             result.put("edge_type_id_map", clientIdEdgetypeJsonObject);
 
             /**
-             * Edge
+             * Save edge
              */
             JSONArray edgeJsonArray = (JSONArray) graph.get("edge_set");
             HashSet<Edge> edgeRecievedSet = new HashSet<>();

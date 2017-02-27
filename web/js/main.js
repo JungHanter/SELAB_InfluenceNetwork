@@ -383,6 +383,7 @@ function setUnselected(graphUnselect) {
     selectedNode = null;
     selectedEdge = null;
 }
+
 function nodeTypeToSubMenuHtml(typeid) {
     return "<span class='nodeTypeColor type-color-bg type-color-"
             + nodeTypes[typeid]['color'] + "'>&nbsp;</span><span class='nodeTypeName'>"
@@ -1534,9 +1535,12 @@ function initFindMaxInfluencePathUI() {
                                                     edgeList.push(networkGraph.getEdge(sourceId, targetId, edgeTypeId));
                                                 }
                                                 console.log(edgeList);
-                                                setUnselected(true);
+
+                                                var edgeType = edgeList[0].type; // To show result of edge type.
                                                 var edgeTypeName = 'Default';
-                                                if (edgeType != null) edgeTypeName = edgeType.name;
+                                                if (edgeType != null) edgeTypeName = edgeTypes[edgeType].name;
+
+                                                setUnselected(true);
                                                 closeAnalysisToast();
                                                 infPathToast(sourceNode.title, targetNode.title, maxInfValue, edgeTypeName, edgeList);
                                                 console.log(edgeList);
@@ -2205,7 +2209,7 @@ function maxInfNodeToast(type, edgeTypeName, nodeList) {
     //     + "<br/>Edge Type: " + edgeTypeName
     //     + "<br/>" + "Ranking" + "<br/>";
 
-    var infoHtml = "Max " + type + " Influence Node <br/>"
+    var infoHtml = "Most " + type + " Influence Node <br/>"
         + "The number of node : " + nodeList.length
         + "<br/>" + "Ranking" + "<br/>";
 
