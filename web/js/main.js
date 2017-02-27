@@ -2210,24 +2210,8 @@ function menuFindMaxInfluenceTable() {
 }
 
 function infPathToast(node1Name, node2Name, infValue, edgeTypeName, edgeList, edgeTypeNameList, isConfidence, isAverage) {
-    var infoHtml = "Max Influence Path from &lt;" + node1Name
-        + "&gt; to &lt;" + node2Name + "&gt; <br/>"
-        + "Max Influence Value: " + infValue
-        + "<br/>Path's edge type: " + edgeTypeName
-        + "<br/>" + "Path" + ": ";
-
-    for (var i = 0; i < edgeList.length; i++) {
-        if (i==0) {
-            infoHtml += edgeList[i].source.title;
-            infoHtml += " ▶ ";
-            infoHtml += edgeList[i].target.title;
-        } else {
-            infoHtml += " ▶ ";
-            infoHtml += edgeList[i].target.title;
-        }
-    }
-
-    infoHtml += "<br/> Confidence : ";
+    var infoHtml = "Max Influence Path <br/>";
+    infoHtml += "Confidence : ";
     if(isConfidence)
         infoHtml += "O <br/>";
     else
@@ -2247,6 +2231,25 @@ function infPathToast(node1Name, node2Name, infValue, edgeTypeName, edgeList, ed
         else
             infoHtml += "<br/>";
     }
+
+    infoHtml += "from &lt;" + node1Name
+    + "&gt; to &lt;" + node2Name + "&gt; <br/>"
+    + "Max Influence Value: " + infValue
+    + "<br/>Path's edge type: " + edgeTypeName.toLowerCase()
+    + "<br/>" + "Path" + ": ";
+
+    for (var i = 0; i < edgeList.length; i++) {
+        if (i==0) {
+            infoHtml += edgeList[i].source.title;
+            infoHtml += " ▶ ";
+            infoHtml += edgeList[i].target.title;
+        } else {
+            infoHtml += " ▶ ";
+            infoHtml += edgeList[i].target.title;
+        }
+    }
+
+
 
     $('#infPathFixedInfo').html(infoHtml);
     $('#infPathFixedToast').show();
