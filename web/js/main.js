@@ -408,7 +408,7 @@ function edgeTypeToSubMenuHtml(typeid) {
         return "<span class='edgeTypeColor type-color-bg type-color-default"
             + "'>&nbsp;</span><span class='edgeTypeName'>"
             + "Default Edge Type</span><span class='edgeTypeId'>"
-            + "default</span>";
+            + "Default</span>";
     } else {
         return "<span class='edgeTypeColor type-color-bg type-color-"
             + edgeTypes[typeid]['color'] + "'>&nbsp;</span><span class='edgeTypeName'>"
@@ -1608,13 +1608,13 @@ function initFindMaxInfluencePathUI() {
                 if ($(this).find('input').is(":checked")) {
                     var edgeTypeId = $(this).find('> .edgeTypeId').text();
                     var edgeType = null;
-                    if (edgeTypeId != 'default') {
+                    if (edgeTypeId != 'Default') {
                         edgeTypeId = parseInt(edgeTypeId);
                         edgeType = edgeTypes[edgeTypeId];
                         edgeTypeNameList.push(edgeType.name);
                     } else {
                         edgeTypeId = null;
-                        edgeTypeNameList.push("default");
+                        edgeTypeNameList.push("Default");
                     }
                     var edgeTypeServerId = null;
                     if (edgeType != null) edgeTypeServerId = edgeType.serverId;
@@ -1680,8 +1680,31 @@ function initFindMaxInfluencePathUI() {
                             closeAnalysisToast();
                             console.log(sourceNode);
                             var infoHtml = "Max Influence Average from &lt;" + sourceNode.title
-                                + "&gt; to &lt;" + targetNode.title + "&gt; <br/>"
-                                + "Max Influence Average Value: " + averageValue;
+                                + "&gt; to &lt;" + targetNode.title + "&gt; <br/>";
+
+                            infoHtml += "Confidence : ";
+                            if(isConfidence)
+                                infoHtml += "O <br/>";
+                            else
+                                infoHtml += "X <br/>";
+
+                            infoHtml += "Average : ";
+                            if(isAverage)
+                                infoHtml += "O <br/>";
+                            else
+                                infoHtml += "X <br/>";
+
+                            infoHtml += "Edge Type : ";
+                            for (var i = 0; i < edgeTypeNameList.length; i++) {
+                                infoHtml += edgeTypeNameList[i];
+                                if(i != edgeTypeNameList.length-1)
+                                    infoHtml += ', ';
+                                else
+                                    infoHtml += "<br/>";
+                            }
+
+                            infoHtml += "Max Influence Average Value: " + averageValue;
+
 
                             $('#infPathFixedInfo').html(infoHtml);
                             $('#infPathFixedToast').show();
@@ -1769,7 +1792,7 @@ function initMaxInfluenceTableUI() {
                                     if ($(this).find('input').is(":checked")) {
                                         var edgeTypeId = $(this).find('> .edgeTypeId').text();
                                         var edgeType = null;
-                                        if (edgeTypeId != 'default') {
+                                        if (edgeTypeId != 'Default') {
                                             edgeTypeId = parseInt(edgeTypeId);
                                             edgeType = edgeTypes[edgeTypeId];
                                         } else edgeTypeId = null;
@@ -1836,7 +1859,7 @@ function initMaxInfluenceTableUI() {
                 if ($(this).find('input').is(":checked")) {
                     var edgeTypeId = $(this).find('> .edgeTypeId').text();
                     var edgeType = null;
-                    if (edgeTypeId != 'default') {
+                    if (edgeTypeId != 'Default') {
                         edgeTypeId = parseInt(edgeTypeId);
                         edgeType = edgeTypes[edgeTypeId];
                     } else edgeTypeId = null;
@@ -1991,13 +2014,13 @@ function initFindMostInfluenceNodeUI(type) {
                                     if ($(this).find('input').is(":checked")) {
                                         var edgeTypeId = $(this).find('> .edgeTypeId').text();
                                         var edgeType = null;
-                                        if (edgeTypeId != 'default') {
+                                        if (edgeTypeId != 'Default') {
                                             edgeTypeId = parseInt(edgeTypeId);
                                             edgeType = edgeTypes[edgeTypeId];
                                             edgeTypeNameList.push(edgeType.name);
                                         } else {
                                             edgeTypeId = null;
-                                            edgeTypeNameList.push("default");
+                                            edgeTypeNameList.push("Default");
                                         }
 
                                         var edgeTypeServerId = null;
@@ -2085,13 +2108,13 @@ function initFindMostInfluenceNodeUI(type) {
                 if ($(this).find('input').is(":checked")) {
                     var edgeTypeId = $(this).find('> .edgeTypeId').text();
                     var edgeType = null;
-                    if (edgeTypeId != 'default') {
+                    if (edgeTypeId != 'Default') {
                         edgeTypeId = parseInt(edgeTypeId);
                         edgeType = edgeTypes[edgeTypeId];
                         edgeTypeNameList.push(edgeType.name);
                     } else {
                         edgeTypeId = null;
-                        edgeTypeNameList.push("default");
+                        edgeTypeNameList.push("Default");
                     }
                     var edgeTypeServerId = null;
                     if (edgeType != null) edgeTypeServerId = edgeType.serverId;
@@ -2210,7 +2233,9 @@ function menuFindMaxInfluenceTable() {
 }
 
 function infPathToast(node1Name, node2Name, infValue, edgeTypeName, edgeList, edgeTypeNameList, isConfidence, isAverage) {
-    var infoHtml = "Max Influence Path <br/>";
+    var infoHtml = "Max Influence Path from &lt;" + node1Name
+    + "&gt; to &lt;" + node2Name + "&gt; <br/>";
+
     infoHtml += "Confidence : ";
     if(isConfidence)
         infoHtml += "O <br/>";
@@ -2232,10 +2257,8 @@ function infPathToast(node1Name, node2Name, infValue, edgeTypeName, edgeList, ed
             infoHtml += "<br/>";
     }
 
-    infoHtml += "from &lt;" + node1Name
-    + "&gt; to &lt;" + node2Name + "&gt; <br/>"
-    + "Max Influence Value: " + infValue
-    + "<br/>Path's edge type: " + edgeTypeName.toLowerCase()
+    infoHtml += "Max Influence Value: " + infValue
+    + "<br/>Path's edge type: " + edgeTypeName
     + "<br/>" + "Path" + ": ";
 
     for (var i = 0; i < edgeList.length; i++) {
