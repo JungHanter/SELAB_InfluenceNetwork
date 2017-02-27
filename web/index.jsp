@@ -62,9 +62,9 @@
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Analyze</a>
           <ul class="dropdown-menu">
-            <li><a class="menuSummary" href="#">Summary</a></li>
-            <li><a class="menuStatistics" href="#">Statistics</a></li>
-            <li role="separator" class="divider"></li>
+            <%--<li><a class="menuSummary" href="#">Summary</a></li>--%>
+            <%--<li><a class="menuStatistics" href="#">Statistics</a></li>--%>
+            <%--<li role="separator" class="divider"></li>--%>
             <li><a class="menuMaxInfluence" href="#">Max Influence</a></li>
             <li><a class="menuMaxInfluenceTable" href="#">Max Influence Table</a></li>
             <li role="separator" class="divider"></li>

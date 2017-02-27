@@ -1477,6 +1477,7 @@ function initFindMaxInfluencePathUI() {
                                 if($('#findMaxInfPathModal .checkbox-average').is(":checked"))
                                     isAverage = true;
                                 var edgeTypeIdList = [];
+                                var edgeTypeNameList = [];
                                 $('#findMaxInfPathModal .checkbox_span').each(function (index) {
                                     if ($(this).find('input').is(":checked")) {
                                         var edgeTypeId = $(this).find('> .edgeTypeId').text();
@@ -1484,7 +1485,11 @@ function initFindMaxInfluencePathUI() {
                                         if (edgeTypeId != 'default') {
                                             edgeTypeId = parseInt(edgeTypeId);
                                             edgeType = edgeTypes[edgeTypeId];
-                                        } else edgeTypeId = null;
+                                            edgeTypeNameList.push(edgeType.name);
+                                        } else {
+                                            edgeTypeId = null;
+                                            edgeTypeNameList.push("default");
+                                        }
                                         var edgeTypeServerId = null;
                                         if (edgeType != null) edgeTypeServerId = edgeType.serverId;
                                         edgeTypeIdList.push(edgeTypeServerId);
@@ -1542,7 +1547,7 @@ function initFindMaxInfluencePathUI() {
 
                                                 setUnselected(true);
                                                 closeAnalysisToast();
-                                                infPathToast(sourceNode.title, targetNode.title, maxInfValue, edgeTypeName, edgeList);
+                                                infPathToast(sourceNode.title, targetNode.title, maxInfValue, edgeTypeName, edgeList, edgeTypeNameList, isConfidence, isAverage);
                                                 console.log(edgeList);
                                                 networkGraph.setEdgeViewMode(networkGraph.EDGE_VIEW_MODE_PATH, edgeList);
                                             } else { // isAverage == true
@@ -1598,6 +1603,7 @@ function initFindMaxInfluencePathUI() {
             if($('#findMaxInfPathModal .checkbox-average').is(":checked"))
                 isAverage = true;
             var edgeTypeIdList = [];
+            var edgeTypeNameList = [];
             $('#findMaxInfPathModal .checkbox_span').each(function (index) {
                 if ($(this).find('input').is(":checked")) {
                     var edgeTypeId = $(this).find('> .edgeTypeId').text();
@@ -1605,7 +1611,11 @@ function initFindMaxInfluencePathUI() {
                     if (edgeTypeId != 'default') {
                         edgeTypeId = parseInt(edgeTypeId);
                         edgeType = edgeTypes[edgeTypeId];
-                    } else edgeTypeId = null;
+                        edgeTypeNameList.push(edgeType.name);
+                    } else {
+                        edgeTypeId = null;
+                        edgeTypeNameList.push("default");
+                    }
                     var edgeTypeServerId = null;
                     if (edgeType != null) edgeTypeServerId = edgeType.serverId;
                     edgeTypeIdList.push(edgeTypeServerId);
@@ -1661,7 +1671,7 @@ function initFindMaxInfluencePathUI() {
                             var edgeTypeName = 'Default';
                             if (edgeType != null) edgeTypeName = edgeTypes[edgeType].name;
                             closeAnalysisToast();
-                            infPathToast(sourceNode.title, targetNode.title, maxInfValue, edgeTypeName, edgeList);
+                            infPathToast(sourceNode.title, targetNode.title, maxInfValue, edgeTypeName, edgeList, edgeTypeNameList, isConfidence, isAverage);
                             console.log(edgeList);
                             networkGraph.setEdgeViewMode(networkGraph.EDGE_VIEW_MODE_PATH, edgeList);
                         } else { // isAverage == true
@@ -1723,7 +1733,6 @@ function initFindMaxInfluencePathUI() {
 }
 
 function initMaxInfluenceTableUI() {
-
     $('#btnFindAllMaxInfConfirm').click(function() {
         if(getCheckedBoxNumber($('#findAllMaxInfModal .checkbox_span')) == 0) { // checked box is none.
             openAlertModal("Please select edgetype more than 1.");
@@ -1894,21 +1903,27 @@ function addCheckbox(id) {
         $('.edgetype-checkbox-group').append("<span class='checkbox_span'><input type=\"checkbox\" checked>" + edgeTypeToSubMenuHtml(tid) + "</span>");
     }
 
-    $(id + ' .checkbox-all').click(function () {
-        if ($(this).is(':checked')) {
-            $(id +' .checkbox_span > input').each(function () {
-                if ($(this).is(':checked') == false) {
-                    $(this).prop('checked', true);
-                }
-            });
-        } else {
-            $(id + ' .checkbox_span > input').each(function () {
-                if ($(this).is(':checked') == true) {
-                    $(this).prop('checked', false);
-                }
-            });
-        }
-    });
+    if (edgeTypes[0] == undefined) {
+        $(id + ' .edgetype-div2').hide();
+    } else {
+        $(id + ' .edgetype-div2').show();
+        $(id + ' .checkbox-all').click(function () {
+            if ($(this).is(':checked')) {
+                $(id +' .checkbox_span > input').each(function () {
+                    if ($(this).is(':checked') == false) {
+                        $(this).prop('checked', true);
+                    }
+                });
+            } else {
+                $(id + ' .checkbox_span > input').each(function () {
+                    if ($(this).is(':checked') == true) {
+                        $(this).prop('checked', false);
+                    }
+                });
+            }
+        });
+    }
+
     var boxNum = 0;
     var checkedboxNum = 0;
 
@@ -1971,6 +1986,7 @@ function initFindMostInfluenceNodeUI(type) {
                                 if($('#findMost' + type + 'InfNodeModal' + ' .checkbox-average').is(":checked"))
                                     isAverage = true;
                                 var edgeTypeIdList = [];
+                                var edgeTypeNameList = [];
                                 $('#findMost' + type + 'InfNodeModal' + ' .checkbox_span').each(function (index) {
                                     if ($(this).find('input').is(":checked")) {
                                         var edgeTypeId = $(this).find('> .edgeTypeId').text();
@@ -1978,7 +1994,12 @@ function initFindMostInfluenceNodeUI(type) {
                                         if (edgeTypeId != 'default') {
                                             edgeTypeId = parseInt(edgeTypeId);
                                             edgeType = edgeTypes[edgeTypeId];
-                                        } else edgeTypeId = null;
+                                            edgeTypeNameList.push(edgeType.name);
+                                        } else {
+                                            edgeTypeId = null;
+                                            edgeTypeNameList.push("default");
+                                        }
+
                                         var edgeTypeServerId = null;
                                         if (edgeType != null) edgeTypeServerId = edgeType.serverId;
                                         edgeTypeIdList.push(edgeTypeServerId);
@@ -2018,8 +2039,8 @@ function initFindMostInfluenceNodeUI(type) {
                                             }
                                             setUnselected(true);
                                             closeAnalysisToast(); // 새로운 토스트를 열기전에 이전의 토스트를 다 닫는다.
-                                            edgeTypeName = "a";
-                                            maxInfNodeToast(type, edgeTypeName, nodeList);
+
+                                            maxInfNodeToast(type, nodeList, edgeTypeNameList, isConfidence, isAverage);
                                             console.log(nodeList);
                                             // networkGraph.setEdgeViewMode(networkGraph.EDGE_VIEW_MODE_PATH, edgeList);
                                         } else {
@@ -2059,6 +2080,7 @@ function initFindMostInfluenceNodeUI(type) {
             if($('#findMost' + type + 'InfNodeModal' + ' .checkbox-average').is(":checked"))
                 isAverage = true;
             var edgeTypeIdList = [];
+            var edgeTypeNameList = [];
             $('#findMost' + type + 'InfNodeModal' + ' .checkbox_span').each(function (index) {
                 if ($(this).find('input').is(":checked")) {
                     var edgeTypeId = $(this).find('> .edgeTypeId').text();
@@ -2066,7 +2088,11 @@ function initFindMostInfluenceNodeUI(type) {
                     if (edgeTypeId != 'default') {
                         edgeTypeId = parseInt(edgeTypeId);
                         edgeType = edgeTypes[edgeTypeId];
-                    } else edgeTypeId = null;
+                        edgeTypeNameList.push(edgeType.name);
+                    } else {
+                        edgeTypeId = null;
+                        edgeTypeNameList.push("default");
+                    }
                     var edgeTypeServerId = null;
                     if (edgeType != null) edgeTypeServerId = edgeType.serverId;
                     edgeTypeIdList.push(edgeTypeServerId);
@@ -2106,8 +2132,7 @@ function initFindMostInfluenceNodeUI(type) {
                         }
                         setUnselected(true);
                         closeAnalysisToast(); // 새로운 토스트를 열기전에 이전의 토스트를 다 닫는다.
-                        edgeTypeName = "a";
-                        maxInfNodeToast(type, edgeTypeName, nodeList);
+                        maxInfNodeToast(type, nodeList, edgeTypeNameList, isConfidence, isAverage);
                         console.log(nodeList);
                         // networkGraph.setEdgeViewMode(networkGraph.EDGE_VIEW_MODE_PATH, edgeList);
                     } else {
@@ -2125,9 +2150,12 @@ function initFindMostInfluenceNodeUI(type) {
             networkGraph.isChanged = false;
         }
     });
+
+
     $('#findMost' + type + 'InfNodeModal').on('show.bs.modal', function (e) {
         $('#most' + type + 'InfNodeNumber').val(1);
         addCheckbox('#findMost' + type + 'InfNodeModal');
+        $('#most' + type + 'InfNodeNumber').attr({'max' : networkGraph.nodes.length});
     });
     // $('#findMost' + type + 'InfNodeModal').on('hide.bs.modal', function (e) {
     //     $('#find' + type + 'InfDlgEdgeTypeDropdown').empty();
@@ -2181,11 +2209,11 @@ function menuFindMaxInfluenceTable() {
     }
 }
 
-function infPathToast(node1Name, node2Name, infValue, edgeTypeName, edgeList) {
+function infPathToast(node1Name, node2Name, infValue, edgeTypeName, edgeList, edgeTypeNameList, isConfidence, isAverage) {
     var infoHtml = "Max Influence Path from &lt;" + node1Name
         + "&gt; to &lt;" + node2Name + "&gt; <br/>"
         + "Max Influence Value: " + infValue
-        + "<br/>Edge Type: " + edgeTypeName
+        + "<br/>Path's edge type: " + edgeTypeName
         + "<br/>" + "Path" + ": ";
 
     for (var i = 0; i < edgeList.length; i++) {
@@ -2199,20 +2227,64 @@ function infPathToast(node1Name, node2Name, infValue, edgeTypeName, edgeList) {
         }
     }
 
+    infoHtml += "<br/> Confidence : ";
+    if(isConfidence)
+        infoHtml += "O <br/>";
+    else
+        infoHtml += "X <br/>";
+
+    infoHtml += "Average : ";
+    if(isAverage)
+        infoHtml += "O <br/>";
+    else
+        infoHtml += "X <br/>";
+
+    infoHtml += "Edge Type : ";
+    for (var i = 0; i < edgeTypeNameList.length; i++) {
+        infoHtml += edgeTypeNameList[i];
+        if(i != edgeTypeNameList.length-1)
+            infoHtml += ', ';
+        else
+            infoHtml += "<br/>";
+    }
+
     $('#infPathFixedInfo').html(infoHtml);
     $('#infPathFixedToast').show();
 }
 
-function maxInfNodeToast(type, edgeTypeName, nodeList) {
+function maxInfNodeToast(type, nodeList, edgeTypeNameList, isConfidence, isAverage) {
     // var infoHtml = "Max " + type + " Influence Node <br/>"
     //     + "The number of node : " + nodeList.length
     //     + "<br/>Edge Type: " + edgeTypeName
     //     + "<br/>" + "Ranking" + "<br/>";
 
     var infoHtml = "Most " + type + " Influence Node <br/>"
-        + "The number of node : " + nodeList.length
-        + "<br/>" + "Ranking" + "<br/>";
+        + "The number of node : " + nodeList.length + "<br/>";
 
+    infoHtml += "Edge Type : ";
+    for (var i = 0; i < edgeTypeNameList.length; i++) {
+        infoHtml += edgeTypeNameList[i];
+        if(i != edgeTypeNameList.length-1)
+            infoHtml += ', ';
+        else
+            infoHtml += "<br/>";
+    }
+
+    infoHtml += "Confidence : ";
+    if(isConfidence)
+        infoHtml += "O <br/>";
+    else
+        infoHtml += "X <br/>";
+
+    infoHtml += "Average : ";
+    if(isAverage)
+        infoHtml += "O <br/>";
+    else
+        infoHtml += "X <br/>";
+
+    console.log(edgeTypeNameList);
+    console.log(nodeList);
+    infoHtml += "<br/>" + "Ranking" + "<br/>";
     for (var i = 0; i < nodeList.length; i++) {
         infoHtml += i+1 + ". ";
         infoHtml += "node : " + nodeList[i].node.title + "&nbsp&nbsp value : " + nodeList[i][type.toLowerCase() + '_influence_value'];
@@ -2232,6 +2304,11 @@ function allMaxInfToast(maxInfluenceList, nodeSet) {
     $('#maxInfluenceTable .fixedTable-header thead tr').empty();
     $('#maxInfluenceTable .fixedTable-sidebar tbody').empty();
     $('#maxInfluenceTable .fixedTable-body tbody').empty();
+
+    nodeSet.sort(function (a,b) {
+        return a.node_name.toLowerCase() < b.node_name.toLowerCase() ? -1
+            : a.node_name.toLowerCase() > b.node_name.toLowerCase() ? 1 : 0;
+    });
 
     for (var n1 in nodeSet) {
         $('#maxInfluenceTable .fixedTable-header thead tr').append(
