@@ -181,11 +181,11 @@ public class GraphServlet extends HttpServlet {
         JSONObject result = new JSONObject();
 
         /* check session */
-//        JSONObject session = SessionServlet.getSession(request);
-//        String res = session.get("result").toString();
-//        if (res.equals("fail")) {
-//            return;
-//        }
+        JSONObject session = SessionServlet.getSession(request);
+        String res = session.get("result").toString();
+        if (res.equals("fail")) {
+            return;
+        }
 
         try {
             br = new BufferedReader(new InputStreamReader(request.getInputStream()));

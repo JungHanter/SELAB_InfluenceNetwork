@@ -1442,7 +1442,7 @@ function initFindMaxInfluencePathUI() {
             openAlertModal("Please select source node.");
         } else if($('#findMaxInfDlgTarget').hasClass('unselected')) {
             openAlertModal("Please select target node.");
-        } else if(getCheckedBoxNumber($('#findMaxInfPathModal .checkbox_span')) == 0) { // checked box is none.
+        } else if(getCheckedBoxNumber($('#findMaxInfPathModal .checkbox_div')) == 0) { // checked box is none.
             openAlertModal("Please select edgetype more than 1.");
         } else if(networkGraph.isChanged) {
             console.log("isChanged");
@@ -1478,17 +1478,17 @@ function initFindMaxInfluencePathUI() {
                                     isAverage = true;
                                 var edgeTypeIdList = [];
                                 var edgeTypeNameList = [];
-                                $('#findMaxInfPathModal .checkbox_span').each(function (index) {
+                                $('#findMaxInfPathModal .checkbox_div').each(function (index) {
                                     if ($(this).find('input').is(":checked")) {
                                         var edgeTypeId = $(this).find('> .edgeTypeId').text();
                                         var edgeType = null;
-                                        if (edgeTypeId != 'default') {
+                                        if (edgeTypeId != 'Default') {
                                             edgeTypeId = parseInt(edgeTypeId);
                                             edgeType = edgeTypes[edgeTypeId];
                                             edgeTypeNameList.push(edgeType.name);
                                         } else {
                                             edgeTypeId = null;
-                                            edgeTypeNameList.push("default");
+                                            edgeTypeNameList.push("Default");
                                         }
                                         var edgeTypeServerId = null;
                                         if (edgeType != null) edgeTypeServerId = edgeType.serverId;
@@ -1604,7 +1604,7 @@ function initFindMaxInfluencePathUI() {
                 isAverage = true;
             var edgeTypeIdList = [];
             var edgeTypeNameList = [];
-            $('#findMaxInfPathModal .checkbox_span').each(function (index) {
+            $('#findMaxInfPathModal .checkbox_div').each(function (index) {
                 if ($(this).find('input').is(":checked")) {
                     var edgeTypeId = $(this).find('> .edgeTypeId').text();
                     var edgeType = null;
@@ -1705,7 +1705,6 @@ function initFindMaxInfluencePathUI() {
 
                             infoHtml += "Max Influence Average Value: " + averageValue;
 
-
                             $('#infPathFixedInfo').html(infoHtml);
                             $('#infPathFixedToast').show();
                         }
@@ -1757,7 +1756,7 @@ function initFindMaxInfluencePathUI() {
 
 function initMaxInfluenceTableUI() {
     $('#btnFindAllMaxInfConfirm').click(function() {
-        if(getCheckedBoxNumber($('#findAllMaxInfModal .checkbox_span')) == 0) { // checked box is none.
+        if(getCheckedBoxNumber($('#findAllMaxInfModal .checkbox_div')) == 0) { // checked box is none.
             openAlertModal("Please select edgetype more than 1.");
         } else if(networkGraph.isChanged) {
             console.log("isChanged");
@@ -1788,7 +1787,7 @@ function initMaxInfluenceTableUI() {
                                 if($('#findAllMaxInfModal .checkbox-average').is(":checked"))
                                     isAverage = true;
                                 var edgeTypeIdList = [];
-                                $('#findAllMaxInfModal .checkbox_span').each(function (index) {
+                                $('#findAllMaxInfModal .checkbox_div').each(function (index) {
                                     if ($(this).find('input').is(":checked")) {
                                         var edgeTypeId = $(this).find('> .edgeTypeId').text();
                                         var edgeType = null;
@@ -1855,7 +1854,7 @@ function initMaxInfluenceTableUI() {
             if($('#findAllMaxInfModal .checkbox-average').is(":checked"))
                 isAverage = true;
             var edgeTypeIdList = [];
-            $('#findAllMaxInfModal .checkbox_span').each(function (index) {
+            $('#findAllMaxInfModal .checkbox_div').each(function (index) {
                 if ($(this).find('input').is(":checked")) {
                     var edgeTypeId = $(this).find('> .edgeTypeId').text();
                     var edgeType = null;
@@ -1921,9 +1920,9 @@ function getCheckedBoxNumber(id) {
 
 function addCheckbox(id) {
     $('.edgetype-checkbox-group').empty();
-    $('.edgetype-checkbox-group').append("<span class='checkbox_span'><input type=\"checkbox\" checked>" + edgeTypeToSubMenuHtml(null) + "</span>");
+    $('.edgetype-checkbox-group').append("<div class='checkbox_div'><input type=\"checkbox\" checked>" + edgeTypeToSubMenuHtml(null) + "</div>");
     for (var tid in edgeTypes) {
-        $('.edgetype-checkbox-group').append("<span class='checkbox_span'><input type=\"checkbox\" checked>" + edgeTypeToSubMenuHtml(tid) + "</span>");
+        $('.edgetype-checkbox-group').append("<div class='checkbox_div'><input type=\"checkbox\" checked>" + edgeTypeToSubMenuHtml(tid) + "</div>");
     }
 
     if (edgeTypes[0] == undefined) {
@@ -1932,13 +1931,13 @@ function addCheckbox(id) {
         $(id + ' .edgetype-div2').show();
         $(id + ' .checkbox-all').click(function () {
             if ($(this).is(':checked')) {
-                $(id +' .checkbox_span > input').each(function () {
+                $(id +' .checkbox_div input').each(function () {
                     if ($(this).is(':checked') == false) {
                         $(this).prop('checked', true);
                     }
                 });
             } else {
-                $(id + ' .checkbox_span > input').each(function () {
+                $(id + ' .checkbox_div input').each(function () {
                     if ($(this).is(':checked') == true) {
                         $(this).prop('checked', false);
                     }
@@ -1950,11 +1949,11 @@ function addCheckbox(id) {
     var boxNum = 0;
     var checkedboxNum = 0;
 
-    $(id + ' .checkbox_span > input').each(function () {
+    $(id + ' .checkbox_div input').each(function () {
         $(this).click(function () {
 
             console.log("click");
-            $(id + ' .checkbox_span > input').each(function () {
+            $(id + ' .checkbox_div input').each(function () {
                 boxNum++;
                 if($(this).is(':checked') == true) {
                     checkedboxNum++;
@@ -1979,7 +1978,7 @@ function initFindMostInfluenceNodeUI(type) {
     $('#btnFind' + type + 'InfNodeConfirm').click(function() {
         if($('#most' + type + 'InfNodeNumber').val() == "") {
             openAlertModal("Please input the number of node.");
-        } else if(getCheckedBoxNumber($('#findMost' + type + 'InfNodeModal' + ' .checkbox_span')) == 0) { // checked box is none.
+        } else if(getCheckedBoxNumber($('#findMost' + type + 'InfNodeModal' + ' .checkbox_div')) == 0) { // checked box is none.
             openAlertModal("Please select edgetype more than 1.");
         } else if(networkGraph.isChanged) {
             openConfirmModal("Before finding max influence path, the graph must be saved. Do you wish to continue?",
@@ -2010,7 +2009,7 @@ function initFindMostInfluenceNodeUI(type) {
                                     isAverage = true;
                                 var edgeTypeIdList = [];
                                 var edgeTypeNameList = [];
-                                $('#findMost' + type + 'InfNodeModal' + ' .checkbox_span').each(function (index) {
+                                $('#findMost' + type + 'InfNodeModal' + ' .checkbox_div').each(function (index) {
                                     if ($(this).find('input').is(":checked")) {
                                         var edgeTypeId = $(this).find('> .edgeTypeId').text();
                                         var edgeType = null;
@@ -2104,7 +2103,7 @@ function initFindMostInfluenceNodeUI(type) {
                 isAverage = true;
             var edgeTypeIdList = [];
             var edgeTypeNameList = [];
-            $('#findMost' + type + 'InfNodeModal' + ' .checkbox_span').each(function (index) {
+            $('#findMost' + type + 'InfNodeModal' + ' .checkbox_div').each(function (index) {
                 if ($(this).find('input').is(":checked")) {
                     var edgeTypeId = $(this).find('> .edgeTypeId').text();
                     var edgeType = null;
@@ -2476,7 +2475,7 @@ function initControllers() {
         }
     });
 
-    getSession();
+    getSession('main');
 
     //for test
     /*user = {user_name: 'sm', email: 'sm@gmail.com'}
@@ -2563,28 +2562,54 @@ function signup() {
     }
 }
 
-function getSession() {
+function getSession(type) {
+
     $.LoadingOverlay('show');
-    $.ajax("/session", {
-        method: 'GET',
-        dataType: 'json',
-        success: function (res) {
-            $.LoadingOverlay('hide');
-            if (res['result'] == 'success') {
-                user = res['user'];
-                $('#menuSignin').hide();
-                $('#menuUserWelcome').text("Welcome " + user.user_name + "!");
-                $('#menuUser').show();
-                $('.content').show();
-                $('.welcome-overlay').hide();
-                $('.main-menu > .dropdown > .dropdown-toggle')
-                    .attr('disabled', false).removeClass('disabled');
-                setGraphUIEnable(false);
+    if(type == 'main') {
+        $.ajax("/session", {
+            method: 'GET',
+            dataType: 'json',
+            success: function (res) {
+                $.LoadingOverlay('hide');
+                if (res['result'] == 'success') {
+                    console.log("getSession Success");
+                    user = res['user'];
+                    $('#menuSignin').hide();
+                    $('#menuUserWelcome').text("Welcome " + user.user_name + "!");
+                    $('#menuUser').show();
+                    $('.content').show();
+                    $('.welcome-overlay').hide();
+                    $('.main-menu > .dropdown > .dropdown-toggle')
+                        .attr('disabled', false).removeClass('disabled');
+                    setGraphUIEnable(false);
+                }
+                // else {
+                //     if($.cookie('getSession') == null) {
+                //         $.cookie("getSession", true);
+                //         window.location.reload();
+                //     } else {
+                //         $.cookie("getSession", null);
+                //     }
+                // }
+            }, error: function(xhr, status, error) {
+                $.LoadingOverlay('hide');
             }
-        }, error: function(xhr, status, error) {
-            $.LoadingOverlay('hide');
-        }
-    });
+        });
+    } else {
+        $.ajax("/session", {
+            method: 'GET',
+            dataType: 'json',
+            success: function (res) {
+                $.LoadingOverlay('hide');
+                if (res['result'] == 'fail') {
+                    window.onbeforeunload = null;
+                    window.location.reload(true);
+                }
+            }, error: function(xhr, status, error) {
+                $.LoadingOverlay('hide');
+            }
+        });
+    }
 }
 
 function signin() {
@@ -2663,6 +2688,7 @@ function signout() {
 }
 
 function menuNewGraph() {
+    getSession();
     $('#newGraphName').val('');
     $('#newGraphModal').modal();
 }
@@ -2702,7 +2728,7 @@ function menuOpenGraph() {
     // $('#graphName').text('asdf');
     // nowGraphInfo = {graphId: 1, graphName: 'asdf'}
     // return;
-
+    getSession();
     $.LoadingOverlay('show');
     $.ajax("/graph", {
         method: 'GET',
@@ -2764,6 +2790,7 @@ function openGraph(graphId) {
     });
 }
 function menuCloseGraph() {
+    getSession();
     if ($(this).hasClass('disabled') || $(this).attr('disabled')) return;
     openConfirmModal("Are you sure to close the graph? \nIf you didn't save the current graph, any unsaved changes will be discarded.",
             "Close Graph Confirm", closeGraph);
@@ -2794,6 +2821,7 @@ function closeGraph() {
 }
 
 function menuSaveGraph() {
+    getSession();
     if ($(this).hasClass('disabled') || $(this).attr('disabled')) return;
     $.LoadingOverlay('show');
     var graphJson = generateSaveGraphJson();
@@ -2823,6 +2851,7 @@ function menuSaveGraph() {
     });
 }
 function menuSaveAsGraph() {
+    getSession();
     if ($(this).hasClass('disabled') || $(this).attr('disabled')) return;
 
     $('#saveAsGraphName').val('');
@@ -2880,9 +2909,11 @@ function assignSaveIdMaps(res) {
 }
 
 function menuPrintGraph() {
+    getSession();
     if ($(this).hasClass('disabled') || $(this).attr('disabled')) return;
 }
 function menuAbout() {
+    getSession();
 }
 
 function loadGraph(graphData) {
