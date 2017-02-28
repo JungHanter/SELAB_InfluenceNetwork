@@ -229,6 +229,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
 
     /* insert svg line breaks: taken from http://stackoverflow.com/questions/13241475/how-do-i-include-newlines-in-labels-in-d3-charts */
     GraphCreator.prototype.insertTitleLinebreaks = function (gEl, title) {
+        console.log(title);
         var words = title.split(/\s+/g),
                 nwords = words.length;
         var el = gEl.append("text")
@@ -244,7 +245,9 @@ document.onload = (function(d3, saveAs, Blob, undefined){
 
     GraphCreator.prototype.insertEdgeName = function (gEl, d) {
         var thisGraph = this;
-
+        console.log(d);
+        console.log(gEl);
+        console.log(gEl[0][0]);
         //set edge name position
         var vx=(d.target.x - d.source.x), vy=(d.target.y - d.source.y);
         var dx=Math.abs(vx), dy=Math.abs(vy);
@@ -957,6 +960,10 @@ document.onload = (function(d3, saveAs, Blob, undefined){
 
             paths.each(function(d) {
                 d3.select(this).selectAll("text").remove();
+                thisGraph.insertEdgeName(d3.select(this), d);
+                // if (d.type == selType) {
+                //
+                // }
             });
         }
 
