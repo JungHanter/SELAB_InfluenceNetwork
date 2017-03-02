@@ -1463,7 +1463,7 @@ function initFindMaxInfluencePathUI() {
                             console.log(res);
                             if (res['result'] == 'success') {
                                 assignSaveIdMaps(res);
-                                toast('Saved');
+                                showSnackBar();
 
                                 //find max influence path
                                 var sourceId = parseInt($('#findMaxInfDlgSource .nodeName').data('nodeid')),
@@ -1777,7 +1777,8 @@ function initMaxInfluenceTableUI() {
                             console.log(res);
                             if (res['result'] == 'success') {
                                 assignSaveIdMaps(res);
-                                toast('Saved');
+
+                                showSnackBar();
 
                                 /* find all max influence */
                                 var isConfidence = false;
@@ -1998,7 +1999,7 @@ function initFindMostInfluenceNodeUI(type) {
                             console.log(res);
                             if (res['result'] == 'success') {
                                 assignSaveIdMaps(res);
-                                toast('Saved');
+                                showSnackBar();
 
                                 var nodeNumber = $('#most' + type + 'InfNodeNumber').val();
                                 var isConfidence = false;
@@ -2189,6 +2190,7 @@ function initFindMostInfluenceNodeUI(type) {
 
 function closeAnalysisToast() {
     networkGraph.setEdgeViewMode(networkGraph.EDGE_VIEW_MODE_SELECTED, viewedEdgeTypes);
+    $('#maxInfTableFixedToast').hide();
     $('#infPathFixedToast').hide();
     $('#sumInfNodeFixedToast').hide();
     $('#avgInfNodeFixedToast').hide();
@@ -2840,7 +2842,8 @@ function menuSaveGraph() {
             if (res['result'] == 'success') {
                 //save done
                 assignSaveIdMaps(res);
-                toast('Saved');
+                // showSnackBar();
+                showSnackBar();
             } else {
                 openAlertModal(res['message'], 'Save Graph Failure');
             }
@@ -2878,7 +2881,7 @@ function saveAs(graphName) {
                 nowGraphInfo.graphId = res['graph_id'];
                 nowGraphInfo.graphName = graphName;
                 assignSaveIdMaps(res);
-                toast('Saved');
+                showSnackBar();
             } else {
                 openAlertModal(res['message'], 'Save As Graph Failure');
             }
@@ -3097,4 +3100,16 @@ function generateSaveGraphJson(saveAs=false) {
     }
 
     return graphData;
+}
+
+function showSnackBar() {
+    closeAnalysisToast();
+    // Get the snackbar DIV
+    var x = document.getElementById("snackbar")
+
+    // Add the "show" class to DIV
+    x.className = "show";
+
+    // After 3 seconds, remove the show class from DIV
+    setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
 }

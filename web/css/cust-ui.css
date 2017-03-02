@@ -78,11 +78,11 @@
 }
 
 .toast2 .toast-wrapper .toast-alert .toast-body {
-    background-color: #424242;
+    background-color: white;
     padding: 14px 20px;
     -webkit-box-shadow: 2px 2px 6px #888888;
     -moz-box-shadow: 2px 2px 6px #888888;
-    box-shadow: 2px 2px 6px #888888;
+    box-shadow: 4px 4px 26px #888888;
     display: inline-block;
     border-radius: 6px;
     min-width: 160px;
@@ -111,6 +111,11 @@
 }
 
 .toast2.fixed-toast .close {
-    color: #fff;
+    color: #607d8b;
     opacity: .5;
+}
+
+.toast2 .table-bordered>tbody>tr>td, .table-bordered>tbody>tr>th, .table-bordered>tfoot>tr>td,
+.table-bordered>tfoot>tr>th, .table-bordered>thead>tr>td, .table-bordered>thead>tr>th {
+    border: 1px solid #ccc;
 }

@@ -993,6 +993,8 @@
   </div>
 </div>
 
+<div id="snackbar">Saved</div>
+
 <script src="lib/jquery/jquery-3.1.1.min.js"></script>
 <script src="js/jquery.cookie.js"></script>
 <script src="lib/jquery/plugin/loadingoverlay.min.js"></script>

@@ -229,7 +229,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
 
     /* insert svg line breaks: taken from http://stackoverflow.com/questions/13241475/how-do-i-include-newlines-in-labels-in-d3-charts */
     GraphCreator.prototype.insertTitleLinebreaks = function (gEl, title) {
-        console.log(title);
+        // console.log(title);
         var words = title.split(/\s+/g),
                 nwords = words.length;
         var el = gEl.append("text")
@@ -245,54 +245,66 @@ document.onload = (function(d3, saveAs, Blob, undefined){
 
     GraphCreator.prototype.insertEdgeName = function (gEl, d) {
         var thisGraph = this;
-        console.log(d);
-        console.log(gEl);
-        console.log(gEl[0][0]);
+        var innerHTML = gEl[0][0]['innerHTML'];
+
+        var attributesD = innerHTML.split("\"")[3];
+        var parsedD = attributesD.split("L");
+        var parsedM = parsedD[0].split(",");
+        var parsedL = parsedD[1].split(",");
+        parsedM[0] = parsedM[0].slice(1);
+        // console.log(gEl[0][0]);
+        // console.log(parsedM);
+        // console.log(parsedL);
+        var vx = Number(parsedM[0]) - Number(parsedL[0]), vy = Number(parsedM[1]) - Number(parsedL[1]);
+        var tx = (Number(parsedM[0]) + Number(parsedL[0]))/2, ty = (Number(parsedM[1]) + Number(parsedL[1]))/2;
+
+
         //set edge name position
-        var vx=(d.target.x - d.source.x), vy=(d.target.y - d.source.y);
+        // var vx=(d.target.x - d.source.x), vy=(d.target.y - d.source.y);
         var dx=Math.abs(vx), dy=Math.abs(vy);
         var dr=Math.sqrt(dx*dx + dy*dy);
-        var tx=((d.source.x+d.target.x)/2), ty=((d.source.y+d.target.y)/2);
-        if (d.bilateral) {
-            if (dx >= dy) {
-                if (d.source.x < d.target.x) {
-                    tx = tx + (20 * vy / dr);
-                    ty = ty - 10 - 20;
-                } else {
-                    tx = tx + (20 * vy / dr);
-                    ty = ty + 10 + 10;
-                }
-            } else {    // dy > dx
-                if (d.source.y < d.target.y) {
-                    tx = tx + 20 + 10;
-                    ty = ty - (20 * vx / dr);
-                } else {
-                    tx = tx - 20 - 10 - 5;
-                    ty = ty - (20 * vx / dr);
-                }
-            }
-        } else {
-            if (dx >= dy) {
-                if (d.source.x < d.target.x) {
-                    tx = tx - (20 * vy / dr);
-                } else {
-                    tx = tx + (20 * vy / dr);
-                }
-                ty = ty + 10 + (10 * dy / dr);
-            } else {
-                tx = tx + 20 + (10 * dx / dr);
-                if (d.source.y < d.target.y) {
-                    ty = ty - (10 * vx / dr);
-                } else {
-                    ty = ty + (10 * vx / dr) - 10;
-                }
-            }
-        }
+        // var tx=((d.source.x+d.target.x)/2), ty=((d.source.y+d.target.y)/2);
+        // if (d.bilateral) {
+        //     if (dx >= dy) {
+        //         if (d.source.x < d.target.x) {
+        //             tx = tx + (20 * vy / dr);
+        //             ty = ty - 10 - 20;
+        //         } else {
+        //             tx = tx + (20 * vy / dr);
+        //             ty = ty + 10 + 10;
+        //         }
+        //     } else {    // dy > dx
+        //         if (d.source.y < d.target.y) {
+        //             tx = tx + 20 + 10;
+        //             ty = ty - (20 * vx / dr);
+        //         } else {
+        //             tx = tx - 20 - 10 - 5;
+        //             ty = ty - (20 * vx / dr);
+        //         }
+        //     }
+        // } else {
+        //     if (dx >= dy) {
+        //         if (d.source.x < d.target.x) {
+        //             tx = tx - (20 * vy / dr);
+        //         } else {
+        //             tx = tx + (20 * vy / dr);
+        //         }
+        //         ty = ty + 10 + (10 * dy / dr);
+        //     } else {
+        //         tx = tx + 20 + (10 * dx / dr);
+        //         if (d.source.y < d.target.y) {
+        //             ty = ty - (10 * vx / dr);
+        //         } else {
+        //             ty = ty + (10 * vx / dr) - 10;
+        //         }
+        //     }
+        // }
 
         var el = gEl.append("text")
                     .attr("text-anchor","middle")
-                    .attr("transform", "translate(" + tx + "," + ty + ")")
-                    .attr("dy", "10")
+                    .attr("transform", "translate(" + tx + "," + ty + ") rotate(" + Math.atan(vy/vx) * 57.3 + ")")
+                    .attr("dy", "13")
+                    .attr("dx", "13")
                     .on("mousedown", function(d) {
                         thisGraph.pathTextMouseDown.call(thisGraph, d3.select(this), d);
                     });
