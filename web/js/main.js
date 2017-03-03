@@ -2459,11 +2459,17 @@ function initControllers() {
                 $('#openGraphModal').modal('hide');
                 openGraph(selectedGraphId);
             } else {
-                openConfirmModal("Are you sure to open the selected graph? \nIf you didn't save the current graph, any unsaved changes will be discarded.",
-                        "Open Graph Confirm", function() {
+                if(networkGraph.isChanged == true) {
+                    openConfirmModal("Are you sure to open the selected graph? \nIf you didn't save the current graph, any unsaved changes will be discarded.",
+                            "Open Graph Confirm", function() {
+                        $('#openGraphModal').modal('hide');
+                        openGraph(selectedGraphId);
+                    });
+                }
+                else {
                     $('#openGraphModal').modal('hide');
                     openGraph(selectedGraphId);
-                });
+                }
             }
         } else openAlertModal("Please select a graph.", "Open Error");
     });
@@ -3105,7 +3111,7 @@ function generateSaveGraphJson(saveAs=false) {
 function showSnackBar() {
     closeAnalysisToast();
     // Get the snackbar DIV
-    var x = document.getElementById("snackbar")
+    var x = document.getElementById("snackbar");
 
     // Add the "show" class to DIV
     x.className = "show";
