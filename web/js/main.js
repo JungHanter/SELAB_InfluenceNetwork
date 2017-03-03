@@ -2464,6 +2464,7 @@ function initControllers() {
                             "Open Graph Confirm", function() {
                         $('#openGraphModal').modal('hide');
                         openGraph(selectedGraphId);
+                            networkGraph.isChanged = false;
                     });
                 }
                 else {
