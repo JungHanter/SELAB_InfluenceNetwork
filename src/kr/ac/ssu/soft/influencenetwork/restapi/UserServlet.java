@@ -97,7 +97,7 @@ public class UserServlet extends HttpServlet {
             result = signup(email, password, name);
         } else {
             result.put("result", "fail");
-            result.put("meassage", "api form is wrong");
+            result.put("message", "api form is wrong");
         }
 
         out.write(result.toJSONString());
@@ -112,7 +112,7 @@ public class UserServlet extends HttpServlet {
         Matcher matcher = pattern.matcher(email);
         if (matcher.matches() == false) {
             result.put("result", "fail");
-            result.put("meassage", "wrong email form");
+            result.put("message", "wrong email form");
             return result;
         }
         try {
@@ -139,7 +139,7 @@ public class UserServlet extends HttpServlet {
                                 return new PasswordAuthentication(senderEmail, senderPassword);
                             }
                         });
-
+                session.setDebug(true);
                 try {
                     Message message = new MimeMessage(session);
                     message.setFrom(new InternetAddress(senderEmail));
@@ -160,7 +160,7 @@ public class UserServlet extends HttpServlet {
                 result.put("result", "success");
             } else {
                 result.put("result", "fail");
-                result.put("meassage", "duplicated email");
+                result.put("message", "duplicated email");
             }
         } catch (HashGenerationException e) {
             e.printStackTrace();
