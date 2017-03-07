@@ -18,77 +18,78 @@
   <div class="container-fluid top-menu top-menu-main">
     <div class="collapse navbar-collapse">
       <ul class="nav navbar-nav main-menu">
+        <h5 id="top-left-title">Influence Network Analytics Service</h5>
         <li class="dropdown">
-          <a href="#" class="dropdown-toggle dropdown-default " data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">File</a>
+          <a  class="dropdown-toggle dropdown-default " data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">File</a>
           <ul class="dropdown-menu dropdown-menu-file">
-            <li><a class="menuNew menuDefault" href="#">New</a></li>
-            <li><a class="menuOpen menuDefault" href="#">Open</a></li>
-            <li><a class="menuClose" href="#">Close</a></li>
+            <li><a class="menuNew menuDefault" >New</a></li>
+            <li><a class="menuOpen menuDefault" >Open</a></li>
+            <li><a class="menuClose" >Close</a></li>
             <li role="separator" class="divider"></li>
-            <li><a class="menuSave" href="#">Save</a></li>
-            <li><a class="menuSaveAs" href="#">Save-As</a></li>
+            <li><a class="menuSave" >Save</a></li>
+            <li><a class="menuSaveAs" >Save-As</a></li>
             <li role="separator" class="divider"></li>
-            <li><a class="menuPrint" href="#">Print</a></li>
+            <li><a class="menuPrint" >Print</a></li>
             <li role="separator" class="divider"></li>
-            <li><a class="menuAbout menuDefault" href="#">About</a></li>
+            <li><a class="menuAbout menuDefault" >About</a></li>
           </ul>
         </li>
         <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Edit</a>
+          <a  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Edit</a>
           <ul class="dropdown-menu">
-            <li><a class="menuNewNode" href="#">New Node</a></li>
-            <li><a class="menuDeleteNode" href="#">Delete Node</a></li>
+            <li><a class="menuNewNode" >New Node</a></li>
+            <li><a class="menuDeleteNode" >Delete Node</a></li>
             <li role="separator" class="divider"></li>
-            <li><a class="menuNewEdge" href="#">New Edge</a></li>
-            <li><a class="menuDeleteEdge" href="#">Delete Edge</a></li>
+            <li><a class="menuNewEdge" >New Edge</a></li>
+            <li><a class="menuDeleteEdge" >Delete Edge</a></li>
             <li role="separator" class="divider"></li>
-            <li><a class="menuManageNodeType" href="#">Manage Node Type</a></li>
-            <li><a class="menuManageEdgeType" href="#">Manage Edge Type</a></li>
-            <li><a class="menuManageConfidence" href="#">Manage Confidence</a></li>
+            <li><a class="menuManageNodeType" >Manage Node Type</a></li>
+            <li><a class="menuManageEdgeType" >Manage Edge Type</a></li>
+            <li><a class="menuManageConfidence" >Manage Confidence</a></li>
           </ul>
         </li>
         <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">View</a>
+          <a  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">View</a>
           <ul class="dropdown-menu">
-            <li><a href="#">Graphical View</a></li>
-            <li><a href="#">Table View</a></li>
+            <li><a >Graphical View</a></li>
+            <li><a >Table View</a></li>
             <li role="separator" class="divider"></li>
-            <li><a class="menuManageEdgeTypeView" href="#">Edge Type View Setting</a></li>
+            <li><a class="menuManageEdgeTypeView" >Edge Type View Setting</a></li>
             <li role="separator" class="divider"></li>
-            <li><a href="#">Zoom-In</a></li>
-            <li><a href="#">Zoom-Out</a></li>
+            <li><a >Zoom-In</a></li>
+            <li><a >Zoom-Out</a></li>
           </ul>
         </li>
         <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Analyze</a>
+          <a  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Analyze</a>
           <ul class="dropdown-menu">
-            <%--<li><a class="menuSummary" href="#">Summary</a></li>--%>
-            <%--<li><a class="menuStatistics" href="#">Statistics</a></li>--%>
+            <%--<li><a class="menuSummary" >Summary</a></li>--%>
+            <%--<li><a class="menuStatistics" >Statistics</a></li>--%>
             <%--<li role="separator" class="divider"></li>--%>
-            <li><a class="menuMaxInfluence" href="#">Max Influence</a></li>
-            <li><a class="menuMaxInfluenceTable" href="#">Max Influence Table</a></li>
+            <li><a class="menuMaxInfluence" >Max Influence</a></li>
+            <li><a class="menuMaxInfluenceTable" >Max Influence Table</a></li>
             <li role="separator" class="divider"></li>
-            <li><a class="menuMostSumInfluence" href="#">Most Sum Influence</a></li>
-            <li><a class="menuMostAverageInfluence" href="#">Most Average Influence</a></li>
+            <li><a class="menuMostSumInfluence" >Most Sum Influence</a></li>
+            <li><a class="menuMostAverageInfluence" >Most Average Influence</a></li>
           </ul>
         </li>
         <li class="dropdown">
-          <a href="#" class="dropdown-toggle dropdown-default" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Resource</a>
+          <a  class="dropdown-toggle dropdown-default" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Help</a>
           <ul class="dropdown-menu">
-            <li><a href="#">News</a></li>
-            <li><a href="#">Events</a></li>
+            <li><a >News</a></li>
+            <li><a >Events</a></li>
             <li role="separator" class="divider"></li>
-            <li><a href="#">Sites</a></li>
-            <li><a href="#">Resources</a></li>
+            <li><a >Sites</a></li>
+            <li><a >Resources</a></li>
           </ul>
         </li>
       </ul>
 
       <ul class="nav navbar-nav navbar-right" id="menuUser" style="display: none">
         <li class="dropdown">
-          <a href="#" id="menuUserWelcome" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Welcome John!</a>
+          <a  id="menuUserWelcome" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Welcome John!</a>
           <ul class="dropdown-menu">
-            <li><a id="menuSignout" href="#">Sign out</a></li>
+            <li><a id="menuSignout" >Sign out</a></li>
           </ul>
         </li>
       </ul>
@@ -106,8 +107,8 @@
           <button id="btnSignin" class="btn btn-dark btn-block" type="submit">Sign in</button>
         </form>
         <div class="signin-more">
-          <a href="#">Forgot your password?</a>
-          <a id="menuSignup" href="#" class="pull-right">Create new account?</a>
+          <a >Forgot your password?</a>
+          <a id="menuSignup" class="pull-right">Create new account?</a>
         </div>
       </div>
     </div>
@@ -139,7 +140,7 @@
           <span class="sr-only">Toggle Dropdown</span>
         </button>
         <ul id="subMenuNodeTypeDropdown" class="dropdown-menu">
-          <li><a href="#"><span class="nodeTypeColor type-color-bg">&nbsp;</span><span class="nodeTypeName">Type1</span></a></li>
+          <li><a ><span class="nodeTypeColor type-color-bg">&nbsp;</span><span class="nodeTypeName">Type1</span></a></li>
         </ul>
       </div>
       <div class="sub-menu-divider"></div>
@@ -159,7 +160,7 @@
           <span class="sr-only">Toggle Dropdown</span>
         </button>
         <ul id="subMenuEdgeSourceDropdown" class="dropdown-menu subMenuEdgeNodeDropdown">
-          <li><a href="#">Node 1</a></li>
+          <li><a >Node 1</a></li>
         </ul>
       </div>
       <div class="sub-menu-name">
@@ -172,7 +173,7 @@
           <span class="sr-only">Toggle Dropdown</span>
         </button>
         <ul id="subMenuEdgeTargetDropdown" class="dropdown-menu subMenuEdgeNodeDropdown">
-          <li><a href="#">Node 1</a></li>
+          <li><a >Node 1</a></li>
         </ul>
       </div>
       <div class="sub-menu-divider"></div>
@@ -186,7 +187,7 @@
           <span class="sr-only">Toggle Dropdown</span>
         </button>
         <ul id="subMenuEdgeTypeDropdown" class="dropdown-menu">
-          <li><a href="#"><span class="edgeTypeColor type-color-bg">&nbsp;</span><span class="edgeTypeName">Type1</span></a></li>
+          <li><a ><span class="edgeTypeColor type-color-bg">&nbsp;</span><span class="edgeTypeName">Type1</span></a></li>
         </ul>
       </div>
       <div class="sub-menu-divider"></div>
@@ -222,7 +223,7 @@
     <div class="side-menu-container">
       <div class="side-menu-list side-menu-nodes">
         <div class="side-menu-list-header">
-          <h5>Node List</h5>
+          <h5>List of Nodes</h5>
           <div class="btn-group" role="group">
             <a class="btn btn-dark btn-xs menuDeleteNode" aria-label="Delete Node">
               <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
@@ -242,7 +243,7 @@
 
       <div class="side-menu-list side-menu-edges">
         <div class="side-menu-list-header">
-          <h5>Edge List</h5>
+          <h5>List of Edges</h5>
           <div class="btn-group" role="group">
             <a class="btn btn-dark btn-xs menuDeleteEdge" aria-label="Delete Edge">
               <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
@@ -355,7 +356,7 @@
               <span class="sr-only">Toggle Dropdown</span>
             </button>
             <ul id="newEdgeDlgSourceDropdown" class="dropdown-menu newEdgeDlgNodeDropdown">
-              <li><a href="#">Node 1</a></li>
+              <li><a >Node 1</a></li>
             </ul>
           </div>
         </div>
@@ -369,7 +370,7 @@
               <span class="sr-only">Toggle Dropdown</span>
             </button>
             <ul id="newEdgeDlgTargetDropdown" class="dropdown-menu newEdgeDlgNodeDropdown">
-              <li><a href="#">Node 1</a></li>
+              <li><a >Node 1</a></li>
             </ul>
           </div>
         </div>
@@ -383,7 +384,7 @@
               <span class="sr-only">Toggle Dropdown</span>
             </button>
             <ul id="newEdgeDlgTypeDropdown" class="dropdown-menu">
-              <li><a href="#"><span class="edgeTypeColor type-color-bg">&nbsp;</span><span class="edgeTypeName">Type1</span></a></li>
+              <li><a ><span class="edgeTypeColor type-color-bg">&nbsp;</span><span class="edgeTypeName">Type1</span></a></li>
             </ul>
           </div>
         </div>
@@ -426,8 +427,8 @@
               </div>
             </div>
             <div id="manageNodeTypeList" class="list-group">
-              <a href="#" class="list-group-item active">Type 1</a>
-              <a href="#" class="list-group-item">Type 2</a>
+              <a  class="list-group-item active">Type 1</a>
+              <a  class="list-group-item">Type 2</a>
             </div>
             <span class="unfocusor" style="display: none;">&nbsp;</span>
           </div>
@@ -436,25 +437,25 @@
               <h5>Select Color</h5>
             </div>
             <div id="manageNodeTypeColorList" class="list-group">
-              <a href="#" class="list-group-item active" data-color="red">Red <span class="typeColor type-color-bg type-color-red">&nbsp;</span></a>
-              <a href="#" class="list-group-item" data-color="pink">Pink <span class="typeColor type-color-bg type-color-pink">&nbsp;</span></a>
-              <a href="#" class="list-group-item" data-color="purple">Purple <span class="typeColor type-color-bg type-color-purple">&nbsp;</span></a>
-              <a href="#" class="list-group-item" data-color="deep-purple">Deep Purple <span class="typeColor type-color-bg type-color-deep-purple">&nbsp;</span></a>
-              <a href="#" class="list-group-item" data-color="indigo">Indigo <span class="typeColor type-color-bg type-color-indigo">&nbsp;</span></a>
-              <a href="#" class="list-group-item" data-color="blue">Blue <span class="typeColor type-color-bg type-color-blue">&nbsp;</span></a>
-              <a href="#" class="list-group-item" data-color="light-blue">Light Blue <span class="typeColor type-color-bg type-color-light-blue">&nbsp;</span></a>
-              <a href="#" class="list-group-item" data-color="cyan">Cyan <span class="typeColor type-color-bg type-color-cyan">&nbsp;</span></a>
-              <a href="#" class="list-group-item" data-color="teal">Teal <span class="typeColor type-color-bg type-color-teal">&nbsp;</span></a>
-              <a href="#" class="list-group-item" data-color="green">Green <span class="typeColor type-color-bg type-color-green">&nbsp;</span></a>
-              <a href="#" class="list-group-item" data-color="light-green">Light Green <span class="typeColor type-color-bg type-color-light-green">&nbsp;</span></a>
-              <a href="#" class="list-group-item" data-color="lime">Lime <span class="typeColor type-color-bg type-color-lime">&nbsp;</span></a>
-              <a href="#" class="list-group-item" data-color="yellow">Yellow <span class="typeColor type-color-bg type-color-yellow">&nbsp;</span></a>
-              <a href="#" class="list-group-item" data-color="amber">Amber <span class="typeColor type-color-bg type-color-amber">&nbsp;</span></a>
-              <a href="#" class="list-group-item" data-color="orange">Orange <span class="typeColor type-color-bg type-color-orange">&nbsp;</span></a>
-              <a href="#" class="list-group-item" data-color="deep-orange">Deep Orange <span class="typeColor type-color-bg type-color-deep-orange">&nbsp;</span></a>
-              <a href="#" class="list-group-item" data-color="brown">Brown <span class="typeColor type-color-bg type-color-brown">&nbsp;</span></a>
-              <a href="#" class="list-group-item" data-color="grey">Grey <span class="typeColor type-color-bg type-color-grey">&nbsp;</span></a>
-              <a href="#" class="list-group-item" data-color="blue-grey">Blue Grey <span class="typeColor type-color-bg type-color-blue-grey">&nbsp;</span></a>
+              <a  class="list-group-item active" data-color="red">Red <span class="typeColor type-color-bg type-color-red">&nbsp;</span></a>
+              <a  class="list-group-item" data-color="pink">Pink <span class="typeColor type-color-bg type-color-pink">&nbsp;</span></a>
+              <a  class="list-group-item" data-color="purple">Purple <span class="typeColor type-color-bg type-color-purple">&nbsp;</span></a>
+              <a  class="list-group-item" data-color="deep-purple">Deep Purple <span class="typeColor type-color-bg type-color-deep-purple">&nbsp;</span></a>
+              <a  class="list-group-item" data-color="indigo">Indigo <span class="typeColor type-color-bg type-color-indigo">&nbsp;</span></a>
+              <a  class="list-group-item" data-color="blue">Blue <span class="typeColor type-color-bg type-color-blue">&nbsp;</span></a>
+              <a  class="list-group-item" data-color="light-blue">Light Blue <span class="typeColor type-color-bg type-color-light-blue">&nbsp;</span></a>
+              <a  class="list-group-item" data-color="cyan">Cyan <span class="typeColor type-color-bg type-color-cyan">&nbsp;</span></a>
+              <a  class="list-group-item" data-color="teal">Teal <span class="typeColor type-color-bg type-color-teal">&nbsp;</span></a>
+              <a  class="list-group-item" data-color="green">Green <span class="typeColor type-color-bg type-color-green">&nbsp;</span></a>
+              <a  class="list-group-item" data-color="light-green">Light Green <span class="typeColor type-color-bg type-color-light-green">&nbsp;</span></a>
+              <a  class="list-group-item" data-color="lime">Lime <span class="typeColor type-color-bg type-color-lime">&nbsp;</span></a>
+              <a  class="list-group-item" data-color="yellow">Yellow <span class="typeColor type-color-bg type-color-yellow">&nbsp;</span></a>
+              <a  class="list-group-item" data-color="amber">Amber <span class="typeColor type-color-bg type-color-amber">&nbsp;</span></a>
+              <a  class="list-group-item" data-color="orange">Orange <span class="typeColor type-color-bg type-color-orange">&nbsp;</span></a>
+              <a  class="list-group-item" data-color="deep-orange">Deep Orange <span class="typeColor type-color-bg type-color-deep-orange">&nbsp;</span></a>
+              <a  class="list-group-item" data-color="brown">Brown <span class="typeColor type-color-bg type-color-brown">&nbsp;</span></a>
+              <a  class="list-group-item" data-color="grey">Grey <span class="typeColor type-color-bg type-color-grey">&nbsp;</span></a>
+              <a  class="list-group-item" data-color="blue-grey">Blue Grey <span class="typeColor type-color-bg type-color-blue-grey">&nbsp;</span></a>
             </div>
           </div>
         </div>
@@ -491,8 +492,8 @@
               </div>
             </div>
             <div id="manageEdgeTypeList" class="list-group">
-              <a href="#" class="list-group-item active">Type 1</a>
-              <a href="#" class="list-group-item">Type 2</a>
+              <a  class="list-group-item active">Type 1</a>
+              <a  class="list-group-item">Type 2</a>
             </div>
             <span class="unfocusor" style="display: none;">&nbsp;</span>
           </div>
@@ -501,25 +502,25 @@
               <h5>Select Color</h5>
             </div>
             <div id="manageEdgeTypeColorList" class="list-group">
-              <a href="#" class="list-group-item active" data-color="red">Red <span class="typeColor type-color-bg type-color-red">&nbsp;</span></a>
-              <a href="#" class="list-group-item" data-color="pink">Pink <span class="typeColor type-color-bg type-color-pink">&nbsp;</span></a>
-              <a href="#" class="list-group-item" data-color="purple">Purple <span class="typeColor type-color-bg type-color-purple">&nbsp;</span></a>
-              <a href="#" class="list-group-item" data-color="deep-purple">Deep Purple <span class="typeColor type-color-bg type-color-deep-purple">&nbsp;</span></a>
-              <a href="#" class="list-group-item" data-color="indigo">Indigo <span class="typeColor type-color-bg type-color-indigo">&nbsp;</span></a>
-              <a href="#" class="list-group-item" data-color="blue">Blue <span class="typeColor type-color-bg type-color-blue">&nbsp;</span></a>
-              <a href="#" class="list-group-item" data-color="light-blue">Light Blue <span class="typeColor type-color-bg type-color-light-blue">&nbsp;</span></a>
-              <a href="#" class="list-group-item" data-color="cyan">Cyan <span class="typeColor type-color-bg type-color-cyan">&nbsp;</span></a>
-              <a href="#" class="list-group-item" data-color="teal">Teal <span class="typeColor type-color-bg type-color-teal">&nbsp;</span></a>
-              <a href="#" class="list-group-item" data-color="green">Green <span class="typeColor type-color-bg type-color-green">&nbsp;</span></a>
-              <a href="#" class="list-group-item" data-color="light-green">Light Green <span class="typeColor type-color-bg type-color-light-green">&nbsp;</span></a>
-              <a href="#" class="list-group-item" data-color="lime">Lime <span class="typeColor type-color-bg type-color-lime">&nbsp;</span></a>
-              <a href="#" class="list-group-item" data-color="yellow">Yellow <span class="typeColor type-color-bg type-color-yellow">&nbsp;</span></a>
-              <a href="#" class="list-group-item" data-color="amber">Amber <span class="typeColor type-color-bg type-color-amber">&nbsp;</span></a>
-              <a href="#" class="list-group-item" data-color="orange">Orange <span class="typeColor type-color-bg type-color-orange">&nbsp;</span></a>
-              <a href="#" class="list-group-item" data-color="deep-orange">Deep Orange <span class="typeColor type-color-bg type-color-deep-orange">&nbsp;</span></a>
-              <a href="#" class="list-group-item" data-color="brown">Brown <span class="typeColor type-color-bg type-color-brown">&nbsp;</span></a>
-              <a href="#" class="list-group-item" data-color="grey">Grey <span class="typeColor type-color-bg type-color-grey">&nbsp;</span></a>
-              <a href="#" class="list-group-item" data-color="blue-grey">Blue Grey <span class="typeColor type-color-bg type-color-blue-grey">&nbsp;</span></a>
+              <a  class="list-group-item active" data-color="red">Red <span class="typeColor type-color-bg type-color-red">&nbsp;</span></a>
+              <a  class="list-group-item" data-color="pink">Pink <span class="typeColor type-color-bg type-color-pink">&nbsp;</span></a>
+              <a  class="list-group-item" data-color="purple">Purple <span class="typeColor type-color-bg type-color-purple">&nbsp;</span></a>
+              <a  class="list-group-item" data-color="deep-purple">Deep Purple <span class="typeColor type-color-bg type-color-deep-purple">&nbsp;</span></a>
+              <a  class="list-group-item" data-color="indigo">Indigo <span class="typeColor type-color-bg type-color-indigo">&nbsp;</span></a>
+              <a  class="list-group-item" data-color="blue">Blue <span class="typeColor type-color-bg type-color-blue">&nbsp;</span></a>
+              <a  class="list-group-item" data-color="light-blue">Light Blue <span class="typeColor type-color-bg type-color-light-blue">&nbsp;</span></a>
+              <a  class="list-group-item" data-color="cyan">Cyan <span class="typeColor type-color-bg type-color-cyan">&nbsp;</span></a>
+              <a  class="list-group-item" data-color="teal">Teal <span class="typeColor type-color-bg type-color-teal">&nbsp;</span></a>
+              <a  class="list-group-item" data-color="green">Green <span class="typeColor type-color-bg type-color-green">&nbsp;</span></a>
+              <a  class="list-group-item" data-color="light-green">Light Green <span class="typeColor type-color-bg type-color-light-green">&nbsp;</span></a>
+              <a  class="list-group-item" data-color="lime">Lime <span class="typeColor type-color-bg type-color-lime">&nbsp;</span></a>
+              <a  class="list-group-item" data-color="yellow">Yellow <span class="typeColor type-color-bg type-color-yellow">&nbsp;</span></a>
+              <a  class="list-group-item" data-color="amber">Amber <span class="typeColor type-color-bg type-color-amber">&nbsp;</span></a>
+              <a  class="list-group-item" data-color="orange">Orange <span class="typeColor type-color-bg type-color-orange">&nbsp;</span></a>
+              <a  class="list-group-item" data-color="deep-orange">Deep Orange <span class="typeColor type-color-bg type-color-deep-orange">&nbsp;</span></a>
+              <a  class="list-group-item" data-color="brown">Brown <span class="typeColor type-color-bg type-color-brown">&nbsp;</span></a>
+              <a  class="list-group-item" data-color="grey">Grey <span class="typeColor type-color-bg type-color-grey">&nbsp;</span></a>
+              <a  class="list-group-item" data-color="blue-grey">Blue Grey <span class="typeColor type-color-bg type-color-blue-grey">&nbsp;</span></a>
             </div>
           </div>
         </div>
@@ -602,8 +603,8 @@
               <h5>Node Types</h5>
             </div>
             <div id="manageEdgeTypeViewList" class="list-group">
-              <a href="#" class="list-group-item active">Type 1</a>
-              <a href="#" class="list-group-item">Type 2</a>
+              <a  class="list-group-item active">Type 1</a>
+              <a  class="list-group-item">Type 2</a>
             </div>
           </div>
         </div>
@@ -652,8 +653,8 @@
         <div>
           <h5>Influence Graph List</h5>
           <div id="graphList" class="list-group">
-            <a href="#" class="list-group-item active">Type 1</a>
-            <a href="#" class="list-group-item">Type 2</a>
+            <a  class="list-group-item active">Type 1</a>
+            <a  class="list-group-item">Type 2</a>
           </div>
           <span class="unfocusor" style="display: none;">&nbsp;</span>
         </div>
@@ -704,7 +705,7 @@
               <span class="sr-only">Toggle Dropdown</span>
             </button>
             <ul id="findMaxInfDlgSourceDropdown" class="dropdown-menu findMaxInfDlgNodeDropdown">
-              <li><a href="#">Node 1</a></li>
+              <li><a >Node 1</a></li>
             </ul>
           </div>
         </div>
@@ -718,7 +719,7 @@
               <span class="sr-only">Toggle Dropdown</span>
             </button>
             <ul id="findMaxInfDlgTargetDropdown" class="dropdown-menu findMaxInfDlgNodeDropdown">
-              <li><a href="#">Node 1</a></li>
+              <li><a >Node 1</a></li>
             </ul>
           </div>
         </div>

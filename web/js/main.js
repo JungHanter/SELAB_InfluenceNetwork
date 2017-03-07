@@ -44,7 +44,7 @@ viewedEdgeTypes = [networkGraph.EDGE_TYPE_DEFAULT];
 function updateNodeTypes() {
     $('#subMenuNodeTypeDropdown').empty();
     for (var tid in nodeTypes) {
-        $('#subMenuNodeTypeDropdown').append("<li><a href='#'>"
+        $('#subMenuNodeTypeDropdown').append("<li><a>"
             + nodeTypeToSubMenuHtml(tid) + "</a></li>");
     }
     $('#subMenuNodeTypeDropdown > li > a').off('click').unbind('click').click(function() {
@@ -64,7 +64,7 @@ function updateNodeList(event, updatedData) {  //if updatedData is null, all dat
     $('.subMenuEdgeNodeDropdown').empty();
     for (var i=0; i<networkGraph.nodes.length; i++) {
         var nodeData = networkGraph.nodes[i];
-        var nodeInfoHtml = "<li><a href='#'>" + nodeDataToSubMenuHtml(nodeData) + "</a></li>";
+        var nodeInfoHtml = "<li><a>" + nodeDataToSubMenuHtml(nodeData) + "</a></li>";
         $('.subMenuEdgeNodeDropdown').append(nodeInfoHtml);
     }
     $('#subMenuEdgeSourceDropdown > li > a').off('click').unbind('click').click(function() {
@@ -95,7 +95,7 @@ function updateNodeList(event, updatedData) {  //if updatedData is null, all dat
     $('.newEdgeDlgNodeDropdown').empty();
     for (var i=0; i<networkGraph.nodes.length; i++) {
         var nodeData = networkGraph.nodes[i];
-        var nodeInfoHtml = "<li><a href='#'>" + nodeDataToSubMenuHtml(nodeData) + "</a></li>";
+        var nodeInfoHtml = "<li><a>" + nodeDataToSubMenuHtml(nodeData) + "</a></li>";
         $('.newEdgeDlgNodeDropdown').append(nodeInfoHtml);
     }
     $('#newEdgeDlgSourceDropdown > li > a').off('click').unbind('click').click(function() {
@@ -176,7 +176,7 @@ function updateNodeList(event, updatedData) {  //if updatedData is null, all dat
 function updateEdgeTypes() {
     $('#subMenuEdgeTypeDropdown').empty();
     for (var tid in edgeTypes) {
-        $('#subMenuEdgeTypeDropdown').append("<li><a href='#'>"
+        $('#subMenuEdgeTypeDropdown').append("<li><a>"
             + edgeTypeToSubMenuHtml(tid) + "</a></li>");
     }
     $('#subMenuEdgeTypeDropdown > li > a').off('click').unbind('click').click(function() {
@@ -186,7 +186,7 @@ function updateEdgeTypes() {
 
     $('#newEdgeDlgTypeDropdown').empty();
     for (var tid in edgeTypes) {
-        $('#newEdgeDlgTypeDropdown').append("<li><a href='#'>"
+        $('#newEdgeDlgTypeDropdown').append("<li><a>"
             + edgeTypeToSubMenuHtml(tid) + "</a></li>");
     }
     $('#newEdgeDlgTypeDropdown > li > a').off('click').unbind('click').click(function() {
@@ -281,6 +281,7 @@ function updateEdgeList(event, updatedData) {
 
 var selectedNode = null;
 function setSelectedNode(d3Node, nodeData) {
+    switchSecondMenu('show');
     $('#subMenuEdge').hide();
     $('#subMenuNone').hide();
     $('#subMenuNode').show();
@@ -319,6 +320,7 @@ function setSelectedNode(d3Node, nodeData) {
 }
 var selectedEdge = null;
 function setSelectedEdge(d3PathG, edgeData) {
+    switchSecondMenu('show');
     $('#subMenuNode').hide();
     $('#subMenuNone').hide();
     $('#subMenuEdge').show();
@@ -354,6 +356,7 @@ function setSelectedEdge(d3PathG, edgeData) {
     }
 }
 function setUnselected(graphUnselect) {
+    switchSecondMenu('hide');
     $('#subMenuNode').hide();
     $('#subMenuEdge').hide();
     $('#subMenuNone').show();
@@ -595,6 +598,7 @@ $(function () {
     }
 });
 $(document).ready(function() {
+
     // console.log(this.resp[])
 
     if ($.cookie('check_remember') == true) {
@@ -616,6 +620,7 @@ $(document).ready(function() {
         }, function () {                    // onUnselected
             // console.log("unselected");
             setUnselected();
+
         }, function(event, nodeData) {      // onNodeChanged
             updateNodeList(event, nodeData);
         }, function(event, edgeData) {      // onEdgeChanged
@@ -761,7 +766,7 @@ function initManageNodeTypeUI() {
         });
 
         //add list item
-        $('#manageNodeTypeList').append("<a href='#' class='list-group-item'>"
+        $('#manageNodeTypeList').append("<a class='list-group-item'>"
             + "<span class='nodeTypeName'>" + defaultNewTypeName + "</span>"
             + "<span class='typeColor type-color-bg type-color-" + defaultNewTypeColor
             + "' data-color='" + defaultNewTypeColor + "'>&nbsp;</span>"
@@ -869,7 +874,7 @@ function initManageNodeTypeUI() {
 function updateManageNodeTypeUI() {
     $('#manageNodeTypeList').empty();
     for (var typeid in nodeTypes) {
-        $('#manageNodeTypeList').append("<a href='#' class='list-group-item'>"
+        $('#manageNodeTypeList').append("<a class='list-group-item'>"
             + "<span class='nodeTypeName'>" + nodeTypes[typeid]['name'] + "</span>"
             + "<span class='typeColor type-color-bg type-color-" + nodeTypes[typeid]['color']
             + "' data-color='" + nodeTypes[typeid]['color'] + "'>&nbsp;</span>"
@@ -992,7 +997,7 @@ function initManageEdgeTypeUI() {
         });
 
         //add list item
-        $('#manageEdgeTypeList').append("<a href='#' class='list-group-item'>"
+        $('#manageEdgeTypeList').append("<a class='list-group-item'>"
             + "<span class='edgeTypeName'>" + defaultNewTypeName + "</span>"
             + "<span class='typeColor type-color-bg type-color-" + defaultNewTypeColor
             + "' data-color='" + defaultNewTypeColor + "'>&nbsp;</span>"
@@ -1120,7 +1125,7 @@ function initManageEdgeTypeUI() {
 function updateManageEdgeTypeUI() {
     $('#manageEdgeTypeList').empty();
     for (var typeid in edgeTypes) {
-        $('#manageEdgeTypeList').append("<a href='#' class='list-group-item'>"
+        $('#manageEdgeTypeList').append("<a class='list-group-item'>"
             + "<span class='edgeTypeName'>" + edgeTypes[typeid]['name'] + "</span>"
             + "<span class='typeColor type-color-bg type-color-" + edgeTypes[typeid]['color']
             + "' data-color='" + edgeTypes[typeid]['color'] + "'>&nbsp;</span>"
@@ -1370,13 +1375,13 @@ function deleteNodeTypeConfidence(typeid) {
 function initManageEdgeTypeViewUI() {
     $('#manageEdgeTypeViewModal').on('show.bs.modal', function (e) {
         $('#manageEdgeTypeViewList').empty();
-        $('#manageEdgeTypeViewList').append("<a href='#' class='list-group-item'>"
+        $('#manageEdgeTypeViewList').append("<a class='list-group-item'>"
             + "<span class='edgeTypeName'>" + "Default (No edge type)" + "</span>"
             + "<span class='typeColor type-color-bg type-color-" + networkGraph.EDGE_TYPE_DEFAULT
             + "' data-color='" + networkGraph.EDGE_TYPE_DEFAULT + "'>&nbsp;</span>"
             + "<span class='typeId'>" + networkGraph.EDGE_TYPE_DEFAULT + "</span></a>");
         for (var typeid in edgeTypes) {
-            $('#manageEdgeTypeViewList').append("<a href='#' class='list-group-item'>"
+            $('#manageEdgeTypeViewList').append("<a class='list-group-item'>"
                 + "<span class='edgeTypeName'>" + edgeTypes[typeid]['name'] + "</span>"
                 + "<span class='typeColor type-color-bg type-color-" + edgeTypes[typeid]['color']
                 + "' data-color='" + edgeTypes[typeid]['color'] + "'>&nbsp;</span>"
@@ -1463,7 +1468,7 @@ function initFindMaxInfluencePathUI() {
                             console.log(res);
                             if (res['result'] == 'success') {
                                 assignSaveIdMaps(res);
-                                showSnackBar();
+                                showSnackBar("Saved");
 
                                 //find max influence path
                                 var sourceId = parseInt($('#findMaxInfDlgSource .nodeName').data('nodeid')),
@@ -1729,7 +1734,7 @@ function initFindMaxInfluencePathUI() {
         $('.findMaxInfDlgNodeDropdown').empty();
         for (var i=0; i<networkGraph.nodes.length; i++) {
             var nodeData = networkGraph.nodes[i];
-            var nodeInfoHtml = "<li><a href='#'>" + nodeDataToSubMenuHtml(nodeData) + "</a></li>";
+            var nodeInfoHtml = "<li><a>" + nodeDataToSubMenuHtml(nodeData) + "</a></li>";
             $('.findMaxInfDlgNodeDropdown').append(nodeInfoHtml);
         }
         $('#findMaxInfDlgSourceDropdown > li > a').off('click').unbind('click').click(function() {
@@ -2557,7 +2562,7 @@ function signup() {
                 $.LoadingOverlay('hide');
                 if (res['result'] == 'success') {
                     // openAlertModal("Hello, " + name + "! Welcome to Influence Network.", "Signup Success");
-                    openAlertModal("Please check the email to activate your account.", "Signup Success");
+                    openAlertModal("Please check the email to activate your account.", "Final Step");
                 } else {
                     console.log(res);
                     openAlertModal(res['message'], 'Signup Failure');
@@ -2648,7 +2653,8 @@ function signin() {
                     $("#signinPassword").val("");
                 }
                 user = res['user'];
-                openAlertModal("Welcome " + user.user_name + "!", 'Login Success');
+                // openAlertModal("Welcome " + user.user_name + "!", 'Login Success');
+                showSnackBar("Login Success!");
                 $('#menuSignin').hide();
                 $('#menuUserWelcome').text("Welcome " + user.user_name + "!");
                 $('#menuUser').show();
@@ -2753,7 +2759,7 @@ function menuOpenGraph() {
                 $('#graphList').empty();
                 for(var i=0; i<graph_list.length; i++) {
                     var graph = graph_list[i];
-                    $('#graphList').append("<a href='#' class='list-group-item' data-graphid="
+                    $('#graphList').append("<a class='list-group-item' data-graphid="
                         + graph.graph_id + ">" + graph.graph_name + "</a>" );
                 }
                 $('#graphList .list-group-item').click(function() {
@@ -3109,14 +3115,27 @@ function generateSaveGraphJson(saveAs=false) {
     return graphData;
 }
 
-function showSnackBar() {
+function showSnackBar(text) {
     closeAnalysisToast();
     // Get the snackbar DIV
     var x = document.getElementById("snackbar");
+    $("#snackbar").text(text);
 
     // Add the "show" class to DIV
     x.className = "show";
 
     // After 3 seconds, remove the show class from DIV
     setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+}
+
+function switchSecondMenu (status) {
+    if (status == 'show') {
+        $('.menu-group').attr('height', '76px !important;');
+        $('.sub-menu-container').show();
+        console.log("switchSecondMenu show");
+    } else if(status == 'hide') {
+        $('.menu-group').attr('height', '38px !important;');
+        $('.sub-menu-container').hide();
+        console.log("switchSecondMenu hide");
+    }
 }
