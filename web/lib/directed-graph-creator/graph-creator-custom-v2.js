@@ -310,6 +310,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                     });
         var tspan = el.append('tspan').text(d.name);
         this.isChanged = true;
+        toggleAskCloseAndRefresh();
     };
 
 
@@ -462,6 +463,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                 thisGraph.onNodeChanged('updated', d);
             });
         this.isChanged= true;
+        toggleAskCloseAndRefresh();
         return d3txt;
     };
 
@@ -521,6 +523,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                 thisGraph.onEdgeChanged('updated', d);
             });
         this.isChanged = true;
+        toggleAskCloseAndRefresh();
         return d3txt;
     };
 
@@ -1043,6 +1046,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         });
         // if (type != undefin/this.consts.typeColorHead + type, true);
         this.isChanged = true;
+        toggleAskCloseAndRefresh();
     };
 
     GraphCreator.prototype.updateEdges = function () {
@@ -1068,6 +1072,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
             }
         });
         this.isChanged = true;
+        toggleAskCloseAndRefresh();
         // if (type != undefin/this.consts.typeColorHead + type, true);
     };
 
@@ -1105,12 +1110,14 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         d3node.selectAll("text").remove();
         this.insertTitleLinebreaks(d3node, title);
         this.isChanged = true;
+        toggleAskCloseAndRefresh();
     }
 
     GraphCreator.prototype.changeEdgeName = function(d3pathG, edgeData) {
         d3pathG.selectAll("text").remove();
         this.insertEdgeName(d3pathG, edgeData);
         this.isChanged = true;
+        toggleAskCloseAndRefresh();
     }
 
     GraphCreator.prototype.createNode = function(updating=true) {
@@ -1147,6 +1154,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         // });
         // thisGraph.replaceSelectNode(d3Node, newNodeData);
         this.isChanged = true;
+        toggleAskCloseAndRefresh();
         return newNodeData;
     };
 
@@ -1155,6 +1163,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         newNodeData.id = thisGraph.idct++;
         thisGraph.nodes.push(newNodeData);
         this.isChanged = true;
+        toggleAskCloseAndRefresh();
         return newNodeData;
     };
 
@@ -1184,6 +1193,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                 txtEdge.focus();
             }
             this.isChanged = true;
+            toggleAskCloseAndRefresh();
             return newEdge;
         }
         return null;
@@ -1366,6 +1376,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
             thisGraph.updateGraph();
         }
         this.isChanged = true;
+        toggleAskCloseAndRefresh();
     };
 
     GraphCreator.prototype.deleteEdge = function() {
@@ -1377,18 +1388,21 @@ document.onload = (function(d3, saveAs, Blob, undefined){
             thisGraph.updateGraph();
         }
         this.isChanged = true;
+        toggleAskCloseAndRefresh();
     };
 
     GraphCreator.prototype.setNodeTypes = function(types) {
         this.nodeTypes = types;
         this.updateNodeType(this.circles);
-        this.isChanged = true;;
+        this.isChanged = true;
+        toggleAskCloseAndRefresh();
     };
 
     GraphCreator.prototype.setEdgeTypes = function(types) {
         this.edgeTypes = types;
         this.updateEdgeType(this.paths);
         this.isChanged = true;
+        toggleAskCloseAndRefresh();
     };
 
     GraphCreator.prototype.resetTransform = function() {
@@ -1398,9 +1412,9 @@ document.onload = (function(d3, saveAs, Blob, undefined){
     /**** MAIN ****/
 
     // warn the user when leaving
-    window.onbeforeunload = function(){
-        return "Make sure to save your graph locally before leaving :-)";
-    };
+    // window.onbeforeunload = function(){
+    //     return "Make sure to save your graph locally before leaving :-)";
+    // };
 
     var docEl = document.documentElement,
         divEl = document.getElementsByTagName('graph')[0];
@@ -1452,4 +1466,16 @@ function isIncludeArray (arr, data) {
         if (arr[i] == data) return true;
     }
     return false;
+}
+
+function toggleAskCloseAndRefresh() {
+    if(networkGraph.isChanged == false) {
+        window.onbeforeunload = null;
+        console.log("networkGraph.isChanged == false");
+    } else {
+        console.log("networkGraph.isChanged == true");
+        window.onbeforeunload = function(){
+            return "Make sure to save your graph locally before leaving :-)";
+        };
+    }
 }

@@ -5,6 +5,7 @@
   <meta charset="utf-8">
   <title>Influence Network Analyzer</title>
 
+  <%--<link rel="stylesheet" type="text/css" href="lib/SnackBar/snackbar.css">--%>
   <link rel="stylesheet" type="text/css" href="lib/bootstrap/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="css/bootstrap-custom.css">
   <%--<link rel="stylesheet" type="text/css" href="lib/directed-graph-creator/graph-creator-custom.css">--%>
@@ -104,10 +105,10 @@
               <input id="checkRemember" type="checkbox" value="remember"> Remember Me
             </label>
           </div>
-          <button id="btnSignin" class="btn btn-dark btn-block" type="submit">Sign in</button>
+          <button id="btnSignin" class="btn btn-primary btn-block" type="submit">Sign in</button>
         </form>
         <div class="signin-more">
-          <a >Forgot your password?</a>
+          <a id="menuForgot">Forgot your password?</a>
           <a id="menuSignup" class="pull-right">Create new account?</a>
         </div>
       </div>
@@ -145,7 +146,7 @@
       </div>
       <div class="sub-menu-divider"></div>
       <div class="sub-menu-btn">
-        <button type="button" id="subMenuNodeEditBtn" class="btn btn-default">Update</button>
+        <button type="button" id="subMenuNodeEditBtn" class="btn btn-primary">Update</button>
       </div>
     </ul>
 
@@ -200,7 +201,7 @@
       </div>
       <div class="sub-menu-divider"></div>
       <div class="sub-menu-btn">
-        <button type="button" id="subMenuEdgeEditBtn" class="btn btn-default">Update</button>
+        <button type="button" id="subMenuEdgeEditBtn" class="btn btn-primary">Update</button>
       </div>
     </ul>
 
@@ -874,6 +875,24 @@
   </div>
 </div>
 
+<div id="confirmModal2" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 id="confirmModalTitle2" class="modal-title">Alert</h4>
+      </div>
+      <div class="modal-body">
+        <p id="confirmModalMsg2">message</p>
+      </div>
+      <div class="modal-footer">
+        <button id="btnSave" type="button" class="btn btn-default" data-dismiss="modal">Save</button>
+        <button id="btnDiscard" type="button" class="btn btn-dark" data-dismiss="modal">Discard</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="alertModal" class="modal fade" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -996,17 +1015,21 @@
 
 <div id="snackbar">Saved</div>
 
+
 <script src="lib/jquery/jquery-3.1.1.min.js"></script>
 <script src="js/jquery.cookie.js"></script>
 <script src="lib/jquery/plugin/loadingoverlay.min.js"></script>
 <script src="js/jquery_extends.js"></script>
 <script src="lib/bootstrap/js/bootstrap.min.js"></script>
 <script src="js/cust-ui.js"></script>
+<%--<script src="lib/SnackBar/snackbar.js"></script>--%>
 <%--<script src="lib/d3/d3.min.js"></script>--%>
 <script src="lib/d3/d3.v3.min.js" charset="utf-8"></script>
 <%--<script src="lib/directed-graph-creator/graph-creator-custom.js"></script>--%>
 <script src="lib/directed-graph-creator/graph-creator-custom-v2.js"></script>
 <script src="js/main.js"></script>
+
+
 
 
 </body>

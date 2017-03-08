@@ -461,6 +461,7 @@ function editNode() {
         }
         networkGraph.updateGraph();
         updateNodeList('updated', selectedNode.nodeData);
+        showSnackBar("Updated");
     }
 }
 function deleteNode() {
@@ -557,6 +558,7 @@ function editEdge() {
         }
         networkGraph.updateGraph();
         updateEdgeList('updated', selectedEdge.edgeData);
+        showSnackBar("Updated");
     }
 }
 function deleteEdge() {
@@ -599,9 +601,12 @@ $(function () {
 });
 $(document).ready(function() {
 
-    // console.log(this.resp[])
 
-    if ($.cookie('check_remember') == true) {
+    // window.onbeforeunload = function(){
+    //     return "Make sure to save your graph locally before leaving :-)";
+    // };
+
+    if ($.cookie('check_remember') == true) { //Login window, check remember
         $('#checkRemember').attr("checked", true);
         $('#signinEmail').val($.cookie('email'));
     }
@@ -656,6 +661,9 @@ $(document).ready(function() {
     $('.menuMostAverageInfluence').click(menuFindMostAverageInfluence);
 
     $('.menuMaxInfluenceTable').click(menuFindMaxInfluenceTable);
+
+    networkGraph.isChanged = false;
+    toggleAskCloseAndRefresh();
 
 });
 
@@ -1261,6 +1269,7 @@ function addNodeTypeConfidence(typeid) {
             }
             nodeConfidences[sourceId][targetId] = confidence;
             networkGraph.isChanged = true;
+            toggleAskCloseAndRefresh();
         });
     });
 
@@ -1306,6 +1315,7 @@ function addNodeTypeConfidence(typeid) {
         }
         nodeConfidences[sourceId][targetId] = confidence;
         networkGraph.isChanged = true;
+        toggleAskCloseAndRefresh();
     });
 }
 
@@ -1571,12 +1581,14 @@ function initFindMaxInfluencePathUI() {
                                             openAlertModal(res['message'], 'Find Max Influence Path Failure');
                                         }
                                         networkGraph.isChanged = false;
+                                        toggleAskCloseAndRefresh();
                                     }, error: function (xhr, status, error) {
                                         console.log(xhr);
                                         $.LoadingOverlay('hide');
                                         $('#findMaxInfPathModal').modal('hide');
                                         openAlertModal(xhr.statusText, 'Find Max Influence Path Failure');
                                         networkGraph.isChanged = false;
+                                        toggleAskCloseAndRefresh();
                                     }
                                 });
                             } else {
@@ -1584,6 +1596,7 @@ function initFindMaxInfluencePathUI() {
                                 $('#findMaxInfPathModal').modal('hide');
                                 openAlertModal(res['message'], 'Save Graph Failure');
                                 networkGraph.isChanged = false;
+                                toggleAskCloseAndRefresh();
                             }
                         }, error: function (xhr, status, error) {
                             console.log(xhr);
@@ -1591,10 +1604,12 @@ function initFindMaxInfluencePathUI() {
                             $('#findMaxInfPathModal').modal('hide');
                             openAlertModal(xhr.statusText, 'Save Graph Failure');
                             networkGraph.isChanged = false;
+                            toggleAskCloseAndRefresh();
                         }
                     });
                 });
             networkGraph.isChanged = false;
+            toggleAskCloseAndRefresh();
         } else {
             //find max influence path
             var sourceId = parseInt($('#findMaxInfDlgSource .nodeName').data('nodeid')),
@@ -1717,15 +1732,18 @@ function initFindMaxInfluencePathUI() {
                         openAlertModal(res['message'], 'Find Max Influence Path Failure');
                     }
                     networkGraph.isChanged = false;
+                    toggleAskCloseAndRefresh();
                 }, error: function (xhr, status, error) {
                     console.log(xhr);
                     $.LoadingOverlay('hide');
                     $('#findMaxInfPathModal').modal('hide');
                     openAlertModal(xhr.statusText, 'Find Max Influence Path Failure');
                     networkGraph.isChanged = false;
+                    toggleAskCloseAndRefresh();
                 }
             });
             networkGraph.isChanged = false;
+            toggleAskCloseAndRefresh();
         }
     });
     $('#findMaxInfPathModal').on('show.bs.modal', function (e) {
@@ -1783,7 +1801,7 @@ function initMaxInfluenceTableUI() {
                             if (res['result'] == 'success') {
                                 assignSaveIdMaps(res);
 
-                                showSnackBar();
+                                showSnackBar("Saved");
 
                                 /* find all max influence */
                                 var isConfidence = false;
@@ -1826,12 +1844,14 @@ function initMaxInfluenceTableUI() {
                                         var nodeSet = res['node_set'];
                                         allMaxInfToast(maxInfluenceList, nodeSet);
                                         networkGraph.isChanged = false;
+                                        toggleAskCloseAndRefresh();
                                     }, error: function (xhr, status, error) {
                                         console.log(xhr);
                                         $.LoadingOverlay('hide');
                                         $('#findMaxInfPathModal').modal('hide');
                                         openAlertModal(xhr.statusText, 'Find Max Influence Path Failure');
                                         networkGraph.isChanged = false;
+                                        toggleAskCloseAndRefresh();
                                     }
                                 });
                             } else {
@@ -1839,6 +1859,7 @@ function initMaxInfluenceTableUI() {
                                 $('#findAllMaxInfModal').modal('hide');
                                 openAlertModal(res['message'], 'Save Graph Failure');
                                 networkGraph.isChanged = false;
+                                toggleAskCloseAndRefresh();
                             }
                         }, error: function (xhr, status, error) {
                             console.log(xhr);
@@ -1846,10 +1867,12 @@ function initMaxInfluenceTableUI() {
                             $('#findAllMaxInfModal').modal('hide');
                             openAlertModal(xhr.statusText, 'Save Graph Failure');
                             networkGraph.isChanged = false;
+                            toggleAskCloseAndRefresh();
                         }
                     });
                 });
             networkGraph.isChanged = false;
+            toggleAskCloseAndRefresh();
         } else {
 
             /* find all max influence */
@@ -1892,15 +1915,18 @@ function initMaxInfluenceTableUI() {
                     var nodeSet = res['node_set'];
                     allMaxInfToast(maxInfluenceList, nodeSet);
                     networkGraph.isChanged = false;
+                    toggleAskCloseAndRefresh();
                 }, error: function (xhr, status, error) {
                     console.log(xhr);
                     $.LoadingOverlay('hide');
                     $('#findAllMaxInfModal').modal('hide');
                     openAlertModal(xhr.statusText, 'Find Max Influence Path Failure');
                     networkGraph.isChanged = false;
+                    toggleAskCloseAndRefresh();
                 }
             });
             networkGraph.isChanged = false;
+            toggleAskCloseAndRefresh();
         }
     });
     $('#findAllMaxInfModal').on('show.bs.modal', function (e) {
@@ -2004,7 +2030,7 @@ function initFindMostInfluenceNodeUI(type) {
                             console.log(res);
                             if (res['result'] == 'success') {
                                 assignSaveIdMaps(res);
-                                showSnackBar();
+                                showSnackBar("Saved");
 
                                 var nodeNumber = $('#most' + type + 'InfNodeNumber').val();
                                 var isConfidence = false;
@@ -2075,12 +2101,14 @@ function initFindMostInfluenceNodeUI(type) {
                                             openAlertModal(res['message'], 'Find Most ' + type + ' Influence Node Failure');
                                         }
                                         networkGraph.isChanged = false;
+                                        toggleAskCloseAndRefresh();
                                     }, error: function (xhr, status, error) {
                                         console.log(xhr);
                                         $.LoadingOverlay('hide');
                                         $('#findMost' + type + 'InfNodeModal').modal('hide');
                                         openAlertModal(xhr.statusText, 'Find Most ' + type + ' Influence Node Failure');
                                         networkGraph.isChanged = false;
+                                        toggleAskCloseAndRefresh();
                                     }
                                 });
                             } else {
@@ -2088,6 +2116,7 @@ function initFindMostInfluenceNodeUI(type) {
                                 $('#findMost' + type + 'InfNodeModal').modal('hide');
                                 openAlertModal(res['message'], 'Save Graph Failure');
                                 networkGraph.isChanged = false;
+                                toggleAskCloseAndRefresh();
                             }
                         }, error: function (xhr, status, error) {
                             console.log(xhr);
@@ -2095,10 +2124,12 @@ function initFindMostInfluenceNodeUI(type) {
                             $('#findMost' + type + 'InfNodeModal').modal('hide');
                             openAlertModal(xhr.statusText, 'Save Graph Failure');
                             networkGraph.isChanged = false;
+                            toggleAskCloseAndRefresh();
                         }
                     });
                 });
             networkGraph.isChanged = false;
+            toggleAskCloseAndRefresh();
         } else {
             var nodeNumber = $('#most' + type + 'InfNodeNumber').val();
             var isConfidence = false;
@@ -2167,15 +2198,18 @@ function initFindMostInfluenceNodeUI(type) {
                         openAlertModal(res['message'], 'Find Most ' + type + ' Influence Node Failure');
                     }
                     networkGraph.isChanged = false;
+                    toggleAskCloseAndRefresh();
                 }, error: function (xhr, status, error) {
                     console.log(xhr);
                     $.LoadingOverlay('hide');
                     $('#findMost' + type + 'InfNodeModal').modal('hide');
                     openAlertModal(xhr.statusText, 'Find Most ' + type + ' Influence Node Failure');
                     networkGraph.isChanged = false;
+                    toggleAskCloseAndRefresh();
                 }
             });
             networkGraph.isChanged = false;
+            toggleAskCloseAndRefresh();
         }
     });
 
@@ -2393,6 +2427,18 @@ function openConfirmModal(msg, title, callback) {
     $('#confirmModal').modal();
 }
 
+function openConfirmModal2(msg, title, callback) {
+    $('#confirmModalTitle2').text(title);
+    $('#confirmModalMsg2').text(msg);
+    $('#btnSave').unbind('click').off('click').click(function() {
+        menuSaveGraph();
+        closeGraph();
+    });
+    $('#btnDiscard').unbind('click').off('click').click(callback);
+    $('#confirmModal2').modal();
+}
+
+
 function initControllers() {
     var welcomeOverlayHeight = $(window).height() - global_consts.graphSvgStartY;
     var welcomeTextMarginTop = welcomeOverlayHeight / 2 - 40;
@@ -2470,6 +2516,7 @@ function initControllers() {
                         $('#openGraphModal').modal('hide');
                         openGraph(selectedGraphId);
                             networkGraph.isChanged = false;
+                            toggleAskCloseAndRefresh();
                     });
                 }
                 else {
@@ -2562,7 +2609,7 @@ function signup() {
                 $.LoadingOverlay('hide');
                 if (res['result'] == 'success') {
                     // openAlertModal("Hello, " + name + "! Welcome to Influence Network.", "Signup Success");
-                    openAlertModal("Please check the email to activate your account.", "Final Step");
+                    openAlertModal("Please check the email to activate your account.", "Email Confirmation");
                 } else {
                     console.log(res);
                     openAlertModal(res['message'], 'Signup Failure');
@@ -2616,6 +2663,8 @@ function getSession(type) {
             success: function (res) {
                 $.LoadingOverlay('hide');
                 if (res['result'] == 'fail') {
+
+                    //don't ask one more.
                     window.onbeforeunload = null;
                     window.location.reload(true);
                 }
@@ -2654,7 +2703,7 @@ function signin() {
                 }
                 user = res['user'];
                 // openAlertModal("Welcome " + user.user_name + "!", 'Login Success');
-                showSnackBar("Login Success!");
+                // showSnackBar("Login Success!");
                 $('#menuSignin').hide();
                 $('#menuUserWelcome').text("Welcome " + user.user_name + "!");
                 $('#menuUser').show();
@@ -2734,6 +2783,7 @@ function newGraph(graphName) {
         }
     });
     networkGraph.isChanged = false;
+    toggleAskCloseAndRefresh();
 }
 
 function menuOpenGraph() {
@@ -2765,6 +2815,28 @@ function menuOpenGraph() {
                 $('#graphList .list-group-item').click(function() {
                     $('#graphList .list-group-item').removeClass('active');
                     $(this).addClass('active');
+                }).dblclick(function () {
+                    var selectedGraphId = parseInt($('#graphList .list-group-item.active').data('graphid'));
+                    if (!isNaN(selectedGraphId) && isFinite(selectedGraphId))  {
+                        if (nowGraphInfo == null) {
+                            $('#openGraphModal').modal('hide');
+                            openGraph(selectedGraphId);
+                        } else {
+                            if(networkGraph.isChanged == true) {
+                                openConfirmModal("Are you sure to open the selected graph? \nIf you didn't save the current graph, any unsaved changes will be discarded.",
+                                    "Open Graph Confirm", function() {
+                                        $('#openGraphModal').modal('hide');
+                                        openGraph(selectedGraphId);
+                                        networkGraph.isChanged = false;
+                                        toggleAskCloseAndRefresh();
+                                    });
+                            }
+                            else {
+                                $('#openGraphModal').modal('hide');
+                                openGraph(selectedGraphId);
+                            }
+                        }
+                    } else openAlertModal("Please select a graph.", "Open Error");
                 });
                 $('#openGraphModal').modal();
             } else {
@@ -2807,8 +2879,15 @@ function openGraph(graphId) {
 function menuCloseGraph() {
     getSession();
     if ($(this).hasClass('disabled') || $(this).attr('disabled')) return;
-    openConfirmModal("Are you sure to close the graph? \nIf you didn't save the current graph, any unsaved changes will be discarded.",
+    if (networkGraph.isChanged == true) {
+        // openConfirmModal("Are you sure to close the graph? \nIf you didn't save the current graph, any unsaved changes will be discarded.",
+        //     "Close Graph Confirm", closeGraph);
+        openConfirmModal2("The Graph has been changed.",
             "Close Graph Confirm", closeGraph);
+    } else {
+        closeGraph();
+    }
+
 }
 function closeGraph() {
     setUnselected(true);
@@ -2856,7 +2935,9 @@ function menuSaveGraph() {
                 //save done
                 assignSaveIdMaps(res);
                 // showSnackBar();
-                showSnackBar();
+                showSnackBar("Saved");
+                networkGraph.isChanged = false;
+                toggleAskCloseAndRefresh();
             } else {
                 openAlertModal(res['message'], 'Save Graph Failure');
             }
@@ -2894,7 +2975,7 @@ function saveAs(graphName) {
                 nowGraphInfo.graphId = res['graph_id'];
                 nowGraphInfo.graphName = graphName;
                 assignSaveIdMaps(res);
-                showSnackBar();
+                showSnackBar("Saved");
             } else {
                 openAlertModal(res['message'], 'Save As Graph Failure');
             }
@@ -3011,6 +3092,7 @@ function loadGraph(graphData) {
     updateEdgeList();
     networkGraph.updateGraph();
     networkGraph.isChanged = false;
+    toggleAskCloseAndRefresh();
 }
 
 function generateSaveGraphJson(saveAs=false) {
@@ -3116,7 +3198,8 @@ function generateSaveGraphJson(saveAs=false) {
 }
 
 function showSnackBar(text) {
-    closeAnalysisToast();
+    if(text != 'Updated')
+        closeAnalysisToast();
     // Get the snackbar DIV
     var x = document.getElementById("snackbar");
     $("#snackbar").text(text);
@@ -3124,18 +3207,21 @@ function showSnackBar(text) {
     // Add the "show" class to DIV
     x.className = "show";
 
-    // After 3 seconds, remove the show class from DIV
-    setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+    // After 1 seconds, remove the show class from DIV
+    setTimeout(function(){ x.className = x.className.replace("show", ""); }, 1500);
 }
+
+// function showSnackBar(text) {
+//     SnackBar.show({pos: 'bottom-left'});
+// }
 
 function switchSecondMenu (status) {
     if (status == 'show') {
-        $('.menu-group').attr('height', '76px !important;');
+        $('.menu-group').attr('height', '62px !important;');
         $('.sub-menu-container').show();
-        console.log("switchSecondMenu show");
     } else if(status == 'hide') {
-        $('.menu-group').attr('height', '38px !important;');
+        $('.menu-group').attr('height', '31px !important;');
         $('.sub-menu-container').hide();
-        console.log("switchSecondMenu hide");
     }
 }
+

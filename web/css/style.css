@@ -8,11 +8,12 @@ body {
 #top-left-title {
     display: inline-block !important;
     float: left;
-    margin: 8px 15px 0px 5px;
+    margin: 8px 25px 0px 5px;
+    color: #ff5823;
 }
 .menu-group{
     margin-bottom: 0px !important;
-    max-height: 76px;
+    max-height: 62px;
     min-height : 0px;
     border-radius: 0px;
     border-width: 1px;
@@ -88,25 +89,34 @@ body {
     padding-top: 5px;
 }
 
+.sub-menu-container .btn, .sub-menu-container .form-control{
+    height: 24px;
+    display: inline-block;
+    padding: 1px 12px;
+}
+#subMenuNode, #subMenuEdge {
+    height: 31px;
+}
 .navbar .sub-menu-container .nav.navbar-nav .sub-menu-name {
     float : left;
-    padding: 10px 15px;
+    padding: 5px 20px;
 }
 .navbar .sub-menu-container .nav.navbar-nav .sub-menu-field {
     float : left;
-    padding: 5px 0px;
+    padding: 4px 0px;
 }
 .navbar .sub-menu-container .nav.navbar-nav .sub-menu-btn {
     float : left;
-    padding: 5px 0px;
+    padding: 4px 0px;
 }
 .navbar .sub-menu-container .nav.navbar-nav .btn-group {
     float : left;
-    padding-top: 5px;
+    padding-top: 4px;
 }
 .navbar .sub-menu-container .nav.navbar-nav .btn-group .btn-selection {
-    min-width: 120px;
-    max-width: 240px;
+    /*min-width: 120px;*/
+    /*max-width: 240px;*/
+    width : 140px;
 }
 .navbar .sub-menu-container .nav.navbar-nav .btn-group .btn-selection.unselected {
     color: #9e9e9e;
@@ -125,7 +135,7 @@ body {
 }
 
 .side-menu {
-    width: 240px;
+    width: 280px;
     min-height: 1600px;
     height: 100%;
     overflow: hidden;
@@ -276,14 +286,20 @@ body {
 }
 
 .graph-area {
-    width: calc(100% - 240px);
+    width: calc(100% - 280px);
     height: 100%;
+    min-height: 1600px;
     display: inline-block;
     float: right;
     background-color: white;
 }
+
+#graph, #graph svg {
+    min-height: 1600px;
+}
+
 .graph-close-overlay {
-    width: calc(100% - 240px);
+    width: calc(100% - 280px);
     height: 100%;
     min-height: 1600px;
     display: inline-block;
@@ -561,12 +577,16 @@ body {
 }
 
 /*signin form*/
+#menuForgot, #menuSignup {
+    color : #337AB7;
+}
 #signinEmail, #signinPassword {
     background-color: white !important;
 }
 
 #menuSignin {
     background: #616161;
+    /*background: #424242;*/
     color: white;
     border-left: 1px solid #212121;
     border-bottom: 1px solid #212121;
@@ -677,8 +697,8 @@ body {
 
     /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
     However, delay the fade out process for 2.5 seconds */
-    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
-    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    -webkit-animation: fadein 0.25s, fadeout 0.25s 1.25s;
+    animation: fadein 0.25s, fadeout 0.25s 1.25s;
 }
 
 /* Animations to fade the snackbar in and out */
