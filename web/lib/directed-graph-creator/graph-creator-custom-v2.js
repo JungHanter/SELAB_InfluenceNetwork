@@ -230,17 +230,25 @@ document.onload = (function(d3, saveAs, Blob, undefined){
     /* insert svg line breaks: taken from http://stackoverflow.com/questions/13241475/how-do-i-include-newlines-in-labels-in-d3-charts */
     GraphCreator.prototype.insertTitleLinebreaks = function (gEl, title) {
         // console.log(title);
-        var words = title.split(/\s+/g),
-                nwords = words.length;
-        var el = gEl.append("text")
-                    .attr("text-anchor","middle")
-                    .attr("dy", "-" + (nwords-1)*7.5);
+        // var words = title.split(/\s+/g),
+        //         nwords = words.length;
+        // var el = gEl.append("text")
+        //             .attr("text-anchor","middle")
+        //             .attr("dy", "-" + (nwords-1)*7.5);
+        //
+        // for (var i = 0; i < words.length; i++) {
+        //     var tspan = el.append('tspan').text(words[i]);
+        //     if (i > 0)
+        //         tspan.attr('x', 0).attr('dy', 15);
+        // }
 
-        for (var i = 0; i < words.length; i++) {
-            var tspan = el.append('tspan').text(words[i]);
-            if (i > 0)
-                tspan.attr('x', 0).attr('dy', 15);
-        }
+        /* remove split part */
+        var el = gEl.append("text")
+                    .attr("text-anchor", "middle")
+                    .attr("dy", 3);
+
+        var tspan = el.append('tspan').text(title);
+
     };
 
     GraphCreator.prototype.insertEdgeName = function (gEl, d) {
@@ -1471,9 +1479,9 @@ function isIncludeArray (arr, data) {
 function toggleAskCloseAndRefresh() {
     if(networkGraph.isChanged == false) {
         window.onbeforeunload = null;
-        console.log("networkGraph.isChanged == false");
+        // console.log("networkGraph.isChanged == false");
     } else {
-        console.log("networkGraph.isChanged == true");
+        // console.log("networkGraph.isChanged == true");
         window.onbeforeunload = function(){
             return "Make sure to save your graph locally before leaving :-)";
         };
