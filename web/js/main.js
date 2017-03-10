@@ -2432,7 +2432,7 @@ function openConfirmModal2(msg, title, callback) {
     $('#confirmModalMsg2').text(msg);
     $('#btnSave').unbind('click').off('click').click(function() {
         menuSaveGraph();
-        closeGraph();
+        callback();
     });
     $('#btnDiscard').unbind('click').off('click').click(callback);
     $('#confirmModal2').modal();
@@ -2494,11 +2494,17 @@ function initControllers() {
                     $('#newGraphModal').modal('hide');
                     newGraph(newGraphName);
                 } else {
-                    openConfirmModal("Are you sure to create new graph? \nIf you didn't save the current graph, any unsaved changes will be discarded.",
-                            "Create Graph Confirm", function() {
+                    if (networkGraph.isChanged == true) {
+                        openConfirmModal2("The Graph has been changed.", "Close Graph Confirm", function () {
+                            $('#newGraphModal').modal('hide');
+                            newGraph(newGraphName);
+                            networkGraph.isChanged = false;
+                            toggleAskCloseAndRefresh();
+                        });
+                    } else {
                         $('#newGraphModal').modal('hide');
                         newGraph(newGraphName);
-                    });
+                    }
                 }
             }
         } else openAlertModal("Please input a graph name.", "Create Error");
@@ -2511,12 +2517,19 @@ function initControllers() {
                 openGraph(selectedGraphId);
             } else {
                 if(networkGraph.isChanged == true) {
-                    openConfirmModal("Are you sure to open the selected graph? \nIf you didn't save the current graph, any unsaved changes will be discarded.",
-                            "Open Graph Confirm", function() {
+                    // openConfirmModal("Are you sure to open the selected graph? \nIf you didn't save the current graph, any unsaved changes will be discarded.",
+                    //         "Open Graph Confirm", function() {
+                    //     $('#openGraphModal').modal('hide');
+                    //     openGraph(selectedGraphId);
+                    //         networkGraph.isChanged = false;
+                    //         toggleAskCloseAndRefresh();
+                    // });
+
+                    openConfirmModal2("The Graph has been changed.", "Close Graph Confirm", function () {
                         $('#openGraphModal').modal('hide');
                         openGraph(selectedGraphId);
-                            networkGraph.isChanged = false;
-                            toggleAskCloseAndRefresh();
+                        networkGraph.isChanged = false;
+                        toggleAskCloseAndRefresh();
                     });
                 }
                 else {
@@ -2823,13 +2836,19 @@ function menuOpenGraph() {
                             openGraph(selectedGraphId);
                         } else {
                             if(networkGraph.isChanged == true) {
-                                openConfirmModal("Are you sure to open the selected graph? \nIf you didn't save the current graph, any unsaved changes will be discarded.",
-                                    "Open Graph Confirm", function() {
-                                        $('#openGraphModal').modal('hide');
-                                        openGraph(selectedGraphId);
-                                        networkGraph.isChanged = false;
-                                        toggleAskCloseAndRefresh();
-                                    });
+                                // openConfirmModal("Are you sure to open the selected graph? \nIf you didn't save the current graph, any unsaved changes will be discarded.",
+                                //     "Open Graph Confirm", function() {
+                                //         $('#openGraphModal').modal('hide');
+                                //         openGraph(selectedGraphId);
+                                //         networkGraph.isChanged = false;
+                                //         toggleAskCloseAndRefresh();
+                                //     });
+                                openConfirmModal2("The Graph has been changed.", "Close Graph Confirm", function () {
+                                    $('#openGraphModal').modal('hide');
+                                    openGraph(selectedGraphId);
+                                    networkGraph.isChanged = false;
+                                    toggleAskCloseAndRefresh();
+                                });
                             }
                             else {
                                 $('#openGraphModal').modal('hide');
@@ -2864,7 +2883,7 @@ function openGraph(graphId) {
                 closeGraph();
                 setGraphUIEnable(true);
                 $('#graphName').text(res['graph_name']);
-                nowGraphInfo = {graphId: graphId, graphName: res['graph_name']}
+                nowGraphInfo = {graphId: graphId, graphName: res['graph_name']};
 
                 loadGraph(res);
             } else {
