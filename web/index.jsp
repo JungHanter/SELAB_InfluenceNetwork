@@ -19,7 +19,7 @@
   <div class="container-fluid top-menu top-menu-main">
     <div class="collapse navbar-collapse">
       <ul class="nav navbar-nav main-menu">
-        <h5 id="top-left-title">Influence Network Analytics Service</h5>
+        <h5 id="top-left-title">INAS</h5>
         <li class="dropdown">
           <a  class="dropdown-toggle dropdown-default " data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">File</a>
           <ul class="dropdown-menu dropdown-menu-file">
@@ -280,7 +280,7 @@
 </div>
 
 <div class="welcome-overlay">
-  <h2>Welcome to Influence Network Analyzer!</h2>
+  <h2>Welcome to Influence Network Analytics Service!</h2>
 </div>
 
 

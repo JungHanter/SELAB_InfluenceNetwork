@@ -430,21 +430,35 @@ document.onload = (function(d3, saveAs, Blob, undefined){
 
     /* place editable text on node in place of svg text */
     GraphCreator.prototype.changeTextOfNode = function(d3node, d) {
+
         var thisGraph= this,
             consts = thisGraph.consts,
             htmlEl = d3node.node();
         d3node.selectAll("text").remove();
         var nodeBCR = htmlEl.getBoundingClientRect(),
             curScale = nodeBCR.width/consts.nodeRadius,
-            placePad  =  5*curScale,
+            // placePad  =  5*curScale,
             useHW = curScale > 1 ? nodeBCR.width*0.71 : consts.nodeRadius*1.42;
+
+        /* apply second menu height or not */
+        var state = thisGraph.state,
+            secondMenuHeight = 0;
+        if(state.selectedNode || state.selectedEdge)
+            secondMenuHeight = -31;
+
+        /* Delete Extreme Positon */
+        if(curScale < 1) curScale = 1;
+        else if(curScale > 5) curScale = 5;
+
         // replace with editableconent text
         var d3txt = thisGraph.svg.selectAll("foreignObject")
             .data([d])
             .enter()
             .append("foreignObject")
-            .attr("x", nodeBCR.left + placePad - global_consts.graphSvgStartX)
-            .attr("y", nodeBCR.top + placePad - global_consts.graphSvgStartY)
+            // .attr("x", nodeBCR.left + placePad - global_consts.graphSvgStartX)
+            // .attr("y", nodeBCR.top + placePad - global_consts.graphSvgStartY)
+            .attr("x", nodeBCR.left + 7 * curScale - global_consts.graphSvgStartX)
+            .attr("y", nodeBCR.top + secondMenuHeight + 40 * curScale - global_consts.graphSvgStartY)
             .attr("height", 2*useHW)
             .attr("width", useHW)
             .append("xhtml:p")
