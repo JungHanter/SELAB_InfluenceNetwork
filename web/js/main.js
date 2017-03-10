@@ -2385,7 +2385,7 @@ function allMaxInfToast(maxInfluenceList, nodeSet) {
             "<tr><th class='type-color-bg type-color-text type-color-blue-grey'>" + nodeSet[n1].node_name + "</th></tr>"
         );
     }
-
+    // var c = new Array();
     for (var n1 in nodeSet) {
         $('#maxInfluenceTable .fixedTable-body tbody').append("<tr>");
         for(var n2 in nodeSet) {
@@ -2400,9 +2400,9 @@ function allMaxInfToast(maxInfluenceList, nodeSet) {
                         }
                     }
                     if(value != null)
-                        $(this).append("<td>" + value + "</td>");
+                        $(this).append("<td id=\"r"+ n1 + "c" + n2 +"\">" + value + "</td>");
                     else
-                        $(this).append("<td class=\"td-empty\"></td>");
+                        $(this).append("<td id=\"r"+ n1 + "c" + n2 +"\" class=\"td-empty\"></td>");
 
                 }
             });
