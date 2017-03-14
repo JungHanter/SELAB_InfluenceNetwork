@@ -1011,6 +1011,7 @@
 
 
 <script src="lib/jquery/jquery-3.1.1.min.js"></script>
+<script src="lib/jquery-ui/jquery-ui.js"></script>
 <script src="js/jquery.cookie.js"></script>
 <script src="lib/jquery/plugin/loadingoverlay.min.js"></script>
 <script src="js/jquery_extends.js"></script>

@@ -485,6 +485,9 @@ function createEdge() {
         }
         $('#newEdgeDlgTarget').addClass('unselected').html("Select Target Node");
         $('#newEdgeDlgType').addClass('unselected').html("Select Type");
+        $("#newEdgeModal").draggable({
+            handle: ".modal-header"
+        });
         $('#newEdgeModal').modal();
     }
 }
@@ -603,6 +606,7 @@ $(function () {
 $(document).ready(function() {
 
 
+
     // window.onbeforeunload = function(){
     //     return "Make sure to save your graph locally before leaving :-)";
     // };
@@ -702,6 +706,10 @@ function initUI() {
 }
 
 function initManageNodeTypeUI() {
+    $("#manageNodeTypeModal").draggable({
+        handle: ".modal-header"
+    });
+
     $('#btnEditNodeTypeName').attr('disabled', true);
     $('#btnDeleteNodeType').attr('disabled', true);
     $('#manageNodeTypeColorList').css('visibility', 'hidden');
@@ -933,6 +941,10 @@ function nodeTypeManageListItemAddClick(elem) {
 }
 
 function initManageEdgeTypeUI() {
+    $("#manageEdgeTypeModal").draggable({
+        handle: ".modal-header"
+    });
+
     $('#btnEditEdgeTypeName').attr('disabled', true);
     $('#btnDeleteEdgeType').attr('disabled', true);
     $('#manageEdgeTypeColorList').css('visibility', 'hidden');
@@ -1184,6 +1196,10 @@ function edgeTypeManageListItemAddClick(elem) {
 }
 
 function initManageConfidenceUI() {
+    $("#manageConfidenceModal").draggable({
+        handle: ".modal-header"
+    });
+
     //fixed header table reference http://codepen.io/ajkochanowicz/pen/KHdih
     var confidenceTable, fixedTable;
     fixedTable = function (el) {
@@ -1384,6 +1400,10 @@ function deleteNodeTypeConfidence(typeid) {
 }
 
 function initManageEdgeTypeViewUI() {
+    $("#manageEdgeTypeViewModal").draggable({
+        handle: ".modal-header"
+    });
+
     $('#manageEdgeTypeViewModal').on('show.bs.modal', function (e) {
         $('#manageEdgeTypeViewList').empty();
         $('#manageEdgeTypeViewList').append("<a class='list-group-item'>"
@@ -1453,6 +1473,10 @@ function initManageEdgeTypeViewUI() {
 }
 
 function initFindMaxInfluencePathUI() {
+    $("#findMaxInfPathModal").draggable({
+        handle: ".modal-header"
+    });
+
     $('#btnFindMaxInfPathConfirm').click(function() {
         if($('#findMaxInfDlgSource').hasClass('unselected')) {
             openAlertModal("Please select source node.");
@@ -1783,6 +1807,10 @@ function initFindMaxInfluencePathUI() {
 }
 
 function initMaxInfluenceTableUI() {
+    $("#findAllMaxInfModal").draggable({
+        handle: ".modal-header"
+    });
+
     $('#btnFindAllMaxInfConfirm').click(function() {
         if(getCheckedBoxNumber($('#findAllMaxInfModal .checkbox_div')) == 0) { // checked box is none.
             openAlertModal("Please select edgetype more than 1.");
@@ -1791,6 +1819,7 @@ function initMaxInfluenceTableUI() {
             openConfirmModal("Before finding max influence path, the graph must be saved. Do you wish to continue?",
                 "Save Confirm", function() {
                     $.LoadingOverlay('show');
+
                     var graphJson = generateSaveGraphJson();
                     console.log(graphJson);
                     $.ajax("/graph", {
@@ -1829,7 +1858,7 @@ function initMaxInfluenceTableUI() {
                                         edgeTypeIdList.push(edgeTypeServerId);
                                     }
                                 });
-
+                                $('#findAllMaxInfModal').modal('hide');
                                 $.ajax("/graph", {
                                     method: 'POST',
                                     dataType: 'json',
@@ -1842,7 +1871,7 @@ function initMaxInfluenceTableUI() {
                                     }),
                                     success: function (res) {
                                         $.LoadingOverlay('hide');
-                                        $('#findAllMaxInfModal').modal('hide');
+
                                         console.log(res);
                                         // add exception handling about result
                                         var maxInfluenceList = res['max_influence_list'];
@@ -1880,6 +1909,7 @@ function initMaxInfluenceTableUI() {
             toggleAskCloseAndRefresh();
         } else {
 
+
             /* find all max influence */
             var isConfidence = false;
             if($('#findAllMaxInfModal .checkbox-confidence').is(":checked"))
@@ -1901,6 +1931,10 @@ function initMaxInfluenceTableUI() {
                     edgeTypeIdList.push(edgeTypeServerId);
                 }
             });
+
+            $.LoadingOverlay('show');
+            $('#findAllMaxInfModal').modal('hide');
+
             $.ajax("/graph", {
                 method: 'POST',
                 dataType: 'json',
@@ -2012,6 +2046,10 @@ function addCheckbox(id) {
 }
 
 function initFindMostInfluenceNodeUI(type) {
+    $('#findMost' + type + 'InfNodeModal').draggable({
+        handle: ".modal-header"
+    });
+
     $('#btnFind' + type + 'InfNodeConfirm').click(function() {
         if($('#most' + type + 'InfNodeNumber').val() == "") {
             openAlertModal("Please input the number of node.");
