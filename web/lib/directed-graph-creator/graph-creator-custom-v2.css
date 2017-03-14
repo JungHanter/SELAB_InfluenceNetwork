@@ -47,6 +47,7 @@ g.conceptG {
     /*opacity: 0.5;*/
 }
 g.conceptG text{
+    white-space: normal;
     pointer-events: none;
 }
 g.conceptG circle{

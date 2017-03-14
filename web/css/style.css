@@ -349,7 +349,9 @@ body {
     margin-right: 8px;
     display: inline-block;
 }
-
+#subMenuEdgeTarget, #subMenuEdgeSource {
+    overflow: hidden;
+}
 #subMenuNodeType .nodeTypeId,
 #subMenuNodeTypeDropdown .nodeTypeId,
 .subMenuEdgeNode .nodeTypeId,

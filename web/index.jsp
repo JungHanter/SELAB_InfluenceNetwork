@@ -96,7 +96,7 @@
       </ul>
       <div class="nav navbar-nav navbar-right" id="menuSignin">
         <form id="signinForm" class="form-signin" name="signinForm" accept-charset="UTF-8" method="POST">
-          <input type="email" id="signinEmail" name="email" maxlength="20" class="form-control"
+          <input type="email" id="signinEmail" name="email" maxlength="78" class="form-control"
                  placeholder="Email" required autofocus>
           <input type="password" id="signinPassword" name="pw" maxlength="20" class="form-control"
                  placeholder="Password" required>
@@ -156,26 +156,20 @@
       </div>
       <div class="btn-group">
         <div id="subMenuEdgeSource" class="btn btn-default btn-selection unselected subMenuEdgeNode">Select Source Node</div>
-        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <span class="caret"></span>
-          <span class="sr-only">Toggle Dropdown</span>
-        </button>
-        <ul id="subMenuEdgeSourceDropdown" class="dropdown-menu subMenuEdgeNodeDropdown">
-          <li><a >Node 1</a></li>
-        </ul>
+        <%--subMenuEdgeTarget--%>
       </div>
       <div class="sub-menu-name">
         <span> --> </span>
       </div>
       <div class="btn-group">
         <div id="subMenuEdgeTarget" class="btn btn-default btn-selection unselected subMenuEdgeNode">Select Target Node</div>
-        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <span class="caret"></span>
-          <span class="sr-only">Toggle Dropdown</span>
-        </button>
-        <ul id="subMenuEdgeTargetDropdown" class="dropdown-menu subMenuEdgeNodeDropdown">
-          <li><a >Node 1</a></li>
-        </ul>
+        <%--<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">--%>
+          <%--<span class="caret"></span>--%>
+          <%--<span class="sr-only">Toggle Dropdown</span>--%>
+        <%--</button>--%>
+        <%--<ul id="subMenuEdgeTargetDropdown" class="dropdown-menu subMenuEdgeNodeDropdown">--%>
+          <%--<li><a >Node 1</a></li>--%>
+        <%--</ul>--%>
       </div>
       <div class="sub-menu-divider"></div>
       <div class="sub-menu-name">
@@ -349,7 +343,7 @@
       </div>
       <div class="modal-body">
         <div>
-          <span>Source Node : </span><br/>
+          <span>Source Node</span><br/>
           <div class="btn-group">
             <div id="newEdgeDlgSource" class="btn btn-default btn-selection long-length unselected newEdgeDlgNode">Select Source Node</div>
             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -363,7 +357,7 @@
         </div>
         <br/>
         <div>
-          <span>Target Node : </span><br/>
+          <span>Target Node</span><br/>
           <div class="btn-group">
             <div id="newEdgeDlgTarget" class="btn btn-default btn-selection long-length unselected newEdgeDlgNode">Select Target Node</div>
             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -377,7 +371,7 @@
         </div>
         <br/>
         <div>
-          <span>Edge Type : </span><br/>
+          <span>Edge Type</span><br/>
           <div class="btn-group">
             <div id="newEdgeDlgType" class="btn btn-default btn-selection long-length unselected">Select Type</div>
             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -391,8 +385,8 @@
         </div>
         <br/>
         <div>
-          <span>Influence (0 to 1) : </span>
-          <input type="number" step=0.01 min=0 max=1 id="newEdgeDlgInfluence" class="form-control" placeholder="Influence Value">
+          <span>Influence (0 to 1)</span>
+          <input type="number" value=0.5 step=0.01 min=0 max=1 id="newEdgeDlgInfluence" class="form-control">
         </div>
       </div>
       <div class="modal-footer">
@@ -631,7 +625,7 @@
       </div>
       <div class="modal-body">
         <div>
-          <h5>Graph Name: </h5>
+          <h5>Graph Name</h5>
           <input type="text" id="newGraphName" class="form-control" placeholder="New Graph Name">
         </div>
       </div>
@@ -677,7 +671,7 @@
       </div>
       <div class="modal-body">
         <div>
-          <h5>Graph Name: </h5>
+          <h5>Graph Name</h5>
           <input type="text" id="saveAsGraphName" class="form-control" placeholder="Graph Name">
         </div>
       </div>
@@ -698,7 +692,7 @@
       </div>
       <div class="modal-body">
         <div>
-          <span>Source Node : </span><br/>
+          <span>Source Node</span><br/>
           <div class="btn-group">
             <div id="findMaxInfDlgSource" class="btn btn-default btn-selection long-length unselected findMaxInfDlgNode">Select Source Node</div>
             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -712,7 +706,7 @@
         </div>
         <br/>
         <div>
-          <span>Target Node : </span><br/>
+          <span>Target Node</span><br/>
           <div class="btn-group">
             <div id="findMaxInfDlgTarget" class="btn btn-default btn-selection long-length unselected findMaxInfDlgNode">Select Target Node</div>
             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -727,14 +721,14 @@
         <br/>
         <div>
           <div class="edgetype-div">
-            <span>Edge Type : </span><br/>
+            <span>Edge Type</span><br/>
             <div class="edgetype-checkbox-group"></div>
           </div>
           <div class="edgetype-div2">
             <input class="checkbox-all" type="checkbox" checked><span>All</span>
           </div>
           <div class="etc-div">
-            <span>ETC : </span><br/>
+            <span>ETC</span><br/>
             <div><input class="checkbox-confidence" type="checkbox" checked><span>Confidence</span></div>
             <div><input class="checkbox-average" type="checkbox" checked><span>Average</span></div>
           </div>
@@ -757,7 +751,7 @@
       </div>
       <div class="modal-body">
         <div>
-          <span>Node Number : </span><br/>
+          <span>Node Number</span><br/>
           <div>
             <input type="number" step=1 min=1 max=1000 id="mostSumInfNodeNumber" class="form-control" placeholder="Node Number"
                    style="width: 200px;">
@@ -766,14 +760,14 @@
         <br/>
         <div>
           <div class="edgetype-div">
-            <span>Edge Type : </span><br/>
+            <span>Edge Type</span><br/>
             <div class="edgetype-checkbox-group"></div>
           </div>
           <div class="edgetype-div2">
             <input class="checkbox-all" type="checkbox" checked><span>All</span>
           </div>
           <div class="etc-div">
-            <span>ETC : </span><br/>
+            <span>ETC</span><br/>
             <input class="checkbox-confidence" type="checkbox" checked><span>Confidence</span>
             <input class="checkbox-average" type="checkbox" checked><span>Average</span>
           </div>
@@ -796,7 +790,7 @@
       </div>
       <div class="modal-body">
         <div>
-          <span>Node Number : </span><br/>
+          <span>Node Number</span><br/>
           <div>
             <input type="number" step=1 min=1 max=1000 id="mostAvgInfNodeNumber" class="form-control" placeholder="Node Number"
                    style="width: 200px;">
@@ -805,14 +799,14 @@
         <br/>
         <div>
           <div class="edgetype-div">
-            <span>Edge Type : </span><br/>
+            <span>Edge Type</span><br/>
             <div class="edgetype-checkbox-group"></div>
           </div>
           <div class="edgetype-div2">
             <input class="checkbox-all" type="checkbox" checked><span>All</span>
           </div>
           <div class="etc-div">
-            <span>ETC : </span><br/>
+            <span>ETC</span><br/>
             <input class="checkbox-confidence" type="checkbox" checked><span>Confidence</span>
             <input class="checkbox-average" type="checkbox" checked><span>Average</span>
           </div>
@@ -836,14 +830,14 @@
       <div class="modal-body">
         <div>
           <div class="edgetype-div">
-            <span>Edge Type : </span><br/>
+            <span>Edge Type</span><br/>
             <div class="edgetype-checkbox-group"></div>
           </div>
           <div class="edgetype-div2">
             <input class="checkbox-all" type="checkbox" checked><span>All</span>
           </div>
           <div class="etc-div">
-            <span>ETC : </span><br/>
+            <span>ETC</span><br/>
             <input class="checkbox-confidence" type="checkbox" checked><span>Confidence</span>
             <input class="checkbox-average" type="checkbox" checked><span>Average</span>
           </div>

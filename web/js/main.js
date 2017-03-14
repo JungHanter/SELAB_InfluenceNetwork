@@ -61,35 +61,35 @@ function updateNodeList(event, updatedData) {  //if updatedData is null, all dat
         event = updatedData = null;
 
     // For submenu
-    $('.subMenuEdgeNodeDropdown').empty();
-    for (var i=0; i<networkGraph.nodes.length; i++) {
-        var nodeData = networkGraph.nodes[i];
-        var nodeInfoHtml = "<li><a>" + nodeDataToSubMenuHtml(nodeData) + "</a></li>";
-        $('.subMenuEdgeNodeDropdown').append(nodeInfoHtml);
-    }
-    $('#subMenuEdgeSourceDropdown > li > a').off('click').unbind('click').click(function() {
-        var selItem = $(this);
-        $('#subMenuEdgeSource').removeClass('unselected').html(selItem.html());
-    });
-    $('#subMenuEdgeTargetDropdown > li > a').off('click').unbind('click').click(function() {
-        var selItem = $(this);
-        $('#subMenuEdgeTarget').removeClass('unselected').html(selItem.html());
-    });
-    if (selectedEdge != null) {
-        if (selectedEdge.edgeData.source == updatedData) {
-            $('#subMenuEdgeSourceDropdown > li > a').each(function (idx, elem) {
-                if ($(this).find('.nodeName').data('nodeid') == updatedData.id) {
-                    $('#subMenuEdgeSource').html($(this).html());
-                }
-            });
-        } else if (selectedEdge.edgeData.target == updatedData) {
-            $('#subMenuEdgeTargetDropdown > li > a').each(function (idx, elem) {
-                if ($(this).find('.nodeName').data('nodeid') == updatedData.id) {
-                    $('#subMenuEdgeTarget').html($(this).html());
-                }
-            });
-        }
-    }
+    // $('.subMenuEdgeNodeDropdown').empty();
+    // for (var i=0; i<networkGraph.nodes.length; i++) {
+    //     var nodeData = networkGraph.nodes[i];
+    //     var nodeInfoHtml = "<li><a>" + nodeDataToSubMenuHtml(nodeData) + "</a></li>";
+    //     $('.subMenuEdgeNodeDropdown').append(nodeInfoHtml);
+    // }
+    // $('#subMenuEdgeSourceDropdown > li > a').off('click').unbind('click').click(function() {
+    //     var selItem = $(this);
+    //     $('#subMenuEdgeSource').removeClass('unselected').html(selItem.html());
+    // });
+    // $('#subMenuEdgeTargetDropdown > li > a').off('click').unbind('click').click(function() {
+    //     var selItem = $(this);
+    //     $('#subMenuEdgeTarget').removeClass('unselected').html(selItem.html());
+    // });
+    // if (selectedEdge != null) {
+    //     if (selectedEdge.edgeData.source == updatedData) {
+    //         $('#subMenuEdgeSourceDropdown > li > a').each(function (idx, elem) {
+    //             if ($(this).find('.nodeName').data('nodeid') == updatedData.id) {
+    //                 $('#subMenuEdgeSource').html($(this).html());
+    //             }
+    //         });
+    //     } else if (selectedEdge.edgeData.target == updatedData) {
+    //         $('#subMenuEdgeTargetDropdown > li > a').each(function (idx, elem) {
+    //             if ($(this).find('.nodeName').data('nodeid') == updatedData.id) {
+    //                 $('#subMenuEdgeTarget').html($(this).html());
+    //             }
+    //         });
+    //     }
+    // }
 
     // For new edge dialog
     $('.newEdgeDlgNodeDropdown').empty();
@@ -477,7 +477,7 @@ function createEdge() {
     if (networkGraph.nodes.length < 2) {
         openAlertModal("Edge can be created when there are more than two nodes.");
     } else {
-        $('#newEdgeDlgInfluence').val('');
+        $('#newEdgeDlgInfluence').val('0.5');
         if (selectedNode == null) {
             $('#newEdgeDlgSource').addClass('unselected').html("Select Source Node");
         } else {
@@ -510,6 +510,7 @@ function createEdgeConfirm() {
     } else if (validEdge(sourceNode, targetNode, edgeType)) {
         var newEdge = networkGraph.createEdge(sourceNode, targetNode, influence, edgeType);
         if (newEdge != null) {
+            networkGraph.selectEdge(sourceId, targetId, edgeType);
             updateEdgeList('created', newEdge);
             $('#newEdgeModal').modal('hide');
         } else {
@@ -1463,6 +1464,7 @@ function initFindMaxInfluencePathUI() {
             console.log("isChanged");
             openConfirmModal("Before finding max influence path, the graph must be saved. Do you wish to continue?",
                 "Save Confirm", function() {
+                    $('#findMaxInfPathModal').modal('hide');
                     $.LoadingOverlay('show');
                     var graphJson = generateSaveGraphJson();
                     console.log(graphJson);
@@ -1525,7 +1527,7 @@ function initFindMaxInfluencePathUI() {
                                     }),
                                     success: function (res) {
                                         $.LoadingOverlay('hide');
-                                        $('#findMaxInfPathModal').modal('hide');
+
                                         console.log(res);
 
                                         //find max influence path
