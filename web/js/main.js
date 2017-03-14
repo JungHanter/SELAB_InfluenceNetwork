@@ -1613,6 +1613,9 @@ function initFindMaxInfluencePathUI() {
             networkGraph.isChanged = false;
             toggleAskCloseAndRefresh();
         } else {
+            $('#findMaxInfPathModal').modal('hide');
+            $.LoadingOverlay('show');
+
             //find max influence path
             var sourceId = parseInt($('#findMaxInfDlgSource .nodeName').data('nodeid')),
                 targetId = parseInt($('#findMaxInfDlgTarget .nodeName').data('nodeid'));
