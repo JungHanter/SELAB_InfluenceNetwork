@@ -513,6 +513,8 @@ function createEdgeConfirm() {
     } else if (validEdge(sourceNode, targetNode, edgeType)) {
         var newEdge = networkGraph.createEdge(sourceNode, targetNode, influence, edgeType);
         if (newEdge != null) {
+            setUnselected(true);
+            closeAnalysisToast();
             networkGraph.selectEdge(sourceId, targetId, edgeType);
             updateEdgeList('created', newEdge);
             $('#newEdgeModal').modal('hide');
@@ -2780,7 +2782,9 @@ function signin() {
 }
 
 function signout() {
+
     var signoutCallback = function(data) {
+
         $.LoadingOverlay('hide');
         console.log(data);
         user = null;
@@ -2793,6 +2797,7 @@ function signout() {
         $('.content').hide();
         $('.main-menu > .dropdown > .dropdown-toggle').attr('disabled', true)
             .addClass('disabled');
+        window.onbeforeunload = null;
     };
 
     $.LoadingOverlay('show');
