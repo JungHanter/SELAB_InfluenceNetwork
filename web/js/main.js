@@ -2989,6 +2989,7 @@ function menuSaveGraph() {
     console.log(graphJson);
     $.ajax("/graph", {
         method: 'POST',
+        contentType: "application/json; charset=UTF-8",
         dataType: 'json',
         data: JSON.stringify({
             action: 'save',
@@ -2996,6 +2997,7 @@ function menuSaveGraph() {
             graph: graphJson
         }),
         success: function (res) {
+            console.log("save test");
             console.log(res);
             $.LoadingOverlay('hide');
             if (res['result'] == 'success') {
