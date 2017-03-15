@@ -444,7 +444,7 @@ public class InfluenceGraph {
                                 ArrayList<Edge> new_edgelist = new ArrayList<Edge>();
                                 new_edgelist.addAll(edgelist);
                                 new_edgelist.add(e);
-                                findPathSet(e.getDestination(), target, new_edgelist, pathlist, et);
+                                newFindPathSet(e.getDestination(), target, new_edgelist, pathlist, edgeTypeSet);
                             }
                         }
                     }

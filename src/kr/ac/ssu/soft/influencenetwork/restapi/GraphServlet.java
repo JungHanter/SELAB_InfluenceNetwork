@@ -24,12 +24,12 @@ public class GraphServlet extends HttpServlet {
     InfluenceGraph graph = null;
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {
-        try{
-            request.setCharacterEncoding("UTF-8");
-            response.setContentType("text/html; charset=utf-8");
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
+//        try{
+//            request.setCharacterEncoding("UTF-8");
+//            response.setContentType("text/html; charset=utf-8");
+//        } catch(Exception e) {
+//            e.printStackTrace();
+//        }
 
         InfluenceGraphDAO influenceGraphDAO = new InfluenceGraphDAO();
         PrintWriter out = null;
@@ -181,9 +181,6 @@ public class GraphServlet extends HttpServlet {
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response){
-
-
-
         InfluenceGraphDAO influenceGraphDAO = new InfluenceGraphDAO();
         BufferedReader br = null;
         PrintWriter out = null;
@@ -197,17 +194,17 @@ public class GraphServlet extends HttpServlet {
             return;
         }
 
-        try{
-            request.setCharacterEncoding("utf-8");
-            response.setContentType("text/html; charset=utf-8");
-        } catch(Exception e) {
-            System.out.print("ERROR");
-            e.printStackTrace();
-        }
+//        try{
+//            request.setCharacterEncoding("utf-8");
+//            response.setContentType("text/html; charset=utf-8");
+//        } catch(Exception e) {
+//            System.out.print("ERROR");
+//            e.printStackTrace();
+//        }
 
         try {
 
-            br = new BufferedReader(new InputStreamReader(request.getInputStream()));
+            br = new BufferedReader(new InputStreamReader(request.getInputStream(),"UTF-8"));
             out = response.getWriter();
 
             if (br != null) {
