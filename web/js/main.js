@@ -395,14 +395,14 @@ function nodeTypeToSubMenuHtml(typeid) {
 }
 function nodeDataToSubMenuHtml(nodeData) {
     var nodeInfoHtml = "<span class='nodeName' data-nodeId=" + nodeData.id
-            + ">" + nodeData.title + "</span> (";
+            + ">" + nodeData.title + "</span> ( ";
     if (nodeData.type == null) {
         nodeInfoHtml += "No Type)";
     } else {
         nodeInfoHtml += "<span class='nodeTypeColor type-color-bg type-color-"
             + nodeTypes[nodeData.type]['color'] + "'>&nbsp;</span><span class='nodeTypeName'>"
             + nodeTypes[nodeData.type]['name'] +"</span><span class='nodeTypeId'>" +
-            + nodeData.type + "</span>)";
+            + nodeData.type + "</span> )";
     }
     return nodeInfoHtml;
 }
@@ -2318,8 +2318,8 @@ function menuFindMaxInfluenceTable() {
 }
 
 function infPathToast(node1Name, node2Name, infValue, edgeTypeName, edgeList, edgeTypeNameList, isConfidence, isAverage) {
-    var infoHtml = "Max Influence Path from &lt;" + node1Name
-    + "&gt; to &lt;" + node2Name + "&gt; <br/>";
+    var infoHtml = "Max Influence Path &lt;" + node1Name
+    + "&gt; ▶ &lt;" + node2Name + "&gt; <br/>";
 
     infoHtml += "Confidence : ";
     if(isConfidence)
@@ -2867,45 +2867,49 @@ function menuOpenGraph() {
             if (res['result'] == 'success') {
                 graph_list = res['graph_list'];
 
-                $('#graphList').empty();
-                for(var i=0; i<graph_list.length; i++) {
-                    var graph = graph_list[i];
-                    $('#graphList').append("<a class='list-group-item' data-graphid="
-                        + graph.graph_id + ">" + graph.graph_name + "</a>" );
-                }
-                $('#graphList .list-group-item').click(function() {
-                    $('#graphList .list-group-item').removeClass('active');
-                    $(this).addClass('active');
-                }).dblclick(function () {
-                    var selectedGraphId = parseInt($('#graphList .list-group-item.active').data('graphid'));
-                    if (!isNaN(selectedGraphId) && isFinite(selectedGraphId))  {
-                        if (nowGraphInfo == null) {
-                            $('#openGraphModal').modal('hide');
-                            openGraph(selectedGraphId);
-                        } else {
-                            if(networkGraph.isChanged == true) {
-                                // openConfirmModal("Are you sure to open the selected graph? \nIf you didn't save the current graph, any unsaved changes will be discarded.",
-                                //     "Open Graph Confirm", function() {
-                                //         $('#openGraphModal').modal('hide');
-                                //         openGraph(selectedGraphId);
-                                //         networkGraph.isChanged = false;
-                                //         toggleAskCloseAndRefresh();
-                                //     });
-                                openConfirmModal2("The Graph has been changed.", "Close Graph Confirm", function () {
-                                    $('#openGraphModal').modal('hide');
-                                    openGraph(selectedGraphId);
-                                    networkGraph.isChanged = false;
-                                    toggleAskCloseAndRefresh();
-                                });
-                            }
-                            else {
+                if (graph_list.length != 0) {
+                    $('#graphList').empty();
+                    for(var i=0; i<graph_list.length; i++) {
+                        var graph = graph_list[i];
+                        $('#graphList').append("<a class='list-group-item' data-graphid="
+                            + graph.graph_id + ">" + graph.graph_name + "</a>" );
+                    }
+                    $('#graphList .list-group-item').click(function() {
+                        $('#graphList .list-group-item').removeClass('active');
+                        $(this).addClass('active');
+                    }).dblclick(function () {
+                        var selectedGraphId = parseInt($('#graphList .list-group-item.active').data('graphid'));
+                        if (!isNaN(selectedGraphId) && isFinite(selectedGraphId))  {
+                            if (nowGraphInfo == null) {
                                 $('#openGraphModal').modal('hide');
                                 openGraph(selectedGraphId);
+                            } else {
+                                if(networkGraph.isChanged == true) {
+                                    // openConfirmModal("Are you sure to open the selected graph? \nIf you didn't save the current graph, any unsaved changes will be discarded.",
+                                    //     "Open Graph Confirm", function() {
+                                    //         $('#openGraphModal').modal('hide');
+                                    //         openGraph(selectedGraphId);
+                                    //         networkGraph.isChanged = false;
+                                    //         toggleAskCloseAndRefresh();
+                                    //     });
+                                    openConfirmModal2("The Graph has been changed.", "Close Graph Confirm", function () {
+                                        $('#openGraphModal').modal('hide');
+                                        openGraph(selectedGraphId);
+                                        networkGraph.isChanged = false;
+                                        toggleAskCloseAndRefresh();
+                                    });
+                                }
+                                else {
+                                    $('#openGraphModal').modal('hide');
+                                    openGraph(selectedGraphId);
+                                }
                             }
-                        }
-                    } else openAlertModal("Please select a graph.", "Open Error");
-                });
-                $('#openGraphModal').modal();
+                        } else openAlertModal("Please select a graph.", "Open Error");
+                    });
+                    $('#openGraphModal').modal();
+                } else {
+                    openAlertModal("There are any graph.", "Open Error");
+                }
             } else {
                 openAlertModal(res['message'], 'Retrive Graph List Failure');
             }

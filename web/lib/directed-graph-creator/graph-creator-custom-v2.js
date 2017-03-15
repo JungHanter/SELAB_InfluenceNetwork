@@ -641,6 +641,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
             }
             var newEdge = thisGraph.createEdge(mouseDownNode, d, 0.5, edgeType, bEditableEdgeName);
             if(newEdge != null) {
+                thisGraph.selectEdge(mouseDownNode.id, d.id, edgeType);
                 thisGraph.onEdgeChanged('created', newEdge);
             }
         } else {
@@ -1214,6 +1215,8 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                 thisGraph.selectElementContents(txtEdge);
                 txtEdge.focus();
             }
+
+
             this.isChanged = true;
             toggleAskCloseAndRefresh();
             return newEdge;
@@ -1253,6 +1256,8 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                 thisGraph.removeSelectFromNode();
             }
             thisGraph.replaceSelectEdge(d3PathG.selectAll("path"), edgeData);
+            d3PathG.attr("animation", "blink 0.5s infinite");
+            console.log(d3PathG);
             return true;
         } else {
             return false;

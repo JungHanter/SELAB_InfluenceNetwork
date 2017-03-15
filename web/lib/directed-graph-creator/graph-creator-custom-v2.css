@@ -68,6 +68,8 @@ g.conceptG:hover text{
 g.conceptG.selected circle{
     fill: rgb(250, 232, 255);
     stroke-width: 6px;
+    stroke-dasharray : 11,10;
+    stroke-linecap: round;
 }
 g.conceptG.selected:hover circle{
     stroke-width: 6px;

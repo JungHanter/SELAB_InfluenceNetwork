@@ -152,17 +152,17 @@
 
     <ul id="subMenuEdge" class="nav navbar-nav">
       <div class="sub-menu-name">
-        <span>Path : </span>
+        <span>Edge : </span>
       </div>
       <div class="btn-group">
-        <div id="subMenuEdgeSource" class="btn btn-default btn-selection unselected subMenuEdgeNode">Select Source Node</div>
+        <div id="subMenuEdgeSource" class="unselected subMenuEdgeNode">Select Source Node</div>
         <%--subMenuEdgeTarget--%>
       </div>
       <div class="sub-menu-name">
         <span> --> </span>
       </div>
       <div class="btn-group">
-        <div id="subMenuEdgeTarget" class="btn btn-default btn-selection unselected subMenuEdgeNode">Select Target Node</div>
+        <div id="subMenuEdgeTarget" class="unselected subMenuEdgeNode">Select Target Node</div>
         <%--<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">--%>
           <%--<span class="caret"></span>--%>
           <%--<span class="sr-only">Toggle Dropdown</span>--%>
@@ -610,7 +610,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Apply</button>
       </div>
     </div>
   </div>
@@ -825,7 +825,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">Find Max Influence Path</h4>
+        <h4 class="modal-title">Find Max Influence Table</h4>
       </div>
       <div class="modal-body">
         <div>
@@ -863,7 +863,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-        <button id="btnConfirmModal" type="button" class="btn btn-dark" data-dismiss="modal">Confirm</button>
+        <button id="btnConfirmModal" type="button" class="btn btn-dark" data-dismiss="modal">Save</button>
       </div>
     </div>
   </div>
