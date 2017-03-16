@@ -526,9 +526,14 @@ public class InfluenceGraph {
 //        }
 //        return null;
 
-        findMaxInfluencePath(source, target, new ArrayList<Edge>(), edgeTypeSet, isConfidence, 1);
+        for(Edge e : edgeSet) {
+            if(e.getOrigin() == source) {
+                ArrayList<Edge> edgeArrayList = new ArrayList<>();
+                edgeArrayList.add(e);
+                findMaxInfluencePath(e.getDestination(), target, edgeArrayList, edgeTypeSet, isConfidence, e.getInfluenceValue());
+            }
+        }
         return maxInfluencePath;
-
     }
 
     public float maxInfluenceAvearge(Node n1, Node n2, Set<EdgeType> edgeTypeSet, boolean isConfidence) {
