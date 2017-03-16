@@ -317,8 +317,8 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                         thisGraph.pathTextMouseDown.call(thisGraph, d3.select(this), d);
                     });
         var tspan = el.append('tspan').text(d.name);
-        this.isChanged = true;
-        toggleAskCloseAndRefresh();
+        // this.isChanged = true;
+        // toggleAskCloseAndRefresh();
     };
 
 
@@ -484,8 +484,8 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                 }
                 thisGraph.onNodeChanged('updated', d);
             });
-        this.isChanged= true;
-        toggleAskCloseAndRefresh();
+        // this.isChanged= true;
+        // toggleAskCloseAndRefresh();
         return d3txt;
     };
 
@@ -544,8 +544,8 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                 thisGraph.updateGraph();    //SURE?
                 thisGraph.onEdgeChanged('updated', d);
             });
-        this.isChanged = true;
-        toggleAskCloseAndRefresh();
+        // this.isChanged = true;
+        // toggleAskCloseAndRefresh();
         return d3txt;
     };
 
@@ -1068,8 +1068,8 @@ document.onload = (function(d3, saveAs, Blob, undefined){
             }
         });
         // if (type != undefin/this.consts.typeColorHead + type, true);
-        this.isChanged = true;
-        toggleAskCloseAndRefresh();
+        // this.isChanged = true;
+        // toggleAskCloseAndRefresh();
     };
 
     GraphCreator.prototype.updateEdges = function () {
@@ -1094,8 +1094,8 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                 d.type = null;
             }
         });
-        this.isChanged = true;
-        toggleAskCloseAndRefresh();
+        // this.isChanged = true;
+        // toggleAskCloseAndRefresh();
         // if (type != undefin/this.consts.typeColorHead + type, true);
     };
 
