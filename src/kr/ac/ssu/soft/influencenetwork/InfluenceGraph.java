@@ -421,7 +421,7 @@ public class InfluenceGraph {
 
     public void findMaxInfluencePath(Node next, Node target, ArrayList<Edge> edgelist, Set<EdgeType> edgeTypeSet, boolean isConfidence, float value) {
 
-        /* Check promising */
+        /* Check Promising */
         if(maxInfluencePath.getInfluenceValue() > value) {
             return;
         }
