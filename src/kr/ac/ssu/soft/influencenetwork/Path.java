@@ -7,6 +7,7 @@ public class Path {
 	private ArrayList<Edge> edgeArrayList = null;
 	private float influenceValue = 0;
 
+	public Path(){}
 	public Path(ArrayList<Edge> edgeArrayList)
 	{
 		this.edgeArrayList = edgeArrayList;
