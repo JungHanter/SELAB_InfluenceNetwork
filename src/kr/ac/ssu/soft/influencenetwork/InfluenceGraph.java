@@ -11,8 +11,6 @@ public class InfluenceGraph {
     private String userEmail;
     private EdgeType defaultEdgeType;
 
-    private Path maxInfluencePath = new Path();
-
     private Set<NodeType> nodeTypeSet = new TreeSet<NodeType>();
     private Set<Node> nodeSet = new TreeSet<Node>();
     private Set<EdgeType> edgeTypeSet = new TreeSet<>();
@@ -419,7 +417,7 @@ public class InfluenceGraph {
         }
     }
 
-    public void findMaxInfluencePath(Node next, Node target, ArrayList<Edge> edgelist, Set<EdgeType> edgeTypeSet, boolean isConfidence, float value) {
+    public void findMaxInfluencePath(Node next, Node target, ArrayList<Edge> edgelist, Set<EdgeType> edgeTypeSet, boolean isConfidence, float value, Path maxInfluencePath) {
 
         /* Check Promising */
         if(maxInfluencePath.getInfluenceValue() > value) {
@@ -429,7 +427,7 @@ public class InfluenceGraph {
         /* Exit Condition of Recursive Function */
         if(next == target) {
             if (maxInfluencePath.getInfluenceValue() < value) {
-                maxInfluencePath = new Path(edgelist);
+                maxInfluencePath.setEdgeArrayList(edgelist);
                 maxInfluencePath.setInfluenceValue(value);
             }
             return;
@@ -459,7 +457,7 @@ public class InfluenceGraph {
                                 } else {
                                     value *= e.getInfluenceValue();
                                 }
-                                findMaxInfluencePath(e.getDestination(), target, new_edgelist, edgeTypeSet, isConfidence, value);
+                                findMaxInfluencePath(e.getDestination(), target, new_edgelist, edgeTypeSet, isConfidence, value, maxInfluencePath);
                             }
                         }
                     }
@@ -525,12 +523,13 @@ public class InfluenceGraph {
 //            return maxInfluencePath;
 //        }
 //        return null;
+        Path maxInfluencePath = new Path();
 
         for(Edge e : edgeSet) {
             if(e.getOrigin() == source) {
                 ArrayList<Edge> edgeArrayList = new ArrayList<>();
                 edgeArrayList.add(e);
-                findMaxInfluencePath(e.getDestination(), target, edgeArrayList, edgeTypeSet, isConfidence, e.getInfluenceValue());
+                findMaxInfluencePath(e.getDestination(), target, edgeArrayList, edgeTypeSet, isConfidence, e.getInfluenceValue(), maxInfluencePath);
             }
         }
         return maxInfluencePath;
