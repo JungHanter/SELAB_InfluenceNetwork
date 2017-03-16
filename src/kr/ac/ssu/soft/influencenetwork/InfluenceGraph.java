@@ -14,7 +14,15 @@ public class InfluenceGraph {
     private Set<NodeType> nodeTypeSet = new TreeSet<NodeType>();
     private Set<Node> nodeSet = new TreeSet<Node>();
     private Set<EdgeType> edgeTypeSet = new TreeSet<>();
-    private Set<Edge> edgeSet = new TreeSet<Edge>();
+    private Set<Edge> edgeSet = new TreeSet<Edge>(new Comparator<Edge>() {
+        @Override
+        public int compare(Edge o1, Edge o2) {
+            if (o1.getInfluenceValue() < o2.getInfluenceValue()) {
+               return 1;
+            } else
+                return -1;
+        }
+    });
     private Set<Confidence> confidenceSet = new TreeSet<Confidence>();
 
     private NodeTypeDAO nodeTypeDAO = new NodeTypeDAO();
@@ -527,6 +535,7 @@ public class InfluenceGraph {
 
         for(Edge e : edgeSet) {
             if(e.getOrigin() == source) {
+                System.out.println(e.getInfluenceValue());
                 ArrayList<Edge> edgeArrayList = new ArrayList<>();
                 edgeArrayList.add(e);
                 findMaxInfluencePath(e.getDestination(), target, edgeArrayList, edgeTypeSet, isConfidence, e.getInfluenceValue(), maxInfluencePath);
@@ -555,6 +564,7 @@ public class InfluenceGraph {
     }
 
     public ArrayList<Path> allMaxInfluencePath(Set<EdgeType> edgeTypeSet, boolean isConfidence, boolean isAverage) {
+        System.out.println("Start Max Influence Table");
         ArrayList<Path> result = new ArrayList<>();
         for(Node n1 : nodeSet) {
             for(Node n2 : nodeSet) {
@@ -572,6 +582,7 @@ public class InfluenceGraph {
                 }
             }
         }
+        System.out.println("End Max Influence Table");
         return result;
     }
 
