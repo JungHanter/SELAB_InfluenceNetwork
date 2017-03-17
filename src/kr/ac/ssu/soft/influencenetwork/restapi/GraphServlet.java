@@ -421,7 +421,9 @@ public class GraphServlet extends HttpServlet {
                 Node origin = p.getOriginNode();
                 Node destination = p.getDestinationNode();
                 float value = p.getInfluenceValue();
+                maxInfluenceJSONObject.put("origin_id", origin.getId());
                 maxInfluenceJSONObject.put("origin_name", origin.getName());
+                maxInfluenceJSONObject.put("destination_id", destination.getId());
                 maxInfluenceJSONObject.put("destination_name", destination.getName());
                 maxInfluenceJSONObject.put("influence_value", value);
                 maxInfluenceJSONArray.add(maxInfluenceJSONObject);
@@ -433,6 +435,7 @@ public class GraphServlet extends HttpServlet {
             JSONArray nodeJSONArray = new JSONArray();
             for (Node n : nodeTreeSet) {
                 JSONObject nodeJSONObject = new JSONObject();
+                nodeJSONObject.put("node_id", n.getId());
                 nodeJSONObject.put("node_name", n.getName());
                 nodeJSONArray.add(nodeJSONObject);
             }

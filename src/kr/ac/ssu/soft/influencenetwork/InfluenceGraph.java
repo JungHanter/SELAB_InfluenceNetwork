@@ -692,17 +692,25 @@ public class InfluenceGraph {
         ArrayList<Path> pathArrayList = new ArrayList<>();
         for (EdgeType et : edgeTypeSet) {
             HashMap<Node, ArrayList<Edge>> adjacencyList = getAdjacencyList(et);
-            pathArrayList.add(findMaxInfluencePath(source, target, isConfidence, adjacencyList));
+            Path p = findMaxInfluencePath(source, target, isConfidence, adjacencyList);
+            if(p != null)
+                pathArrayList.add(p);
         }
         Path maxInfluencePath = new Path();
-        if(target != null) {
-            for(Path p : pathArrayList) {
-                if(p.getInfluenceValue() > maxInfluencePath.getInfluenceValue()) {
-                    maxInfluencePath = p;
+        if(target != null) {  // MaxInfluencePath.
+            if(pathArrayList.isEmpty() == false) {
+                for(Path p : pathArrayList) {
+                    if(p.getInfluenceValue() > maxInfluencePath.getInfluenceValue()) {
+                        maxInfluencePath = p;
+                    }
                 }
-            }
-        } else {
-            maxInfluencePath = pathArrayList.get(0);
+            } else
+                return null;
+        } else { // MaxInfluenceTable.
+            if(pathArrayList.isEmpty() == false)
+                maxInfluencePath = pathArrayList.get(0);
+            else
+                return null;
         }
 
         return maxInfluencePath;
@@ -734,7 +742,7 @@ public class InfluenceGraph {
                 continue;
             }
             maxInfluenceEdgeList.add(entry.getKey());
-            if(target != null) {
+            if(target != null) { // maxInfluencePath.
                 if (entry.getKey().getDestination() == target) { // 최종 Path 찾음. 종료
                     Path maxInfluencePath = findOnePath(maxInfluenceEdgeList, source, target);
                     maxInfluencePath.setInfluenceValue(entry.getValue());
@@ -760,9 +768,13 @@ public class InfluenceGraph {
             }
         }
         if (target == null) { //maxInfluenceTable
-            Path maxInfluenceTablePaths = new Path(maxInfluenceEdgeList);
-            return maxInfluenceTablePaths;
-        } else {
+            if(maxInfluenceEdgeList.size() != 0) {
+                Path maxInfluenceTablePaths = new Path(maxInfluenceEdgeList);
+                return maxInfluenceTablePaths;
+            } else { // No Path.
+                return null;
+            }
+        } else { // No Path.
             return null;
         }
     }
@@ -772,11 +784,14 @@ public class InfluenceGraph {
         ArrayList<Path> result = new ArrayList<>();
         for(Node n1 : nodeSet) {
             Path n1Paths = newMaxInfluencePath(n1, null, edgeTypeSet, isConfidence);
+            if(n1Paths == null)
+                continue;
             for(Node n2 : nodeSet) {
-                if(n1 == n2) {
+                if(n1 == n2)
                     continue;
-                }
                 Path n1n2Path = findOnePath(n1Paths.getEdgeArrayList(), n1, n2);
+                if(n1n2Path == null)
+                    continue;
                 n1n2Path.setInfluenceValue(influence(n1n2Path, isConfidence));
                 if(n1n2Path != null) {
                     if(isAverage) {
@@ -814,6 +829,9 @@ public class InfluenceGraph {
                 edge = edgeArrayList.get(j);
                 edgePathArrayList.add(edge); // put last edge.
             }
+        }
+        if (edgePathArrayList.isEmpty()) { // No path.
+           return null;
         }
 
         while (true) {
