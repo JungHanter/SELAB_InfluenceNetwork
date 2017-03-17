@@ -4,6 +4,7 @@ import kr.ac.ssu.soft.influencenetwork.db.*;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class InfluenceGraph {
     private int id;
@@ -14,15 +15,7 @@ public class InfluenceGraph {
     private Set<NodeType> nodeTypeSet = new TreeSet<NodeType>();
     private Set<Node> nodeSet = new TreeSet<Node>();
     private Set<EdgeType> edgeTypeSet = new TreeSet<>();
-    private Set<Edge> edgeSet = new TreeSet<Edge>(new Comparator<Edge>() {
-        @Override
-        public int compare(Edge o1, Edge o2) {
-            if (o1.getInfluenceValue() < o2.getInfluenceValue()) {
-               return 1;
-            } else
-                return -1;
-        }
-    });
+    private Set<Edge> edgeSet = new TreeSet<Edge>();
     private Set<Confidence> confidenceSet = new TreeSet<Confidence>();
 
     private NodeTypeDAO nodeTypeDAO = new NodeTypeDAO();
@@ -693,53 +686,152 @@ public class InfluenceGraph {
         return 0;
     }
 
-//
-//    public Path newMaxInfluencePath(Node source, Node target, Set<EdgeType> edgeTypeSet, boolean isConfidence) { //among all path which connect two node, return path which have maximum value of influence
-//
-//        for (EdgeType et : edgeTypeSet) {
-//            HashMap<Node, ArrayList<Edge>> adjacencyList = getAdjacencyList(et);
-//        }
-//    }
-//
-//    public Path findMaxInfluencePath(Node source, Node target, boolean isConfidence, HashMap<Node, ArrayList<Edge>> adjacencyList) {
-//
-//        /* Edge and Length Value */
-//        PriorityQueue<AbstractMap.SimpleEntry<Edge, Float>> priorityQueue = new PriorityQueue<>(50, comparator.class);
-//
-//        HashMap<Node, Float> length = new HashMap<>();
-//        ArrayList<Edge> edgeList = adjacencyList.get(source); // null일경우 예외처리
-//        for(Edge e : edgeList) {
-//            length.put(e.getDestination(), e.getInfluenceValue());
-//            priorityQueue.add(new AbstractMap.SimpleEntry<Edge, Float>(e, e.getInfluenceValue()));
-//        }
-//
-//        for(Node n : nodeSet) {
-////            AbstractMap.SimpleEntry<Edge, Float> = priorityQueue.
-//        }
-//    }
-//
-//    public HashMap<Node, ArrayList<Edge>> getAdjacencyList(EdgeType edgeType) {
-//        HashMap<Node, ArrayList<Edge>> adjacencyList = new HashMap<>();
-//        for(Node n : nodeSet) {
-//            adjacencyList.put(n, new ArrayList<Edge>());
-//            for(Edge e : edgeSet) {
-//                if(edgeType == e.getEdgeType() && n == e.getDestination()) {
-//                    adjacencyList.get(n).add(e);
-//                }
-//            }
-//        }
-//        return adjacencyList;
-//    }
-//
-//    public class comparator implements Comparator<Map.Entry<Edge, Float>> {
-//        @Override
-//        public int compare(Map.Entry<Edge, Float> a, Map.Entry<Edge, Float> b) {
-//            if(a.getValue() > b.getValue())
-//                return 1;
-//            else
-//                return -1;
-//        }
-//    }
+
+    public Path newMaxInfluencePath(Node source, Node target, Set<EdgeType> edgeTypeSet, boolean isConfidence) { //among all path which connect two node, return path which have maximum value of influence
+
+        ArrayList<Path> pathArrayList = new ArrayList<>();
+        for (EdgeType et : edgeTypeSet) {
+            HashMap<Node, ArrayList<Edge>> adjacencyList = getAdjacencyList(et);
+            pathArrayList.add(findMaxInfluencePath(source, target, isConfidence, adjacencyList));
+        }
+        Path maxInfluencePath = new Path();
+        if(target != null) {
+            for(Path p : pathArrayList) {
+                if(p.getInfluenceValue() > maxInfluencePath.getInfluenceValue()) {
+                    maxInfluencePath = p;
+                }
+            }
+        } else {
+            maxInfluencePath = pathArrayList.get(0);
+        }
+
+        return maxInfluencePath;
+    }
+
+    public Path findMaxInfluencePath(Node source, Node target, boolean isConfidence, HashMap<Node, ArrayList<Edge>> adjacencyList) {
+
+        /* Edge and Length Value */
+        PriorityQueue<Map.Entry<Edge, Float>> priorityQueue = new PriorityQueue<>(1000, new Comparator<Map.Entry<Edge, Float>>() {
+        @Override
+        public int compare(Map.Entry<Edge, Float> a, Map.Entry<Edge, Float> b) {
+            if(a.getValue() < b.getValue())
+                return 1;
+            else
+                return -1;
+        }
+    });
+        Set<Node> visited = new HashSet<>();
+        visited.add(source);
+        ArrayList<Edge> edgeofSourceList = adjacencyList.get(source); // add exception handling that edge of source is null
+        for(Edge e : edgeofSourceList) {
+            priorityQueue.add(new AbstractMap.SimpleEntry<Edge, Float>(e, e.getInfluenceValue()));
+        }
+
+        ArrayList<Edge> maxInfluenceEdgeList = new ArrayList<>();
+        while(priorityQueue.isEmpty() == false) { // Queue is not empty
+            Map.Entry<Edge, Float> entry = priorityQueue.poll();
+            if(visited.contains(entry.getKey().getDestination())) {
+                continue;
+            }
+            maxInfluenceEdgeList.add(entry.getKey());
+            if(target != null) {
+                if (entry.getKey().getDestination() == target) { // 최종 Path 찾음. 종료
+                    Path maxInfluencePath = findOnePath(maxInfluenceEdgeList, source, target);
+                    maxInfluencePath.setInfluenceValue(entry.getValue());
+                    return maxInfluencePath;
+                }
+            } else { // maxInfluenceTable
+                if(visited.size() == nodeSet.size()) {
+                    Path maxInfluenceTablePaths = new Path(maxInfluenceEdgeList);
+                    return maxInfluenceTablePaths;
+                }
+            }
+            Node destination = entry.getKey().getDestination();
+            visited.add(destination);
+            ArrayList<Edge> edgeofNodeList = adjacencyList.get(destination);
+            for(Edge e : edgeofNodeList) {
+                if (visited.contains(e.getDestination()) == false) { // 아직 연결 되지 않은 노드와 연결되있는 엣지만 다시 넣는다.
+                    if(isConfidence) {
+                        priorityQueue.add(new AbstractMap.SimpleEntry<Edge, Float>(e, entry.getValue() * e.getInfluenceValue() * getConfidenceValue(e.getOrigin().getNodeType(), e.getDestination().getNodeType())));
+                    } else {
+                        priorityQueue.add(new AbstractMap.SimpleEntry<Edge, Float>(e, entry.getValue() * e.getInfluenceValue()));
+                    }
+                }
+            }
+        }
+        if (target == null) { //maxInfluenceTable
+            Path maxInfluenceTablePaths = new Path(maxInfluenceEdgeList);
+            return maxInfluenceTablePaths;
+        } else {
+            return null;
+        }
+    }
+
+    public ArrayList<Path> maxInfluenceTable(Set<EdgeType> edgeTypeSet, boolean isConfidence, boolean isAverage) {
+        System.out.println("Start Max Influence Table");
+        ArrayList<Path> result = new ArrayList<>();
+        for(Node n1 : nodeSet) {
+            Path n1Paths = newMaxInfluencePath(n1, null, edgeTypeSet, isConfidence);
+            for(Node n2 : nodeSet) {
+                if(n1 == n2) {
+                    continue;
+                }
+                Path n1n2Path = findOnePath(n1Paths.getEdgeArrayList(), n1, n2);
+                n1n2Path.setInfluenceValue(influence(n1n2Path, isConfidence));
+                if(n1n2Path != null) {
+                    if(isAverage) {
+                        float averageValue = maxInfluenceAvearge(n1, n2, edgeTypeSet, isConfidence);
+                        n1n2Path.setInfluenceValue(averageValue);
+                        result.add(n1n2Path);
+                    } else
+                        result.add(n1n2Path);
+                }
+            }
+        }
+        System.out.println("End Max Influence Table");
+        return result;
+    }
+
+    public HashMap<Node, ArrayList<Edge>> getAdjacencyList(EdgeType edgeType) {
+        HashMap<Node, ArrayList<Edge>> adjacencyList = new HashMap<>();
+        for(Node n : nodeSet) {
+            adjacencyList.put(n, new ArrayList<Edge>());
+            for(Edge e : edgeSet) {
+                if(edgeType == e.getEdgeType() && n == e.getOrigin()) {
+                    adjacencyList.get(n).add(e);
+                }
+            }
+        }
+        return adjacencyList;
+    }
+
+    public Path findOnePath(ArrayList<Edge> edgeArrayList, Node source, Node target) {
+
+        ArrayList<Edge> edgePathArrayList = new ArrayList<>(); // Return value.
+        Edge edge = null;
+        for(int j = edgeArrayList.size()-1; j >= 0; j--) { // Find last edge which include target node.
+            if(edgeArrayList.get(j).getDestination() == target) {
+                edge = edgeArrayList.get(j);
+                edgePathArrayList.add(edge); // put last edge.
+            }
+        }
+
+        while (true) {
+            if(edge.getOrigin() == source) {
+                break;
+            }
+            for(int j = edgeArrayList.size()-1; j >= 0; j--) {
+                if(edge.getOrigin() == edgeArrayList.get(j).getDestination()) {
+                    edgePathArrayList.add(edgeArrayList.get(j));
+                    edge = edgeArrayList.get(j);
+                    break;
+                }
+            }
+        }
+        Collections.reverse(edgePathArrayList);
+        Path maxInfluencePath = new Path(edgePathArrayList);
+        return maxInfluencePath;
+    }
 
     public static void main(String args[]) {
 

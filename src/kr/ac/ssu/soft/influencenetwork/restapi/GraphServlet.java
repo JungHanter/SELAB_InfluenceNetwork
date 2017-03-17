@@ -345,7 +345,8 @@ public class GraphServlet extends HttpServlet {
                 if (isAverage == false) {
                     Node n1 = influenceGraph.getNode(n1Id);
                     Node n2 = influenceGraph.getNode(n2Id);
-                    maxInfluencePath = influenceGraph.maxInfluencePath(n1, n2, edgeTypeSet, isConfidence);
+//                    maxInfluencePath = influenceGraph.maxInfluencePath(n1, n2, edgeTypeSet, isConfidence);
+                    maxInfluencePath = influenceGraph.newMaxInfluencePath(n1, n2, edgeTypeSet, isConfidence);
                     if(maxInfluencePath == null)
                         throw new Exception("There is no path from " + n1.getName() + " to " + n2.getName() + ".");
                     maxInfluenceEdgeList = maxInfluencePath.getEdgeArrayList();
@@ -409,7 +410,8 @@ public class GraphServlet extends HttpServlet {
                 System.out.println(edgeTypeSet);
             }
 
-            ArrayList<Path> allMaxInfluencePath = influenceGraph.allMaxInfluencePath(edgeTypeSet, isCofidence, isAverage);
+//            ArrayList<Path> allMaxInfluencePath = influenceGraph.allMaxInfluencePath(edgeTypeSet, isCofidence, isAverage);
+            ArrayList<Path> allMaxInfluencePath = influenceGraph.maxInfluenceTable(edgeTypeSet, isCofidence, isAverage);
 
             /* make max_influence_list & nodeTreeSet */
             JSONArray maxInfluenceJSONArray = new JSONArray();
