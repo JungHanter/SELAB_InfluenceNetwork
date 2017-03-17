@@ -2405,7 +2405,6 @@ function maxInfNodeToast(type, nodeList, edgeTypeNameList, isConfidence, isAvera
 }
 
 function allMaxInfToast(maxInfluenceList, nodeSet) {
-
     var data = '<div style="overflow: scroll" id="maxInfluenceTable"><header class="fixedTable-header"><table class="table table-bordered"><thead><tr><th class="type-color-bg type-color-text type-color-red">A</th> <th class="type-color-bg type-color-text type-color-blue">B</th> </tr> </thead> </table> </header> <aside class="fixedTable-sidebar"> <table class="table table-bordered"> <tbody> <tr> <th class="type-color-bg type-color-text type-color-red">A</th> </tr> <tr> <th class="type-color-bg type-color-text type-color-blue">B</th> </tr> </tbody> </table> </aside> <div class="fixedTable-body"> <table class="table table-bordered"> <tbody> <tr> <td class="td-empty"></td> <td class="td-input"><input type="number" step=0.01 min=0 max=1 /></td> </tr> <tr> <td class="td-input"><input type="number" step=0.01 min=0 max=1 /></td> <td class="td-empty"></td> </tr> </tbody> </table> </div> </div>';
 
     $.dialogbox({
@@ -2434,7 +2433,7 @@ function allMaxInfToast(maxInfluenceList, nodeSet) {
             "<tr><th class='type-color-bg type-color-text type-color-blue-grey'>" + nodeSet[n1].node_name + "</th></tr>"
         );
     }
-    // var c = new Array();
+
     for (var n1 in nodeSet) {
         $('#maxInfluenceTable .fixedTable-body tbody').append("<tr>");
         for(var n2 in nodeSet) {
@@ -2442,8 +2441,8 @@ function allMaxInfToast(maxInfluenceList, nodeSet) {
                 if (n1 == index) {
                     var value = null;
                     for (var i in maxInfluenceList) {
-                        if ((maxInfluenceList[i].origin_name == nodeSet[n1].node_name)
-                            && (maxInfluenceList[i].destination_name == nodeSet[n2].node_name)) {
+                        if ((maxInfluenceList[i].origin_id == nodeSet[n1].node_id)
+                            && (maxInfluenceList[i].destination_id == nodeSet[n2].node_id)) {
                             value = maxInfluenceList[i].influence_value.toFixed(3);
                             break;
                         }
@@ -2518,7 +2517,15 @@ function initControllers() {
         signin();
     });
     $('#menuSignout').click(function() {
-        signout();
+        if (networkGraph.isChanged == true) {
+            openConfirmModal2("The Graph has been changed.", "Sign-out Confirm", function () {
+                $('#newGraphModal').modal('hide');
+                networkGraph.isChanged = false;
+                toggleAskCloseAndRefresh();
+                signout();
+            });
+        } else
+            signout();
     });
 
     $('#menuSignup').click(function(e) {

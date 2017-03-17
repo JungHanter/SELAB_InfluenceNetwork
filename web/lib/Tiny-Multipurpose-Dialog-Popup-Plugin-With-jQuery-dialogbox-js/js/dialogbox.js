@@ -73,7 +73,7 @@
     loading:function(data){
       $.dialogbox.init();
       $.dialogbox.position();
-      $.dialogbox.showOverlay(data);
+      // $.dialogbox.showOverlay(data);
       $(".dialogboxBody").html('<div class="dialogLoading"></div>');
     },
     reveal:function(data){

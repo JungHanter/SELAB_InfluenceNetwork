@@ -99,7 +99,7 @@ body {
 }
 .navbar .sub-menu-container .nav.navbar-nav .sub-menu-name {
     float : left;
-    padding: 5px 20px;
+    padding: 4px 16px
 }
 .navbar .sub-menu-container .nav.navbar-nav .sub-menu-field {
     float : left;
@@ -350,7 +350,9 @@ body {
     display: inline-block;
 }
 #subMenuEdgeTarget, #subMenuEdgeSource {
-    overflow: hidden;
+    width: 150px;
+    height: 20px;
+    overflow-x: hidden;
 }
 #subMenuNodeType .nodeTypeId,
 #subMenuNodeTypeDropdown .nodeTypeId,

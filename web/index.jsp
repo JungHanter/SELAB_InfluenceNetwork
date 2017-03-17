@@ -160,7 +160,7 @@
         <%--subMenuEdgeTarget--%>
       </div>
       <div class="sub-menu-name">
-        <span> --> </span>
+        <span> ▶ </span>
       </div>
       <div class="btn-group">
         <div id="subMenuEdgeTarget" class="unselected subMenuEdgeNode">Select Target Node</div>
