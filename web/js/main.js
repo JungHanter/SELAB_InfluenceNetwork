@@ -1911,7 +1911,6 @@ function initMaxInfluenceTableUI() {
             toggleAskCloseAndRefresh();
         } else {
 
-
             /* find all max influence */
             var isConfidence = false;
             if($('#findAllMaxInfModal .checkbox-confidence').is(":checked"))
@@ -2407,6 +2406,16 @@ function maxInfNodeToast(type, nodeList, edgeTypeNameList, isConfidence, isAvera
 
 function allMaxInfToast(maxInfluenceList, nodeSet) {
 
+    var data = '<div style="overflow: scroll" id="maxInfluenceTable"><header class="fixedTable-header"><table class="table table-bordered"><thead><tr><th class="type-color-bg type-color-text type-color-red">A</th> <th class="type-color-bg type-color-text type-color-blue">B</th> </tr> </thead> </table> </header> <aside class="fixedTable-sidebar"> <table class="table table-bordered"> <tbody> <tr> <th class="type-color-bg type-color-text type-color-red">A</th> </tr> <tr> <th class="type-color-bg type-color-text type-color-blue">B</th> </tr> </tbody> </table> </aside> <div class="fixedTable-body"> <table class="table table-bordered"> <tbody> <tr> <td class="td-empty"></td> <td class="td-input"><input type="number" step=0.01 min=0 max=1 /></td> </tr> <tr> <td class="td-input"><input type="number" step=0.01 min=0 max=1 /></td> <td class="td-empty"></td> </tr> </tbody> </table> </div> </div>';
+
+    $.dialogbox({
+        type:'default',
+        title:'MaxInfluenceTable',
+        content: data,
+        width : 1000,
+        height : 500
+    });
+
     $('#maxInfluenceTable .fixedTable-body').css('width','auto');
     $('#maxInfluenceTable .fixedTable-body').css('height','auto');
     $('#maxInfluenceTable .fixedTable-sidebar').css('height','auto');
@@ -2453,7 +2462,7 @@ function allMaxInfToast(maxInfluenceList, nodeSet) {
             });
         }
     }
-    $('#maxInfTableFixedToast').show();
+    // $('#maxInfTableFixedToast').show();
 }
 
 function openAlertModal(msg, title) {

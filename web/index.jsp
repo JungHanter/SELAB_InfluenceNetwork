@@ -12,6 +12,7 @@
   <link rel="stylesheet" type="text/css" href="lib/directed-graph-creator/graph-creator-custom-v2.css">
   <link rel="stylesheet" type="text/css" href="css/cust-ui.css">
   <link rel="stylesheet" type="text/css" href="css/style.css">
+  <link rel="stylesheet" type="text/css" href="lib/Tiny-Multipurpose-Dialog-Popup-Plugin-With-jQuery-dialogbox-js/css/dialogbox.css">
 </head>
 
 <body>
@@ -945,57 +946,57 @@
   </div>
 </div>
 
-<div id="maxInfTableFixedToast" class="toast2 fixed-toast" role="alert">
-  <div class="toast-wrapper">
-    <div class="toast-alert" role="document">
-      <div class="toast-body">
-        <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <div id="maxInfTableFixedInfo">
-          <div class="table-container" >
-            <div id="maxInfluenceTable">
-              <header class="fixedTable-header">
-                <table class="table table-bordered">
-                  <thead>
-                  <tr>
-                    <th class="type-color-bg type-color-text type-color-red">A</th>
-                    <th class="type-color-bg type-color-text type-color-blue">B</th>
-                  </tr>
-                  </thead>
-                </table>
-              </header>
-              <aside class="fixedTable-sidebar">
-                <table class="table table-bordered">
-                  <tbody>
-                  <tr>
-                    <th class="type-color-bg type-color-text type-color-red">A</th>
-                  </tr>
-                  <tr>
-                    <th class="type-color-bg type-color-text type-color-blue">B</th>
-                  </tr>
-                  </tbody>
-                </table>
-              </aside>
-              <div class="fixedTable-body">
-                <table class="table table-bordered">
-                  <tbody>
-                  <tr>
-                    <td class="td-empty"></td>
-                    <td class="td-input"><input type="number" step=0.01 min=0 max=1 /></td>
-                  </tr>
-                  <tr>
-                    <td class="td-input"><input type="number" step=0.01 min=0 max=1 /></td>
-                    <td class="td-empty"></td>
-                  </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+<%--<div id="maxInfTableFixedToast" class="toast2 fixed-toast" role="alert">--%>
+  <%--<div class="toast-wrapper">--%>
+    <%--<div class="toast-alert" role="document">--%>
+      <%--<div class="toast-body">--%>
+        <%--<button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>--%>
+        <%--<div id="maxInfTableFixedInfo">--%>
+          <%--<div class="table-container" >--%>
+            <%--<div id="maxInfluenceTable">--%>
+              <%--<header class="fixedTable-header">--%>
+                <%--<table class="table table-bordered">--%>
+                  <%--<thead>--%>
+                  <%--<tr>--%>
+                    <%--<th class="type-color-bg type-color-text type-color-red">A</th>--%>
+                    <%--<th class="type-color-bg type-color-text type-color-blue">B</th>--%>
+                  <%--</tr>--%>
+                  <%--</thead>--%>
+                <%--</table>--%>
+              <%--</header>--%>
+              <%--<aside class="fixedTable-sidebar">--%>
+                <%--<table class="table table-bordered">--%>
+                  <%--<tbody>--%>
+                  <%--<tr>--%>
+                    <%--<th class="type-color-bg type-color-text type-color-red">A</th>--%>
+                  <%--</tr>--%>
+                  <%--<tr>--%>
+                    <%--<th class="type-color-bg type-color-text type-color-blue">B</th>--%>
+                  <%--</tr>--%>
+                  <%--</tbody>--%>
+                <%--</table>--%>
+              <%--</aside>--%>
+              <%--<div class="fixedTable-body">--%>
+                <%--<table class="table table-bordered">--%>
+                  <%--<tbody>--%>
+                  <%--<tr>--%>
+                    <%--<td class="td-empty"></td>--%>
+                    <%--<td class="td-input"><input type="number" step=0.01 min=0 max=1 /></td>--%>
+                  <%--</tr>--%>
+                  <%--<tr>--%>
+                    <%--<td class="td-input"><input type="number" step=0.01 min=0 max=1 /></td>--%>
+                    <%--<td class="td-empty"></td>--%>
+                  <%--</tr>--%>
+                  <%--</tbody>--%>
+                <%--</table>--%>
+              <%--</div>--%>
+            <%--</div>--%>
+          <%--</div>--%>
+        <%--</div>--%>
+      <%--</div>--%>
+    <%--</div>--%>
+  <%--</div>--%>
+<%--</div>--%>
 
 <div id="alertToast" class="toast" role="alert">
   <div class="toast-wrapper">
@@ -1022,6 +1023,7 @@
 <script src="lib/d3/d3.v3.min.js" charset="utf-8"></script>
 <%--<script src="lib/directed-graph-creator/graph-creator-custom.js"></script>--%>
 <script src="lib/directed-graph-creator/graph-creator-custom-v2.js"></script>
+<script src="lib/Tiny-Multipurpose-Dialog-Popup-Plugin-With-jQuery-dialogbox-js/js/dialogbox.js"></script>
 <script src="js/main.js"></script>
 
 
