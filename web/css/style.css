@@ -555,7 +555,7 @@ body {
     width: auto;
     height: 28px;
     margin-left: 71px;
-    overflow: hidden;
+    overflow: initial;
     /*border-bottom: 1px solid #CCC;*/
 }
 
@@ -563,12 +563,12 @@ body {
     width: 71px;
     height: 310px;
     float: left;
-    overflow: hidden;
+    overflow: initial;
     /*border-right: 1px solid #CCC;*/
 }
 
 #maxInfluenceTable .fixedTable-body {
-    overflow: auto;
+    overflow: initial;
     width: calc(100% - 120px);
     height: 310px;
     float: left;

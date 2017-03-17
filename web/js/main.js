@@ -2416,11 +2416,6 @@ function allMaxInfToast(maxInfluenceList, nodeSet) {
         height : 500
     });
 
-    $('#maxInfluenceTable .fixedTable-body').css('width','auto');
-    $('#maxInfluenceTable .fixedTable-body').css('height','auto');
-    $('#maxInfluenceTable .fixedTable-sidebar').css('height','auto');
-    $('#maxInfluenceTable .fixedTable-sidebar').css('height','auto');
-
     $('#maxInfluenceTable .fixedTable-header thead tr').empty();
     $('#maxInfluenceTable .fixedTable-sidebar tbody').empty();
     $('#maxInfluenceTable .fixedTable-body tbody').empty();
