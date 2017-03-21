@@ -397,7 +397,7 @@ function nodeDataToSubMenuHtml(nodeData) {
     var nodeInfoHtml = "<span class='nodeName' data-nodeId=" + nodeData.id
             + ">" + nodeData.title + "</span> ( ";
     if (nodeData.type == null) {
-        nodeInfoHtml += "No Type)";
+        nodeInfoHtml += "No Type )";
     } else {
         nodeInfoHtml += "<span class='nodeTypeColor type-color-bg type-color-"
             + nodeTypes[nodeData.type]['color'] + "'>&nbsp;</span><span class='nodeTypeName'>"

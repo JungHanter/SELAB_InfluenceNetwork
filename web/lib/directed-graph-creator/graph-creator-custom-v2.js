@@ -244,8 +244,8 @@ document.onload = (function(d3, saveAs, Blob, undefined){
 
         /* remove split part */
         var el = gEl.append("text")
-                    .attr("text-anchor", "middle")
-                    .attr("dy", 3);
+            .attr("text-anchor", "middle")
+            .attr("dy", 3);
 
         var tspan = el.append('tspan').text(title);
 
@@ -1256,8 +1256,22 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                 thisGraph.removeSelectFromNode();
             }
             thisGraph.replaceSelectEdge(d3PathG.selectAll("path"), edgeData);
-            d3PathG.attr("animation", "blink 0.5s infinite");
-            console.log(d3PathG);
+
+            d3PathG.selectAll("path").append("animate")  // add Blink animation to  new Edge
+                .attr("id", "anim" + sourceId + targetId + type)
+                .attr("attributeType", "css")
+                .attr("attributeName", "opacity")
+                .attr("from", "1")
+                .attr("to", "0")
+                .attr("dur", "1s")
+                .attr("begin", "0s")
+                .attr("repeatCount", "indefinite");
+            setTimeout(function () {
+                $('#anim' + sourceId + targetId + type).remove();
+            }, 3000);
+
+            console.log(type);
+
             return true;
         } else {
             return false;
