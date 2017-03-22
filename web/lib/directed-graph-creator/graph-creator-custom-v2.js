@@ -1122,12 +1122,14 @@ document.onload = (function(d3, saveAs, Blob, undefined){
             else if(height <= 900 && width >= 1680)
                 scale = 1680/width;
             else
-                scale = ((height >= width)? 900/height : 1680/width);
+                scale = ((900/height >= 1680/width)? 1680/width : 900/height);
         }
+        scale *= 0.8;
+        console.log(top + "/" + right + "/" + bottom + "/" + left);
         console.log(height + "/" + width + "/" + scale);
         this.state.justScaleTransGraph = true;
         d3.select("." + this.consts.graphClass)
-               .attr("transform", "translate(" + [840 - (width * scale /2),450 - (height * scale /2)] + ") scale(" + scale + ")");
+               .attr("transform", "translate(" + [840 - ((left + right) * scale /2),450 - ((top + bottom) * scale /2)] + ") scale(" + scale + ")");
             // .attr("transform", "translate(" + [(left+right)/2, (top+bottom)/2] + ")");
 
     };
