@@ -3190,6 +3190,9 @@ function loadGraph(graphData) {
     }
     updateEdgeList();
     networkGraph.updateGraph();
+    // networkGraph.d3.event.translate = [384.47928640784977, 190.0129346818016];
+    // networkGraph.d3.event.scale = 0.4774208154204951;
+    networkGraph.setZoom();
     networkGraph.isChanged = false;
     toggleAskCloseAndRefresh();
 }

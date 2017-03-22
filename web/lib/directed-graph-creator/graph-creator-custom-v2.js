@@ -2,7 +2,8 @@ var global_consts = {
     defaultTitle: "New Node",
     defaultEdgeValue: 0.5,
     graphSvgStartX: 240,
-    graphSvgStartY: 107
+    graphSvgStartY: 107,
+    graphStartScale: 0
 };
 var global_settings = {
     appendElSpec: "#graph"
@@ -1106,6 +1107,31 @@ document.onload = (function(d3, saveAs, Blob, undefined){
             .attr("transform", "translate(" + d3.event.translate + ") scale(" + d3.event.scale + ")");
     };
 
+    GraphCreator.prototype.setZoom = function() {
+        console.log("setZoom");
+        var top = d3.select("." + this.consts.graphClass).node().getBoundingClientRect().top;
+        var bottom =  d3.select("." + this.consts.graphClass).node().getBoundingClientRect().bottom;
+        var left = d3.select("." + this.consts.graphClass).node().getBoundingClientRect().left;
+        var right = d3.select("." + this.consts.graphClass).node().getBoundingClientRect().right;
+        var height = d3.select("." + this.consts.graphClass).node().getBoundingClientRect().height;
+        var width = d3.select("." + this.consts.graphClass).node().getBoundingClientRect().width;
+        var scale = 1;
+        if (height >= 900 || width >= 1680) {
+            if(height >= 900 && width <= 1680)
+                scale = 900/height;
+            else if(height <= 900 && width >= 1680)
+                scale = 1680/width;
+            else
+                scale = ((height >= width)? 900/height : 1680/width);
+        }
+        console.log(height + "/" + width + "/" + scale);
+        this.state.justScaleTransGraph = true;
+        d3.select("." + this.consts.graphClass)
+               .attr("transform", "translate(" + [840 - (width * scale /2),450 - (height * scale /2)] + ") scale(" + scale + ")");
+            // .attr("transform", "translate(" + [(left+right)/2, (top+bottom)/2] + ")");
+
+    };
+
     GraphCreator.prototype.focus = function(focus) {
         this.state.graphFocus = focus;
     };
@@ -1461,6 +1487,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
 
     GraphCreator.prototype.resetTransform = function() {
         this.svgG.attr('transform', '');
+        console.log("resetTransform");
     };
 
     /**** MAIN ****/
