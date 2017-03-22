@@ -42,7 +42,14 @@ edgeTypeCnt = 0;
 viewedEdgeTypes = [networkGraph.EDGE_TYPE_DEFAULT];
 
 function updateNodeTypes() {
-    $('#subMenuNodeTypeDropdown').empty();
+    if(Object.keys(nodeTypes).length == 0) { // It is possible select node type only When node type exists.
+        $('#subMenuNodeTypeDropdown').remove();
+    }
+    else {
+        $('#subMenuNodeTypeDropdown').remove();
+        $('#subMenuNode > .btn-group').append("<ul id=\"subMenuNodeTypeDropdown\" class=\"dropdown-menu\">");
+        $('#subMenuNodeTypeDropdown').empty();
+    }
     for (var tid in nodeTypes) {
         $('#subMenuNodeTypeDropdown').append("<li><a>"
             + nodeTypeToSubMenuHtml(tid) + "</a></li>");
@@ -174,9 +181,17 @@ function updateNodeList(event, updatedData) {  //if updatedData is null, all dat
 }
 
 function updateEdgeTypes() {
-    $('#subMenuEdgeTypeDropdown').empty();
+    if(Object.keys(edgeTypes).length == 0 ) { // It is possible select edge type only When edge type exists.
+        $('#subMenuEdge > .btn-group > ul').remove();
+    } else {
+        $('#subMenuEdge > .btn-group > ul').remove();
+        $('#subMenuEdge > .btn-group').append("<ul id=\"subMenuEdgeTypeDropdown\" class=\"dropdown-menu\">");
+        $('#subMenuEdge > .btn-group > ul').empty();
+    }
+
     for (var tid in edgeTypes) {
-        $('#subMenuEdgeTypeDropdown').append("<li><a>"
+        console.log(tid);
+        $('#subMenuEdge > .btn-group ul').append("<li><a>"
             + edgeTypeToSubMenuHtml(tid) + "</a></li>");
     }
     $('#subMenuEdgeTypeDropdown > li > a').off('click').unbind('click').click(function() {

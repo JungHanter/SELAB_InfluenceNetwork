@@ -704,6 +704,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                 txtNode = d3txt.node();
             thisGraph.selectElementContents(txtNode);
             txtNode.focus();
+            thisGraph.selectNode(newNodeData.id);
 
         } else if (state.shiftNodeDrag){
             // dragged from node
@@ -1237,6 +1238,18 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                 thisGraph.removeSelectFromEdge();
             }
             thisGraph.replaceSelectNode(d3Node, nodeData);
+            d3Node.append("animate")  // add Blink animation to  new Node
+                .attr("id", "anim" + id)
+                .attr("attributeType", "css")
+                .attr("attributeName", "opacity")
+                .attr("from", "1")
+                .attr("to", "0")
+                .attr("dur", "0.75s")
+                .attr("begin", "0s")
+                .attr("repeatCount", "indefinite");
+            setTimeout(function () {
+                $('#anim' + id).remove();
+            }, 2250);
             return true;
         } else {
             return false;
@@ -1263,12 +1276,12 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                 .attr("attributeName", "opacity")
                 .attr("from", "1")
                 .attr("to", "0")
-                .attr("dur", "1s")
+                .attr("dur", "0.75s")
                 .attr("begin", "0s")
                 .attr("repeatCount", "indefinite");
             setTimeout(function () {
                 $('#anim' + sourceId + targetId + type).remove();
-            }, 3000);
+            }, 2250);
 
             console.log(type);
 
