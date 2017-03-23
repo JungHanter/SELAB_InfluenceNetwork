@@ -1129,7 +1129,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         console.log(height + "/" + width + "/" + scale);
         this.state.justScaleTransGraph = true;
         d3.select("." + this.consts.graphClass)
-               .attr("transform", "translate(" + [1000 - ((left + right) * scale /2),450 - ((top + bottom) * scale /2)] + ") scale(" + scale + ")");
+               .attr("transform", "translate(" + [1000 - ((left + right) * scale /2), 490 - ((top + bottom) * scale /2)] + ") scale(" + scale + ")");
             // .attr("transform", "translate(" + [(left+right)/2, (top+bottom)/2] + ")");
 
     };

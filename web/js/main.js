@@ -1893,6 +1893,8 @@ function initMaxInfluenceTableUI() {
                                         // add exception handling about result
                                         var maxInfluenceList = res['max_influence_list'];
                                         var nodeSet = res['node_set'];
+                                        setUnselected(true);
+                                        closeAnalysisToast();
                                         allMaxInfToast(maxInfluenceList, nodeSet);
                                         networkGraph.isChanged = false;
                                         toggleAskCloseAndRefresh();
@@ -1968,6 +1970,8 @@ function initMaxInfluenceTableUI() {
                     // add exception handling about result
                     var maxInfluenceList = res['max_influence_list'];
                     var nodeSet = res['node_set'];
+                    setUnselected(true);
+                    closeAnalysisToast();
                     allMaxInfToast(maxInfluenceList, nodeSet);
                     networkGraph.isChanged = false;
                     toggleAskCloseAndRefresh();
@@ -2389,13 +2393,20 @@ function infPathToast(node1Name, node2Name, infValue, edgeTypeName, edgeList, ed
 }
 
 function maxInfNodeToast(type, nodeList, edgeTypeNameList, isConfidence, isAverage) {
-    // var infoHtml = "Max " + type + " Influence Node <br/>"
-    //     + "The number of node : " + nodeList.length
-    //     + "<br/>Edge Type: " + edgeTypeName
-    //     + "<br/>" + "Ranking" + "<br/>";
+    var data = '<div id="maxInfNodeToast"></div>';
 
-    var infoHtml = "Most " + type + " Influence Node <br/>"
-        + "The number of node : " + nodeList.length + "<br/>";
+    $.dialogbox({
+        type:'default',
+        title: "Most " + type + " Influence Node",
+        content: data,
+        width : 300,
+        height : 300,
+        top : '80px',
+        left : '265px',
+        padding : '10px'
+    });
+
+    var infoHtml = "The number of node : " + nodeList.length + "<br/>";
 
     infoHtml += "Edge Type : ";
     for (var i = 0; i < edgeTypeNameList.length; i++) {
@@ -2426,8 +2437,7 @@ function maxInfNodeToast(type, nodeList, edgeTypeNameList, isConfidence, isAvera
         infoHtml += "node : " + nodeList[i].node.title + "&nbsp&nbsp value : " + nodeList[i][type.toLowerCase() + '_influence_value'];
         infoHtml += "<br/>";
     }
-    $('#' + type.toLowerCase() + 'InfNodeFixedInfo').html(infoHtml);
-    $('#' + type.toLowerCase() + 'InfNodeFixedToast').show();
+    $('#maxInfNodeToast').html(infoHtml);
 }
 
 function allMaxInfToast(maxInfluenceList, nodeSet) {
@@ -2440,7 +2450,7 @@ function allMaxInfToast(maxInfluenceList, nodeSet) {
         width : 1000,
         height : 500,
         top : '53%',
-        left : '25%'
+        left : '28%'
     });
 
     $('#maxInfluenceTable .fixedTable-header thead tr').empty();
