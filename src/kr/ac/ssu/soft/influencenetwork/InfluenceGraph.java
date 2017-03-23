@@ -544,7 +544,7 @@ public class InfluenceGraph {
         for(EdgeType et : edgeTypeSet) {
             TreeSet<EdgeType> ets = new TreeSet<>();
             ets.add(et);
-            Path p = maxInfluencePath(n1, n2, ets, isConfidence);
+            Path p = newMaxInfluencePath(n1, n2, ets, isConfidence);
             if (p != null) {
                 totalNum++;
                 sum += p.getInfluenceValue();
@@ -587,7 +587,7 @@ public class InfluenceGraph {
             for(Node n2 : nodeSet) {
                 if(n1 == n2) // except same node.
                     continue;
-                Path path = maxInfluencePath(n1, n2, edgeTypeSet, isConfidence);
+                Path path = newMaxInfluencePath(n1, n2, edgeTypeSet, isConfidence);
                 if(path != null) {
                     if(isAverage) {
                         float averageValue = maxInfluenceAvearge(n1, n2, edgeTypeSet, isConfidence);

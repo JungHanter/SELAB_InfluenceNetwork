@@ -253,7 +253,7 @@ public class GraphServlet extends HttpServlet {
                     result.put("graph_name", newInfluenceGraph.getName());
                     result.put("result", "success");
                 } else {
-                    throw new Exception("fail to create a new graph");
+                    throw new Exception("Graph Name is duplicated.");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
