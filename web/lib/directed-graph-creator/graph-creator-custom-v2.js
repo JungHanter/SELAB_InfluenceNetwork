@@ -1129,7 +1129,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         console.log(height + "/" + width + "/" + scale);
         this.state.justScaleTransGraph = true;
         d3.select("." + this.consts.graphClass)
-               .attr("transform", "translate(" + [840 - ((left + right) * scale /2),450 - ((top + bottom) * scale /2)] + ") scale(" + scale + ")");
+               .attr("transform", "translate(" + [1000 - ((left + right) * scale /2),450 - ((top + bottom) * scale /2)] + ") scale(" + scale + ")");
             // .attr("transform", "translate(" + [(left+right)/2, (top+bottom)/2] + ")");
 
     };
@@ -1266,7 +1266,8 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                 thisGraph.removeSelectFromEdge();
             }
             thisGraph.replaceSelectNode(d3Node, nodeData);
-            d3Node.append("animate")  // add Blink animation to  new Node
+            $('animate').remove(); // Remove other animation
+            d3Node.append("animate")  // Add Blink animation to  new Node
                 .attr("id", "anim" + id)
                 .attr("attributeType", "css")
                 .attr("attributeName", "opacity")
@@ -1297,8 +1298,8 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                 thisGraph.removeSelectFromNode();
             }
             thisGraph.replaceSelectEdge(d3PathG.selectAll("path"), edgeData);
-
-            d3PathG.selectAll("path").append("animate")  // add Blink animation to  new Edge
+            $('animate').remove(); // Remove other animation
+            d3PathG.selectAll("path").append("animate")  // Add blink animation to  new Edge
                 .attr("id", "anim" + sourceId + targetId + type)
                 .attr("attributeType", "css")
                 .attr("attributeName", "opacity")

@@ -84,7 +84,11 @@
             width =  data ? data.width > 0 ? data.width : $(window).width() < 1200 ?  $(window).width()  - 150 : 1100 : '',
             height =  data ? data.height > 0 ? data.height : $(window).height()  - 250 : '',
             time = data ? data.time ? data.time : '' : '' ,
-            closeBtn =  data ? data.closeBtn ? data.closeBtn : false : false;
+            closeBtn =  data ? data.closeBtn ? data.closeBtn : false : false,
+            position_y = data ? data.top ? data.top : '' : '',
+            position_x = data ? data.left ? data.left : '' : '',
+            padding = data? data.padding ? data.padding : '' : '';
+
 
       if(data && data.type == 'msg'){/*********************************打开对话框*********************************/
 
@@ -138,6 +142,7 @@
       }
 
       $('.dialogboxBody').html(content);
+      $('.dialogboxBody').css("padding", padding);
       if(title){
         $('.dialogboxTitle').show().html(title);
       }else{
@@ -163,7 +168,7 @@
       $('.dialogboxClose').on('click',function(){
         $.dialogbox.close();
       }) ;
-      $.dialogbox.position($('.dialogbox'));
+      $.dialogbox.position($('.dialogbox'), position_x, position_y);
       $.dialogbox.move();
     },
     close:function(){
@@ -175,9 +180,13 @@
       }
     },
     /*显示位置*/
-    position:function(obj){
+    position:function(obj, position_x, position_y){
       var left = $(window).width() / 2 - ($(obj).outerWidth() / 2) + $(window).scrollLeft();
+      if(position_x != '')
+        left = position_x;
       var top = $(window).height() / 2 - ($(obj).outerHeight() / 2) + $(window).scrollTop();
+      if(position_y != '')
+        top = position_y;
       if(top < $(window).scrollTop())
         top= $(window).scrollTop() + 10;
       $(obj).css({left:left,top:top}).fadeIn();

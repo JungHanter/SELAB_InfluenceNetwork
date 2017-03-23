@@ -2332,6 +2332,20 @@ function menuFindMaxInfluenceTable() {
 }
 
 function infPathToast(node1Name, node2Name, infValue, edgeTypeName, edgeList, edgeTypeNameList, isConfidence, isAverage) {
+
+    var data = '<div id="maxInfluenceToast"></div>';
+
+    $.dialogbox({
+        type:'default',
+        title:'MaxInfluence',
+        content: data,
+        width : 300,
+        height : 300,
+        top : '80px',
+        left : '265px',
+        padding : '10px'
+    });
+
     var infoHtml = "Max Influence Path &lt;" + node1Name
     + "&gt; ▶ &lt;" + node2Name + "&gt; <br/>";
 
@@ -2371,10 +2385,7 @@ function infPathToast(node1Name, node2Name, infValue, edgeTypeName, edgeList, ed
         }
     }
 
-
-
-    $('#infPathFixedInfo').html(infoHtml);
-    $('#infPathFixedToast').show();
+    $('#maxInfluenceToast').html(infoHtml);
 }
 
 function maxInfNodeToast(type, nodeList, edgeTypeNameList, isConfidence, isAverage) {
@@ -2427,7 +2438,9 @@ function allMaxInfToast(maxInfluenceList, nodeSet) {
         title:'MaxInfluenceTable',
         content: data,
         width : 1000,
-        height : 500
+        height : 500,
+        top : '53%',
+        left : '25%'
     });
 
     $('#maxInfluenceTable .fixedTable-header thead tr').empty();
