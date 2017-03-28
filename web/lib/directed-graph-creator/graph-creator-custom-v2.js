@@ -3,7 +3,7 @@ var global_consts = {
     defaultEdgeValue: 0.5,
     graphSvgStartX: 240,
     graphSvgStartY: 107,
-    graphStartScale: 0
+    graphStartScale: 0,
 };
 var global_settings = {
     appendElSpec: "#graph"
@@ -19,6 +19,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
     // define graphcreator object
     var GraphCreator = function(svg, nodes, edges, nodeTypes, edgeTypes){
         var isChanged = false;
+        var zoom = null;
         var thisGraph = this;
         thisGraph.idct = 0;
         thisGraph.edgect = 0;
@@ -53,7 +54,10 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         thisGraph.onUnselected = function(){};
         thisGraph.onNodeChanged = function(event, nodeData){};
         thisGraph.onEdgeChanged = function(event, nodeData){};
-
+        thisGraph.initialValues = {
+          position : null,
+          scale : 0
+        };
         thisGraph.state = {
             selectedNode: null,
             selectedEdge: null,
@@ -64,6 +68,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
             lastKeyDown: -1,
             shiftNodeDrag: false,
             selectedText: null,
+            isZoomed : false
         };
 
         // define arrow markers for graph links
@@ -151,6 +156,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                             // TODO  the internal d3 state is still changing
                             return false;
                         } else{
+
                             thisGraph.zoomed.call(thisGraph);
                         }
                         return true;
@@ -165,8 +171,12 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                     .on("zoomend", function(){
                         d3.select('body').style("cursor", "auto");
                     });
-
         svg.call(dragSvg).on("dblclick.zoom", null);
+        console.log("dragSvg Initialized");
+
+        // console.log(zoom);
+        // dragSvg.scale(5);
+
 
         // listen for resize
         window.onresize = function(){thisGraph.updateWindow(svg);};
@@ -215,6 +225,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
             thisGraph.nodes = [];
             thisGraph.edges = [];
             thisGraph.updateGraph();
+            thisGraph.state.isZoomed = false;
         }
     };
 
@@ -740,6 +751,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                     state.selectedNode = null;
                     thisGraph.updateGraph();
                     thisGraph.onNodeChanged('deleted', deletedNode);
+
                 } else if (selectedEdge){
                     var deletedEdge = state.selectedEdge;
                     thisGraph.edges.splice(thisGraph.edges.indexOf(selectedEdge), 1);
@@ -1045,7 +1057,8 @@ document.onload = (function(d3, saveAs, Blob, undefined){
 
         // remove old nodes
         thisGraph.circles.exit().remove();
-    };
+
+};
 
     GraphCreator.prototype.updateNodeType = function(gs){
         var thisGraph = this;
@@ -1102,13 +1115,50 @@ document.onload = (function(d3, saveAs, Blob, undefined){
     };
 
     GraphCreator.prototype.zoomed = function(){
+        if(this.state.isZoomed == false) {
+            // GraphCreator.dragSvg.scale(this.initialValues.scale);
+            // GraphCreator.dragSvg.translate(this.initialValues.position);
+                // d3.event.scale = this.initialValues.scale;
+                //
+                // d3.event.position = this.initialValues.position;
+            this.state.isZoomed = true;
+            // console.log("zoomed" + d3.event.scale);
+        }
+
+
         this.state.justScaleTransGraph = true;
         d3.select("." + this.consts.graphClass)
             .attr("transform", "translate(" + d3.event.translate + ") scale(" + d3.event.scale + ")");
+
     };
 
     GraphCreator.prototype.setZoom = function() {
-        console.log("setZoom");
+        var thisGraph = this;
+
+        /* Set auto scale */
+        var dragSvg = d3.behavior.zoom()
+            .on("zoom", function(){
+                if (d3.event.sourceEvent.shiftKey){
+                    // TODO  the internal d3 state is still changing
+                    return false;
+                } else{
+
+                    thisGraph.zoomed.call(thisGraph);
+                }
+                return true;
+            })
+            .on("zoomstart", function(){
+                var ael = d3.select("#" + thisGraph.consts.activeEditId).node();
+                if (ael){
+                    ael.blur();
+                }
+                if (!d3.event.sourceEvent.shiftKey) d3.select('body').style("cursor", "move");
+            })
+            .on("zoomend", function(){
+                d3.select('body').style("cursor", "auto");
+            });
+        svg.call(dragSvg).on("dblclick.zoom", null);
+
         var top = d3.select("." + this.consts.graphClass).node().getBoundingClientRect().top;
         var bottom =  d3.select("." + this.consts.graphClass).node().getBoundingClientRect().bottom;
         var left = d3.select("." + this.consts.graphClass).node().getBoundingClientRect().left;
@@ -1124,14 +1174,16 @@ document.onload = (function(d3, saveAs, Blob, undefined){
             else
                 scale = ((900/height >= 1680/width)? 1680/width : 900/height);
         }
-        scale *= 0.8;
-        console.log(top + "/" + right + "/" + bottom + "/" + left);
-        console.log(height + "/" + width + "/" + scale);
+        scale *= 0.7;
+        // console.log(top + "/" + right + "/" + bottom + "/" + left);
+        // console.log(height + "/" + width + "/" + scale);
         this.state.justScaleTransGraph = true;
+        // d3.select("." + this.consts.graphClass)
+        //        .attr("transform", "translate(" + [1000 - ((left + right) * scale /2), 490 - ((top + bottom) * scale /2)] + ") scale(" + scale + ")");
         d3.select("." + this.consts.graphClass)
-               .attr("transform", "translate(" + [1000 - ((left + right) * scale /2), 490 - ((top + bottom) * scale /2)] + ") scale(" + scale + ")");
-            // .attr("transform", "translate(" + [(left+right)/2, (top+bottom)/2] + ")");
-
+            .attr("transform", "translate(" + [($(window).width() - ($(window).width() * 0.45)) - ((left + right) * scale /2), 490 - ((top + bottom) * scale /2)] + ") scale(" + scale + ")");
+        dragSvg.scale(scale);
+        dragSvg.translate([($(window).width() - ($(window).width() * 0.45)) - ((left + right) * scale /2), 490 - ((top + bottom) * scale /2)]);
     };
 
     GraphCreator.prototype.focus = function(focus) {
@@ -1354,6 +1406,8 @@ document.onload = (function(d3, saveAs, Blob, undefined){
             var edge = this.edges[i];
             if (edge.source == source && edge.target == target
                 && edge.type == edgeTypeId) return edge;
+            else if (edge.source == source && edge.target == target
+                && edge.type == null && isNaN(edgeTypeId)) return edge;
         }
         return null;
     };

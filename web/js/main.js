@@ -42,14 +42,17 @@ edgeTypeCnt = 0;
 viewedEdgeTypes = [networkGraph.EDGE_TYPE_DEFAULT];
 
 function updateNodeTypes() {
-    if(Object.keys(nodeTypes).length == 0) { // It is possible select node type only When node type exists.
-        $('#subMenuNodeTypeDropdown').remove();
-    }
-    else {
-        $('#subMenuNodeTypeDropdown').remove();
-        $('#subMenuNode > .btn-group').append("<ul id=\"subMenuNodeTypeDropdown\" class=\"dropdown-menu\">");
-        $('#subMenuNodeTypeDropdown').empty();
-    }
+    // if(Object.keys(nodeTypes).length == 0) { // It is possible select node type only When node type exists.
+    //     $('#subMenuNodeTypeDropdown').remove();
+    // }
+    // else {
+    //     $('#subMenuNodeTypeDropdown').remove();
+    //     $('#subMenuNode > .btn-group').append("<ul id=\"subMenuNodeTypeDropdown\" class=\"dropdown-menu\">");
+    //     $('#subMenuNodeTypeDropdown').empty();
+    // }
+    $('#subMenuNodeTypeDropdown').empty();
+    $('#subMenuNodeTypeDropdown').append("<li><a>"
+        + nodeTypeToSubMenuHtml(null) + "</a></li>");
     for (var tid in nodeTypes) {
         $('#subMenuNodeTypeDropdown').append("<li><a>"
             + nodeTypeToSubMenuHtml(tid) + "</a></li>");
@@ -181,17 +184,21 @@ function updateNodeList(event, updatedData) {  //if updatedData is null, all dat
 }
 
 function updateEdgeTypes() {
-    if(Object.keys(edgeTypes).length == 0 ) { // It is possible select edge type only When edge type exists.
-        $('#subMenuEdge > .btn-group > ul').remove();
-    } else {
-        $('#subMenuEdge > .btn-group > ul').remove();
-        $('#subMenuEdge > .btn-group').append("<ul id=\"subMenuEdgeTypeDropdown\" class=\"dropdown-menu\">");
-        $('#subMenuEdge > .btn-group > ul').empty();
-    }
+    // if(Object.keys(edgeTypes).length == 0 ) { // It is possible select edge type only When edge type exists.
+    //     $('#subMenuEdge > .btn-group > ul').remove();
+    // } else {
+    //     $('#subMenuEdge > .btn-group > ul').remove();
+    //     $('#subMenuEdge > .btn-group').append("<ul id=\"subMenuEdgeTypeDropdown\" class=\"dropdown-menu\">");
+    //     $('#subMenuEdge > .btn-group > ul').empty();
+    // }
+
+    $('#subMenuEdgeTypeDropdown').empty();
+    $('#subMenuEdgeTypeDropdown').append("<li><a>"
+        + edgeTypeToSubMenuHtml(null) + "</a></li>");
 
     for (var tid in edgeTypes) {
         console.log(tid);
-        $('#subMenuEdge > .btn-group ul').append("<li><a>"
+        $('#subMenuEdgeTypeDropdown').append("<li><a>"
             + edgeTypeToSubMenuHtml(tid) + "</a></li>");
     }
     $('#subMenuEdgeTypeDropdown > li > a').off('click').unbind('click').click(function() {
@@ -200,6 +207,9 @@ function updateEdgeTypes() {
     });
 
     $('#newEdgeDlgTypeDropdown').empty();
+    $('#newEdgeDlgTypeDropdown').append("<li><a>"
+        + edgeTypeToSubMenuHtml(null) + "</a></li>");
+
     for (var tid in edgeTypes) {
         $('#newEdgeDlgTypeDropdown').append("<li><a>"
             + edgeTypeToSubMenuHtml(tid) + "</a></li>");
@@ -316,7 +326,8 @@ function setSelectedNode(d3Node, nodeData) {
     if (nodeData.type != null) {
         $('#subMenuNodeType').removeClass('unselected').html(nodeTypeToSubMenuHtml(nodeData.type));
     } else {
-        $('#subMenuNodeType').addClass('unselected').text("Select Type");
+        // $('#subMenuNodeType').addClass('unselected').text("Select Type");
+        $('#subMenuNodeType').removeClass('unselected').html(nodeTypeToSubMenuHtml(null));
     }
 
     $('#sideMenuNodeList > li > a').removeClass('active');
@@ -351,7 +362,8 @@ function setSelectedEdge(d3PathG, edgeData) {
     if (edgeData.type != null) {
         $('#subMenuEdgeType').removeClass('unselected').html(edgeTypeToSubMenuHtml(edgeData.type));
     } else {
-        $('#subMenuEdgeType').addClass('unselected').text("Select Type");
+        // $('#subMenuEdgeType').addClass('unselected').text("Select Type");
+        $('#subMenuEdgeType').removeClass('unselected').html(edgeTypeToSubMenuHtml(edgeData.type));
     }
 
     $('#sideMenuNodeList > li > a').removeClass('active');
@@ -397,16 +409,22 @@ function setUnselected(graphUnselect) {
         else if (networkGraph.state.selectedNode != null)
             networkGraph.removeSelectFromNode();
     }
+    networkGraph.setEdgeViewMode(networkGraph.EDGE_VIEW_MODE_SELECTED, viewedEdgeTypes);
 
     selectedNode = null;
     selectedEdge = null;
 }
 
 function nodeTypeToSubMenuHtml(typeid) {
-    return "<span class='nodeTypeColor type-color-bg type-color-"
+    if(typeid != null)
+        return "<span class='nodeTypeColor type-color-bg type-color-"
             + nodeTypes[typeid]['color'] + "'>&nbsp;</span><span class='nodeTypeName'>"
             + nodeTypes[typeid]['name'] +"</span><span class='nodeTypeId'>"
             + typeid + "</span>";
+    else
+        return "<span class='nodeTypeColor type-color-bg type-color-default'>&nbsp;</span><span class='nodeTypeName'>"
+            + "No Type" +"</span><span class='nodeTypeId'>"
+            + null + "</span>";
 }
 function nodeDataToSubMenuHtml(nodeData) {
     var nodeInfoHtml = "<span class='nodeName' data-nodeId=" + nodeData.id
@@ -426,7 +444,7 @@ function edgeTypeToSubMenuHtml(typeid) {
         return "<span class='edgeTypeColor type-color-bg type-color-default"
             + "'>&nbsp;</span><span class='edgeTypeName'>"
             + "Default Edge Type</span><span class='edgeTypeId'>"
-            + "Default</span>";
+            + null + "</span>";
     } else {
         return "<span class='edgeTypeColor type-color-bg type-color-"
             + edgeTypes[typeid]['color'] + "'>&nbsp;</span><span class='edgeTypeName'>"
@@ -499,7 +517,8 @@ function createEdge() {
             $('#newEdgeDlgSource').removeClass('unselected').html(nodeDataToSubMenuHtml(selectedNode.nodeData));
         }
         $('#newEdgeDlgTarget').addClass('unselected').html("Select Target Node");
-        $('#newEdgeDlgType').addClass('unselected').html("Select Type");
+        // $('#newEdgeDlgType').addClass('unselected').html("Select Type");
+        $('#newEdgeDlgType').removeClass('unselected').html(edgeTypeToSubMenuHtml(null));
         $("#newEdgeModal").draggable({
             handle: ".modal-header"
         });
@@ -597,6 +616,10 @@ function validEdge(sourceNode, targetNode, type) {
                 && edge.type == type) {
             return false;
         }
+        else if (edge.source === sourceNode && edge.target === targetNode
+            && (edge.type == null && isNaN(type))) {
+            return false;
+        }
     }
     return true;
 }
@@ -650,8 +673,12 @@ $(document).ready(function() {
 
         }, function(event, nodeData) {      // onNodeChanged
             updateNodeList(event, nodeData);
+            networkGraph.isChanged = true;
+            toggleAskCloseAndRefresh();
         }, function(event, edgeData) {      // onEdgeChanged
             updateEdgeList(event, edgeData);
+            networkGraph.isChanged = true;
+            toggleAskCloseAndRefresh();
         }
     );
 
@@ -2347,7 +2374,10 @@ function infPathToast(node1Name, node2Name, infValue, edgeTypeName, edgeList, ed
         height : 300,
         top : '80px',
         left : '265px',
-        padding : '10px'
+        padding : '10px',
+        closeCallback : function(){
+            setUnselected(true);
+        }
     });
 
     var infoHtml = "Max Influence Path &lt;" + node1Name
@@ -3041,6 +3071,7 @@ function menuSaveGraph() {
     var graphJson = generateSaveGraphJson();
     console.log(graphJson);
     $.ajax("/graph", {
+        async : false,
         method: 'POST',
         contentType: "application/json; charset=UTF-8",
         dataType: 'json',
@@ -3191,6 +3222,7 @@ function loadGraph(graphData) {
         var edgeType = {name: json['edge_type_name'],
             color: json['color'],
             serverId: json['edge_type_id']};
+        console.log(edgeType);
         edgeTypes[edgeTypeCnt] = edgeType;
         viewedEdgeTypes.push(edgeTypeCnt);
         edgeTypeServerIds[json['edge_type_id']] = edgeTypeCnt;
@@ -3212,10 +3244,11 @@ function loadGraph(graphData) {
         var edge = networkGraph.createEdge(sourceNode, targetNode, influence, edgeType);
     }
     updateEdgeList();
+    networkGraph.setZoom();
     networkGraph.updateGraph();
     // networkGraph.d3.event.translate = [384.47928640784977, 190.0129346818016];
     // networkGraph.d3.event.scale = 0.4774208154204951;
-    networkGraph.setZoom();
+
     networkGraph.isChanged = false;
     toggleAskCloseAndRefresh();
 }

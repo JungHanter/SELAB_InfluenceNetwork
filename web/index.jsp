@@ -392,7 +392,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-        <button type="button" id="btnNewEdgeModalConfirm" class="btn btn-dark">Create</button>
+        <button type="button" id="btnNewEdgeModalConfirm" class="btn btn-dark">Add</button>
       </div>
     </div>
   </div>
