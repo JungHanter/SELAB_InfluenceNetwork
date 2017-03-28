@@ -1135,7 +1135,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
     GraphCreator.prototype.setZoom = function() {
         var thisGraph = this;
 
-        /* Set auto scale */
+        /* Set zoom object to auto scale*/
         var dragSvg = d3.behavior.zoom()
             .on("zoom", function(){
                 if (d3.event.sourceEvent.shiftKey){
@@ -1159,6 +1159,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
             });
         svg.call(dragSvg).on("dblclick.zoom", null);
 
+        /* Set auto scale */
         var top = d3.select("." + this.consts.graphClass).node().getBoundingClientRect().top;
         var bottom =  d3.select("." + this.consts.graphClass).node().getBoundingClientRect().bottom;
         var left = d3.select("." + this.consts.graphClass).node().getBoundingClientRect().left;
@@ -1183,7 +1184,8 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         d3.select("." + this.consts.graphClass)
             .attr("transform", "translate(" + [($(window).width() - ($(window).width() * 0.45)) - ((left + right) * scale /2), 490 - ((top + bottom) * scale /2)] + ") scale(" + scale + ")");
         dragSvg.scale(scale);
-        dragSvg.translate([($(window).width() - ($(window).width() * 0.45)) - ((left + right) * scale /2), 490 - ((top + bottom) * scale /2)]);
+        dragSvg.translate([($(window).width() - ($(window).width() * 0.45)) - ((left + right) * scale /2), $(window).height() - ((top + bottom) * scale /2)]);
+        console.log($(window).height());
     };
 
     GraphCreator.prototype.focus = function(focus) {
