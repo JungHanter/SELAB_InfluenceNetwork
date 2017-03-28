@@ -1167,15 +1167,16 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         var height = d3.select("." + this.consts.graphClass).node().getBoundingClientRect().height;
         var width = d3.select("." + this.consts.graphClass).node().getBoundingClientRect().width;
         var scale = 1;
-        if (height >= 900 || width >= 1680) {
-            if(height >= 900 && width <= 1680)
-                scale = 900/height;
-            else if(height <= 900 && width >= 1680)
-                scale = 1680/width;
+        // var windowWidth = 1680, windowHeight = 900;
+        if (height >= $(window).height() || width >= $(window).width()) {
+            if(height >= $(window).height() && width <= $(window).width())
+                scale = $(window).height()/height;
+            else if(height <= $(window).height() && width >= $(window).width())
+                scale = $(window).width()/width;
             else
-                scale = ((900/height >= 1680/width)? 1680/width : 900/height);
+                scale = (($(window).height()/height >= $(window).width()/width)? $(window).width()/width : $(window).height()/height);
         }
-        scale *= 0.7;
+        scale *= 0.5;
         // console.log(top + "/" + right + "/" + bottom + "/" + left);
         // console.log(height + "/" + width + "/" + scale);
         this.state.justScaleTransGraph = true;
@@ -1184,7 +1185,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         d3.select("." + this.consts.graphClass)
             .attr("transform", "translate(" + [($(window).width() - ($(window).width() * 0.45)) - ((left + right) * scale /2), 490 - ((top + bottom) * scale /2)] + ") scale(" + scale + ")");
         dragSvg.scale(scale);
-        dragSvg.translate([($(window).width() - ($(window).width() * 0.45)) - ((left + right) * scale /2), $(window).height() - ((top + bottom) * scale /2)]);
+        dragSvg.translate([($(window).width() - ($(window).width() * 0.4)) - ((left + right) * scale /2), $(window).height() - ((top + bottom) * scale /2)]);
         console.log($(window).height());
     };
 
