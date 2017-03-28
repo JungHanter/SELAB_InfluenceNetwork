@@ -1701,7 +1701,7 @@ function initFindMaxInfluencePathUI() {
                 if ($(this).find('input').is(":checked")) {
                     var edgeTypeId = $(this).find('> .edgeTypeId').text();
                     var edgeType = null;
-                    if (edgeTypeId != 'Default') {
+                    if (edgeTypeId != 'null') {
                         edgeTypeId = parseInt(edgeTypeId);
                         edgeType = edgeTypes[edgeTypeId];
                         edgeTypeNameList.push(edgeType.name);
@@ -2234,7 +2234,7 @@ function initFindMostInfluenceNodeUI(type) {
                 if ($(this).find('input').is(":checked")) {
                     var edgeTypeId = $(this).find('> .edgeTypeId').text();
                     var edgeType = null;
-                    if (edgeTypeId != 'Default') {
+                    if (edgeTypeId != "null") {
                         edgeTypeId = parseInt(edgeTypeId);
                         edgeType = edgeTypes[edgeTypeId];
                         edgeTypeNameList.push(edgeType.name);
