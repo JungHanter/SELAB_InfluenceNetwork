@@ -256,10 +256,56 @@ document.onload = (function(d3, saveAs, Blob, undefined){
 
         /* remove split part */
         var el = gEl.append("text")
-            .attr("text-anchor", "middle")
-            .attr("dy", 3);
+            .attr("class", "wrap")
+            .attr("text-anchor", "middle");
+            // .attr("dy", 3);
 
-        var tspan = el.append('tspan').text(title);
+
+        var parsedString = new Array();
+        if(title.length >= 10) {
+            var start = 0, end = 8;
+            for (var i = 0; ; i++) {
+                if(start > title.length)
+                    break;
+                parsedString[i] = title.substring(start,end);
+                start += 8;
+                end += 8;
+            }
+            if(parsedString.length <= 2 || (parsedString.length == 3 && parsedString[2].length == 0)) {
+                for (var i = 0; i < parsedString.length; i++) {
+                    var tspan = el.append('tspan').text(parsedString[i]);
+                    if (i > 0)
+                        tspan.attr('x', 0).attr('dy', 15);
+                }
+            } else if(parsedString.length <= 4)  {
+                for (var i = 0; i < parsedString.length; i++) {
+                    var tspan = el.append('tspan').text(parsedString[i]).attr('x', 0).attr('y', - 15 + (i * 15));
+                }
+            } else if(parsedString.length <= 5)  {
+                for (var i = 0; i < parsedString.length; i++) {
+                    var tspan = el.append('tspan').text(parsedString[i]).attr('x', 0).attr('y', - 25 + (i * 15));
+                }
+            } else {
+                for (var i = 0; i < parsedString.length; i++) {
+                    if(i==4 && parsedString.length > 4 ) {
+                        if(parsedString[i].length > 7)
+                            var tspan = el.append('tspan').text(parsedString[i].substring(0,6) + "...").attr('x', 0).attr('y', - 25 + (i * 15));
+                        else
+                            var tspan = el.append('tspan').text(parsedString[i]).attr('x', 0).attr('y', - 25 + (i * 15));
+                        break;
+                    }
+                    var tspan = el.append('tspan').text(parsedString[i]).attr('x', 0).attr('y', - 25 + (i * 15));
+                }
+            }
+
+        } else
+            var tspan = el.append('tspan').text(title);
+
+
+
+        console.log(parsedString);
+
+        // var tspan = el.append('tspan').text(title);
 
     };
 

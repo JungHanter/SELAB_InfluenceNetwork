@@ -3062,6 +3062,7 @@ function closeGraph() {
     updateManageNodeTypeUI();
     updateManageEdgeTypeUI();
     updateManageConfidenceUI();
+    $.dialogbox.close();
 }
 
 function menuSaveGraph() {
