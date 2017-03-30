@@ -256,7 +256,10 @@ document.onload = (function(d3, saveAs, Blob, undefined){
 
         /* remove split part */
         var el = gEl.append("text")
-            .attr("text-anchor", "middle");
+            .attr("text-anchor", "middle")
+            // .attr("textLength", 100);
+
+            .attr("font-size", 11);
             // .attr("dy", 3);
 
 
