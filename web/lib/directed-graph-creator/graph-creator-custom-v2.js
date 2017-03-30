@@ -272,12 +272,28 @@ document.onload = (function(d3, saveAs, Blob, undefined){
             }
             if(parsedString.length <= 2) {
                 for (var i = 0; i < parsedString.length; i++) {
-                    var tspan = el.append('tspan').text(parsedString[i]);
-                    if (i > 0)
-                        tspan.attr('x', 0).attr('y', i * 15);
+                    while(true) {
+                        if(parsedString[i][0] != ' ')
+                            break;
+                        if(parsedString[i][0] == ' ' && parsedString[i].length == 1) {
+                            parsedString.pop();
+                            break;
+                        }
+                        parsedString[i] = parsedString[i].substring(1 ,parsedString[i].length);
+                    }
+                    var tspan = el.append('tspan').text(parsedString[i]).attr('x', 0).attr('y', i * 15);
                 }
             } else {
                 for (var i = 0; i < parsedString.length; i++) {
+                    while(true) {
+                        if(parsedString[i][0] != ' ')
+                            break;
+                        if(parsedString[i][0] == ' ' && parsedString[i].length == 1) {
+                            parsedString.pop();
+                            break;
+                        }
+                        parsedString[i] = parsedString[i].substring(1 ,parsedString[i].length);
+                    }
                     if(i==3 && parsedString.length > 4 ) {
                         if(parsedString[i].length > 7)
                             var tspan = el.append('tspan').text(parsedString[i].substring(0,6) + "...").attr('x', 0).attr('y', - 15 + (i * 15));
