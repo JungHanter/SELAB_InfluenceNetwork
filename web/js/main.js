@@ -519,8 +519,9 @@ function createEdge() {
         $('#newEdgeDlgTarget').addClass('unselected').html("Select Target Node");
         // $('#newEdgeDlgType').addClass('unselected').html("Select Type");
         $('#newEdgeDlgType').removeClass('unselected').html(edgeTypeToSubMenuHtml(null));
-        $("#newEdgeModal").draggable({
-            handle: ".modal-header"
+        $("#newEdgeModal .modal-content").draggable({
+            containment: "body",
+            scroll: false
         });
         $('#newEdgeModal').modal();
     }
@@ -750,8 +751,9 @@ function initUI() {
 }
 
 function initManageNodeTypeUI() {
-    $("#manageNodeTypeModal").draggable({
-        handle: ".modal-header"
+    $("#manageNodeTypeModal .modal-content").draggable({
+        containment: "body",
+        scroll: false
     });
 
     $('#btnEditNodeTypeName').attr('disabled', true);
@@ -985,8 +987,9 @@ function nodeTypeManageListItemAddClick(elem) {
 }
 
 function initManageEdgeTypeUI() {
-    $("#manageEdgeTypeModal").draggable({
-        handle: ".modal-header"
+    $("#manageEdgeTypeModal .modal-content").draggable({
+        containment: "body",
+        scroll: false
     });
 
     $('#btnEditEdgeTypeName').attr('disabled', true);
@@ -1240,8 +1243,9 @@ function edgeTypeManageListItemAddClick(elem) {
 }
 
 function initManageConfidenceUI() {
-    $("#manageConfidenceModal").draggable({
-        handle: ".modal-header"
+    $("#manageConfidenceModal .modal-content").draggable({
+        containment: "body",
+        scroll: false
     });
 
     //fixed header table reference http://codepen.io/ajkochanowicz/pen/KHdih
@@ -1444,8 +1448,9 @@ function deleteNodeTypeConfidence(typeid) {
 }
 
 function initManageEdgeTypeViewUI() {
-    $("#manageEdgeTypeViewModal").draggable({
-        handle: ".modal-header"
+    $("#manageEdgeTypeViewModal .modal-content").draggable({
+        containment: "body",
+        scroll: false
     });
 
     $('#manageEdgeTypeViewModal').on('show.bs.modal', function (e) {
@@ -1517,8 +1522,9 @@ function initManageEdgeTypeViewUI() {
 }
 
 function initFindMaxInfluencePathUI() {
-    $("#findMaxInfPathModal").draggable({
-        handle: ".modal-header"
+    $("#findMaxInfPathModal .modal-content").draggable({
+        containment: "body",
+        scroll: false
     });
 
     $('#btnFindMaxInfPathConfirm').click(function() {
@@ -1851,8 +1857,9 @@ function initFindMaxInfluencePathUI() {
 }
 
 function initMaxInfluenceTableUI() {
-    $("#findAllMaxInfModal").draggable({
-        handle: ".modal-header"
+    $("#findAllMaxInfModal .modal-content").draggable({
+        containment: "body",
+        scroll: false
     });
 
     $('#btnFindAllMaxInfConfirm').click(function() {
@@ -2093,9 +2100,10 @@ function addCheckbox(id) {
 }
 
 function initFindMostInfluenceNodeUI(type) {
-    $('#findMost' + type + 'InfNodeModal').draggable({
-        handle: ".modal-header"
-    });
+    $('#findMost' + type + 'InfNodeModal' + " .modal-content").draggable({
+    containment: "body",
+        scroll: false
+});
 
     $('#btnFind' + type + 'InfNodeConfirm').click(function() {
         if($('#most' + type + 'InfNodeNumber').val() == "") {
