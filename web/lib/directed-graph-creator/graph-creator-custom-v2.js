@@ -258,8 +258,8 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         var el = gEl.append("text")
             .attr("text-anchor", "middle")
             // .attr("textLength", 100);
-
-            .attr("font-size", 11);
+            .attr("letter-spacing", 0)
+            .attr("font-size", 12);
             // .attr("dy", 3);
 
 
@@ -307,24 +307,9 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                     var tspan = el.append('tspan').text(parsedString[i]).attr('x', 0).attr('y', - 15 + (i * 15));
                 }
             }
-            // else if(parsedString.length <= 5)  {
-            //     for (var i = 0; i < parsedString.length; i++) {
-            //         var tspan = el.append('tspan').text(parsedString[i]).attr('x', 0).attr('y', - 25 + (i * 15));
-            //     }
-            // } else {
-            //     for (var i = 0; i < parsedString.length; i++) {
-            //         if(i==4 && parsedString.length > 4 ) {
-            //             if(parsedString[i].length > 7)
-            //                 var tspan = el.append('tspan').text(parsedString[i].substring(0,6) + "...").attr('x', 0).attr('y', - 25 + (i * 15));
-            //             else
-            //                 var tspan = el.append('tspan').text(parsedString[i]).attr('x', 0).attr('y', - 25 + (i * 15));
-            //             break;
-            //         }
-            //         var tspan = el.append('tspan').text(parsedString[i]).attr('x', 0).attr('y', - 25 + (i * 15));
-            //     }
-            // }
-        } else
+        } else {
             var tspan = el.append('tspan').text(title);
+        }
 
 
 
