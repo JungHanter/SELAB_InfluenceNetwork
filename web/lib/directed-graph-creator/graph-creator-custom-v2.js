@@ -1240,6 +1240,8 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         // var translatedHeight = $(window).height() - $(window).width() * 0.3 - ((top + bottom) * scale /2);
         var translatedWidth = (($(window).width()-240) * 0.5) - ((left + right) * 0.5 * scale);
         var translatedHeight = ($(window).height() * 0.5) - ((top + bottom) * 0.5 * scale);
+        var offset = ($(window).width()-240) * 0.05;
+        translatedWidth += offset;
         // d3.select("." + this.consts.graphClass)
         //        .attr("transform", "translate(" + [1000 - ((left + right) * scale /2), 490 - ((top + bottom) * scale /2)] + ") scale(" + scale + ")");
         d3.select("." + this.consts.graphClass)

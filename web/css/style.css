@@ -173,7 +173,7 @@ body {
     overflow-y: scroll;
     overflow-x: hidden;
     min-height: 30px;
-    max-height: 320px;
+    max-height: 40vh;
     padding: 5px 0;
     margin-bottom: 0;
     list-style-type: none;
