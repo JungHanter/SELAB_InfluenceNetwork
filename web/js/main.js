@@ -1652,6 +1652,10 @@ function initFindMaxInfluencePathUI() {
 
                                                 $('#infPathFixedInfo').html(infoHtml);
                                                 $('#infPathFixedToast').show();
+                                                $('#infPathFixedToast .toast-alert').draggable({
+                                                    containment: "#graph",
+                                                    scroll: false
+                                                });
                                             }
                                         } else {
                                             openAlertModal(res['message'], 'Find Max Influence Path Failure');
@@ -1806,6 +1810,10 @@ function initFindMaxInfluencePathUI() {
 
                             $('#infPathFixedInfo').html(infoHtml);
                             $('#infPathFixedToast').show();
+                            $('#infPathFixedToast .toast-alert').draggable({
+                                containment: "#graph",
+                                scroll: false
+                            });
                         }
                     } else {
                         openAlertModal(res['message'], 'Find Max Influence Path Failure');
@@ -2028,8 +2036,8 @@ function initMaxInfluenceTableUI() {
     $('#findAllMaxInfModal').on('hide.bs.modal', function (e) {
         $('.edgetype-checkbox-group').empty();
     });
-    $('#maxInfTableFixedToast .close').click(function() {
-        $('#maxInfTableFixedToast').hide();
+    $('#maxInfluenceTable .close').click(function() {
+        $('#maxInfluenceTable').hide();
     });
 }
 
@@ -2327,7 +2335,7 @@ function initFindMostInfluenceNodeUI(type) {
 
 function closeAnalysisToast() {
     networkGraph.setEdgeViewMode(networkGraph.EDGE_VIEW_MODE_SELECTED, viewedEdgeTypes);
-    $('#maxInfTableFixedToast').hide();
+    $('#maxInfluenceTable').hide();
     $('#infPathFixedToast').hide();
     $('#sumInfNodeFixedToast').hide();
     $('#avgInfNodeFixedToast').hide();
@@ -2372,21 +2380,21 @@ function menuFindMaxInfluenceTable() {
 
 function infPathToast(node1Name, node2Name, infValue, edgeTypeName, edgeList, edgeTypeNameList, isConfidence, isAverage) {
 
-    var data = '<div id="maxInfluenceToast"></div>';
-
-    $.dialogbox({
-        type:'default',
-        title:'MaxInfluence',
-        content: data,
-        width : 300,
-        height : 300,
-        top : '80px',
-        left : '265px',
-        padding : '10px',
-        closeCallback : function(){
-            setUnselected(true);
-        }
-    });
+    // var data = '<div id="maxInfluenceToast"></div>';
+    //
+    // $.dialogbox({
+    //     type:'default',
+    //     title:'MaxInfluence',
+    //     content: data,
+    //     width : 300,
+    //     height : 300,
+    //     top : '80px',
+    //     left : '265px',
+    //     padding : '10px',
+    //     closeCallback : function(){
+    //         setUnselected(true);
+    //     }
+    // });
 
     var infoHtml = "Max Influence Path &lt;" + node1Name
     + "&gt; ▶ &lt;" + node2Name + "&gt; <br/>";
@@ -2427,22 +2435,28 @@ function infPathToast(node1Name, node2Name, infValue, edgeTypeName, edgeList, ed
         }
     }
 
-    $('#maxInfluenceToast').html(infoHtml);
+    // $('#maxInfluenceToast').html(infoHtml);
+    $('#infPathFixedInfo').html(infoHtml);
+    $('#infPathFixedToast').show();
+    $('#infPathFixedToast .toast-alert').draggable({
+        containment: "#graph",
+        scroll: false
+    }).resizable();
 }
 
 function maxInfNodeToast(type, nodeList, edgeTypeNameList, isConfidence, isAverage) {
-    var data = '<div id="maxInfNodeToast"></div>';
-
-    $.dialogbox({
-        type:'default',
-        title: "Most " + type + " Influence Node",
-        content: data,
-        width : 300,
-        height : 300,
-        top : '80px',
-        left : '265px',
-        padding : '10px'
-    });
+    // var data = '<div id="maxInfNodeToast"></div>';
+    //
+    // $.dialogbox({
+    //     type:'default',
+    //     title: "Most " + type + " Influence Node",
+    //     content: data,
+    //     width : 300,
+    //     height : 300,
+    //     top : '80px',
+    //     left : '265px',
+    //     padding : '10px'
+    // });
 
     var infoHtml = "The number of node : " + nodeList.length + "<br/>";
 
@@ -2475,21 +2489,27 @@ function maxInfNodeToast(type, nodeList, edgeTypeNameList, isConfidence, isAvera
         infoHtml += "node : " + nodeList[i].node.title + "&nbsp&nbsp value : " + nodeList[i][type.toLowerCase() + '_influence_value'];
         infoHtml += "<br/>";
     }
-    $('#maxInfNodeToast').html(infoHtml);
+    // $('#maxInfNodeToast').html(infoHtml);
+    $('#' + type.toLowerCase() + 'InfNodeFixedInfo').html(infoHtml);
+    $('#' + type.toLowerCase() + 'InfNodeFixedToast').show();
+    $('#' + type.toLowerCase() + 'InfNodeFixedToast .toast-alert').draggable({
+        containment: "#graph",
+        scroll: false
+    });
 }
 
 function allMaxInfToast(maxInfluenceList, nodeSet) {
-    var data = '<div style="overflow: scroll" id="maxInfluenceTable"><header class="fixedTable-header"><table class="table table-bordered"><thead><tr><th class="type-color-bg type-color-text type-color-red">A</th> <th class="type-color-bg type-color-text type-color-blue">B</th> </tr> </thead> </table> </header> <aside class="fixedTable-sidebar"> <table class="table table-bordered"> <tbody> <tr> <th class="type-color-bg type-color-text type-color-red">A</th> </tr> <tr> <th class="type-color-bg type-color-text type-color-blue">B</th> </tr> </tbody> </table> </aside> <div class="fixedTable-body"> <table class="table table-bordered"> <tbody> <tr> <td class="td-empty"></td> <td class="td-input"><input type="number" step=0.01 min=0 max=1 /></td> </tr> <tr> <td class="td-input"><input type="number" step=0.01 min=0 max=1 /></td> <td class="td-empty"></td> </tr> </tbody> </table> </div> </div>';
-
-    $.dialogbox({
-        type:'default',
-        title:'MaxInfluenceTable',
-        content: data,
-        width : 1000,
-        height : 500,
-        top : '53%',
-        left : '28%'
-    });
+    // var data = '<div style="overflow: scroll" id="maxInfluenceTable"><header class="fixedTable-header"><table class="table table-bordered"><thead><tr><th class="type-color-bg type-color-text type-color-red">A</th> <th class="type-color-bg type-color-text type-color-blue">B</th> </tr> </thead> </table> </header> <aside class="fixedTable-sidebar"> <table class="table table-bordered"> <tbody> <tr> <th class="type-color-bg type-color-text type-color-red">A</th> </tr> <tr> <th class="type-color-bg type-color-text type-color-blue">B</th> </tr> </tbody> </table> </aside> <div class="fixedTable-body"> <table class="table table-bordered"> <tbody> <tr> <td class="td-empty"></td> <td class="td-input"><input type="number" step=0.01 min=0 max=1 /></td> </tr> <tr> <td class="td-input"><input type="number" step=0.01 min=0 max=1 /></td> <td class="td-empty"></td> </tr> </tbody> </table> </div> </div>';
+    //
+    // $.dialogbox({
+    //     type:'default',
+    //     title:'MaxInfluenceTable',
+    //     content: data,
+    //     width : 1000,
+    //     height : 500,
+    //     top : '53%',
+    //     left : '28%'
+    // });
 
     $('#maxInfluenceTable .fixedTable-header thead tr').empty();
     $('#maxInfluenceTable .fixedTable-sidebar tbody').empty();
@@ -2533,6 +2553,11 @@ function allMaxInfToast(maxInfluenceList, nodeSet) {
         }
     }
     // $('#maxInfTableFixedToast').show();
+    $('#maxInfluenceTable').show();
+    $('#maxInfluenceTable .toast-alert').draggable({
+        containment: "#graph",
+        scroll: false
+    });
 }
 
 function openAlertModal(msg, title) {
@@ -3063,7 +3088,7 @@ function closeGraph() {
     $('#infPathFixedToast').hide();
     $('#sumInfNodeFixedToast').hide();
     $('#avgInfNodeFixedToast').hide();
-    $('#maxInfTableFixedToast').hide();
+    $('#maxInfluenceTable').hide();
     updateNodeTypes();
     updateEdgeTypes();
     updateEdgeList();
