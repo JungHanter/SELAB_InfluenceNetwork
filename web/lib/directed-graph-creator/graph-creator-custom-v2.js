@@ -1224,27 +1224,35 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         var width = d3.select("." + this.consts.graphClass).node().getBoundingClientRect().width;
         var scale = 1;
         // var windowWidth = 1680, windowHeight = 900;
-        if (height >= $(window).height() || width >= $(window).width()) {
-            if(height >= $(window).height() && width <= $(window).width())
+        if (height >= $(window).height() || width >= ($(window).width()-240)) {
+            if(height >= $(window).height() && width <= ($(window).width()-240))
                 scale = $(window).height()/height;
-            else if(height <= $(window).height() && width >= $(window).width())
-                scale = $(window).width()/width;
+            else if(height <= $(window).height() && width >= ($(window).width()-240))
+                scale = ($(window).width()-240)/width;
             else
-                scale = (($(window).height()/height >= $(window).width()/width)? $(window).width()/width : $(window).height()/height);
+                scale = (($(window).height()/height >= ($(window).width()-240)/width)? ($(window).width()-240)/width : $(window).height()/height);
         }
         scale *= 0.5;
         // console.log(top + "/" + right + "/" + bottom + "/" + left);
         // console.log(height + "/" + width + "/" + scale);
         this.state.justScaleTransGraph = true;
-        var translatedWidth = ($(window).width() - ($(window).width() * 0.5)) - ((left + right) * scale /2);
-        var translatedHeight = $(window).height() - $(window).width() * 0.3 - ((top + bottom) * scale /2);
+        // var translatedWidth = ($(window).width() - ($(window).width() * 0.5)) - ((left + right) * scale /2);
+        // var translatedHeight = $(window).height() - $(window).width() * 0.3 - ((top + bottom) * scale /2);
+        var translatedWidth = (($(window).width()-240) * 0.5) - ((left + right) * 0.5 * scale);
+        var translatedHeight = ($(window).height() * 0.5) - ((top + bottom) * 0.5 * scale);
         // d3.select("." + this.consts.graphClass)
         //        .attr("transform", "translate(" + [1000 - ((left + right) * scale /2), 490 - ((top + bottom) * scale /2)] + ") scale(" + scale + ")");
         d3.select("." + this.consts.graphClass)
             .attr("transform", "translate(" + [translatedWidth, translatedHeight] + ") scale(" + scale + ")");
         dragSvg.scale(scale);
         dragSvg.translate([translatedWidth, translatedHeight]);
-        console.log($(window).height());
+        // console.log("translatedWidth : " +translatedWidth);
+        // console.log("translatedHeight : " +translatedHeight);
+        // console.log(($(window).width()-240));
+        // console.log("left : " + d3.select("." + this.consts.graphClass).node().getBoundingClientRect().left);
+        // console.log("left * scale: " + left * scale);
+        // console.log("right : " + d3.select("." + this.consts.graphClass).node().getBoundingClientRect().right);
+        // console.log("right * scale: " + right * scale);
     };
 
     GraphCreator.prototype.focus = function(focus) {
