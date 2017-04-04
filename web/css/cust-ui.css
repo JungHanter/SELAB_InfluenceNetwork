@@ -7,11 +7,11 @@
     display: none;
 }
 
-.toast .toast-wrapper {
-    min-width: 200px;
-    max-width: 640px;
-    margin: 20px auto
-}
+/*.toast .toast-wrapper {*/
+    /*min-width: 200px;*/
+    /*max-width: 640px;*/
+    /*margin: 20px auto*/
+/*}*/
 
 .toast .toast-wrapper .toast-alert {
     text-align: center;
@@ -33,7 +33,7 @@
     top: 120px;
     right: 10px;
     left: auto;
-    z-index: 1900;
+    z-index: 1000;
 }
 
 .toast.fixed-toast .toast-wrapper {
@@ -51,9 +51,26 @@
     width: 100%;
 }
 
-.toast.fixed-toast .close {
+.toast.fixed-toast .close{
     color: #fff;
     opacity: .5;
+}
+
+.toast.fixed-toast .maximize{
+    -webkit-appearance: none;
+    padding: 0;
+    cursor: pointer;
+    background: 0 0;
+    border: 0;
+    float: right;
+    font-size: 21px;
+    font-weight: 700;
+    line-height: 1.5;
+    color: #fff;
+    text-shadow: 0 1px 0 #fff;
+    filter: alpha(opacity=20);
+    opacity: .5;
+    font-family: initial; font-size: 13px;
 }
 
 /* maxInfluenceTable Toast */

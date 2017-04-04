@@ -2074,6 +2074,36 @@ function initMaxInfluenceTableUI() {
     $('#maxInfluenceTable .close').click(function() {
         $('#maxInfluenceTable').hide();
     });
+    var initialWidth = 0, initialHeight = 0;
+    $('#maxInfluenceTable .maximize').click(function () {
+        if($('#maxInfluenceTable').hasClass('maximized')==false) {
+            initialWidth = $('#maxInfluenceTable .toa' +
+                'st-wrapper .toast-alert .toast-body').width();
+            initialHeight = $('#maxInfluenceTable .toa' +
+                'st-wrapper .toast-alert .toast-body').height();
+            $('#maxInfluenceTable').addClass('maximized');
+            $('#maxInfluenceTable').css('left', '240px').css('top', '61px');
+            $('#maxInfluenceTable .toa' +
+                'st-wrapper .toast-alert .toast-body').css('width', '100%');
+            $('#maxInfluenceTable .toa' +
+                'st-wrapper .toast-alert .toast-body').css('height', '90vh');
+            $('#maxInfluenceTable .toast-wrapper').css('width', '100%');
+            $('#maxInfluenceTable .toast-wrapper').css('max-width', '100%');
+            $('#maxInfluenceTable .maximize span').text('▣');
+        } else {
+            console.log(initialWidth + "/" + initialHeight);
+            $('#maxInfluenceTable').removeClass('maximized');
+            $('#maxInfluenceTable').css('left', '240px').css('top', '61px');
+            $('#maxInfluenceTable .toa' +
+                'st-wrapper .toast-alert .toast-body').css('width', initialWidth);
+            $('#maxInfluenceTable .toa' +
+                'st-wrapper .toast-alert .toast-body').css('height', initialHeight);
+            $('#maxInfluenceTable .toast-wrapper').css('width', initialWidth);
+            $('#maxInfluenceTable .toast-wrapper').css('max-width', '480px');
+            $('#maxInfluenceTable .maximize span').text('□');
+        }
+
+    });
 }
 
 function getCheckedBoxNumber(id) {

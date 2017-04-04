@@ -951,8 +951,11 @@
   <div class="toast-wrapper">
     <div class="toast-alert" role="document">
       <div class="toast-body">
-        <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <div style="overflow: scroll">
+        <div>
+          <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <button type="button" class="maximize" style="margin-right: 10px;"><span aria-hidden="true">□</span></button>
+        </div>
+        <div style="overflow: auto; width:100%; height:90%; margin-top: 30px;">
           <header class="fixedTable-header">
             <table class="table table-bordered">
               <thead>

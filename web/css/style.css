@@ -509,7 +509,7 @@ body {
 }
 .fixedTable-sidebar {
     width: 120px;
-    height: 310px;
+    /*height: 310px;*/
     float: left;
     overflow: hidden;
     /*border-right: 1px solid #CCC;*/
@@ -517,7 +517,7 @@ body {
 .fixedTable-body {
     overflow: auto;
     width: calc(100% - 120px);
-    height: 310px;
+    /*height: 310px;*/
     float: left;
 }
 #confidenceTable.fixedTable .table tr td.td-input {
@@ -570,7 +570,7 @@ body {
 
 #maxInfluenceTable .fixedTable-sidebar {
     width: 71px;
-    height: 310px;
+    /*height: 310px;*/
     float: left;
     overflow: initial;
     /*border-right: 1px solid #CCC;*/
@@ -579,7 +579,7 @@ body {
 #maxInfluenceTable .fixedTable-body {
     overflow: initial;
     width: calc(100% - 120px);
-    height: 310px;
+    /*height: 310px;*/
     float: left;
 }
 
