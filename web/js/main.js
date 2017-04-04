@@ -1501,7 +1501,9 @@ function initManageEdgeTypeViewUI() {
                     .addClass('type-color-text').addClass('type-color-'+typeColor);
             }
         });
-        $('#checkboxAllEdgeTypeView').prop('checked', true);
+        if($('#manageEdgeTypeViewList .list-group-item.active').length == (Object.keys(edgeTypes).length + 1)) {
+            $('#checkboxAllEdgeTypeView').prop("checked", true);
+        }
     });
     $('#btnManageEdgeTypeViewModal').click(function () {
         if($('#manageEdgeTypeViewList .list-group-item.active').length < 1) {
