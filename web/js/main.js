@@ -573,8 +573,9 @@ function editEdge() {
 
         selectedEdge.edgeData.name = $('#subMenuEdgeInfluence').val();
 
-        if (originalSourceId == changedSourceId && originalTargetId == changedTargetId
-                && originalType == changedType) {
+        if ((originalSourceId == changedSourceId && originalTargetId == changedTargetId
+                && originalType == changedType) || (originalSourceId == changedSourceId && originalTargetId == changedTargetId
+            && originalType == null)) {
             //pass
         } else {
             var changedSource = networkGraph.getNodeById(changedSourceId),
@@ -1470,15 +1471,23 @@ function initManageEdgeTypeViewUI() {
         $('#manageEdgeTypeViewList').find('.list-group-item').each(function(idx, elem) {
             $(this).off('click').unbind('click').click(function() {
                 if ($(this).hasClass('active')) {
-                    if ($('#manageEdgeTypeViewList .list-group-item.active').length == 1) {
-                        openAlertModal("You must select node types at least one.")
-                    } else {
-                        $(this).attr('class', 'list-group-item');
+                    // if ($('#manageEdgeTypeViewList .list-group-item.active').length == 1) {
+                    //     openAlertModal("You must select node types at least one.")
+                    // } else {
+                    //     $(this).attr('class', 'list-group-item');
+                    // }
+
+                    $(this).attr('class', 'list-group-item');
+                    if($('#manageEdgeTypeViewList .list-group-item.active').length < (Object.keys(edgeTypes).length + 1)) {
+                        $('#checkboxAllEdgeTypeView').prop("checked", false);
                     }
                 } else {
                     var typeColor = $(this).find('> .typeColor').data('color');
                     $(this).addClass('active').addClass('type-color-bg')
                         .addClass('type-color-text').addClass('type-color-'+typeColor);
+                    if($('#manageEdgeTypeViewList .list-group-item.active').length == (Object.keys(edgeTypes).length + 1)) {
+                        $('#checkboxAllEdgeTypeView').prop("checked", true);
+                    }
                 }
             });
         });
@@ -1492,23 +1501,43 @@ function initManageEdgeTypeViewUI() {
                     .addClass('type-color-text').addClass('type-color-'+typeColor);
             }
         });
-        $('#checkboxAllEdgeTypeView').prop('checked', false);
+        $('#checkboxAllEdgeTypeView').prop('checked', true);
     });
-    $('#manageEdgeTypeViewModal').on('hide.bs.modal', function (e) {
-        var selectedEdgeTypes = [];
-        $('#manageEdgeTypeViewList').find('.list-group-item.active').each(function(idx, elem) {
-            var edgeType = $(this).find('> .typeId').text();
-            if (edgeType != networkGraph.EDGE_TYPE_DEFAULT)
-                edgeType = parseInt(edgeType);
-            selectedEdgeTypes.push(edgeType);
-        });
-        console.log(selectedEdgeTypes);
-        viewedEdgeTypes = selectedEdgeTypes;
-        $('#infPathFixedToast').hide(); //end path view
-        networkGraph.setEdgeViewMode(networkGraph.EDGE_VIEW_MODE_SELECTED, viewedEdgeTypes);
-        setUnselected(true);
-        networkGraph.updateGraph();
+    $('#btnManageEdgeTypeViewModal').click(function () {
+        if($('#manageEdgeTypeViewList .list-group-item.active').length < 1) {
+            openAlertModal("You must select node types at least one.");
+        } else {
+            var selectedEdgeTypes = [];
+            $('#manageEdgeTypeViewList').find('.list-group-item.active').each(function(idx, elem) {
+                var edgeType = $(this).find('> .typeId').text();
+                if (edgeType != networkGraph.EDGE_TYPE_DEFAULT)
+                    edgeType = parseInt(edgeType);
+                selectedEdgeTypes.push(edgeType);
+            });
+            console.log(selectedEdgeTypes);
+            viewedEdgeTypes = selectedEdgeTypes;
+            $('#infPathFixedToast').hide(); //end path view
+            networkGraph.setEdgeViewMode(networkGraph.EDGE_VIEW_MODE_SELECTED, viewedEdgeTypes);
+            setUnselected(true);
+            networkGraph.updateGraph();
+            $('#manageEdgeTypeViewModal').modal('hide');
+        }
     });
+    // $('#manageEdgeTypeViewModal').on('hide.bs.modal', function (e) {
+    //     var selectedEdgeTypes = [];
+    //     $('#manageEdgeTypeViewList').find('.list-group-item.active').each(function(idx, elem) {
+    //         var edgeType = $(this).find('> .typeId').text();
+    //         if (edgeType != networkGraph.EDGE_TYPE_DEFAULT)
+    //             edgeType = parseInt(edgeType);
+    //         selectedEdgeTypes.push(edgeType);
+    //     });
+    //     console.log(selectedEdgeTypes);
+    //     viewedEdgeTypes = selectedEdgeTypes;
+    //     $('#infPathFixedToast').hide(); //end path view
+    //     networkGraph.setEdgeViewMode(networkGraph.EDGE_VIEW_MODE_SELECTED, viewedEdgeTypes);
+    //     setUnselected(true);
+    //     networkGraph.updateGraph();
+    // });
     $('#checkboxAllEdgeTypeView').change(function() {
         if ($(this).is(':checked')) {
             $('#manageEdgeTypeViewList').find('.list-group-item').each(function(idx, elem) {
@@ -1517,6 +1546,10 @@ function initManageEdgeTypeViewUI() {
                 $(this).addClass('active').addClass('type-color-bg')
                     .addClass('type-color-text').addClass('type-color-' + typeColor);
             });
+        } else { // Uncheck 'Show all Edge Types'
+            $('#manageEdgeTypeViewList').find('.list-group-item').each(function (idx, elem) {
+                $(this).attr('class', 'list-group-item');
+            })
         }
     })
 }

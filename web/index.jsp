@@ -611,7 +611,8 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Apply</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="button" id="btnManageEdgeTypeViewModal" class="btn btn-dark">Apply</button>
       </div>
     </div>
   </div>
