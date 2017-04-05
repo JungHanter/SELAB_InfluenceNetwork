@@ -109,7 +109,7 @@
           <button id="btnSignin" class="btn btn-primary btn-block" type="submit">Sign in</button>
         </form>
         <div class="signin-more">
-          <a id="menuForgot">Forgot your password?</a>
+          <a id="menuForgot">Forgot your ID/Password?</a>
           <a id="menuSignup" class="pull-right">Create new account?</a>
         </div>
       </div>

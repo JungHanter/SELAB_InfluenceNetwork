@@ -2844,7 +2844,7 @@ function signup() {
                 $.LoadingOverlay('hide');
                 if (res['result'] == 'success') {
                     // openAlertModal("Hello, " + name + "! Welcome to Influence Network.", "Signup Success");
-                    openAlertModal("Please check the email to activate your account.", "Email Confirmation");
+                    openAlertModal("An email was sent to you. Check the email to activate your account.", "Alert");
                 } else {
                     console.log(res);
                     openAlertModal(res['message'], 'Signup Failure');
@@ -2948,7 +2948,7 @@ function signin() {
                     .attr('disabled', false).removeClass('disabled');
                 setGraphUIEnable(false);
             } else {
-                openAlertModal(res['message'], 'Login Failure');
+                openAlertModal(res['message'], 'Alert');
             }
         }, error: function(xhr, status, error) {
             $.LoadingOverlay('hide');
