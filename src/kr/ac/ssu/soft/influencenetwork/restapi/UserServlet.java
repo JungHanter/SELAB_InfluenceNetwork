@@ -165,6 +165,8 @@ public class UserServlet extends HttpServlet {
                     Transport.send(message);
                     System.out.println("Done");
                 } catch (MessagingException e) {
+                    result.put("result", "fail");
+                    result.put("message", "Sending email is fail.");
                     throw new RuntimeException(e);
                 }
                 result.put("result", "success");
