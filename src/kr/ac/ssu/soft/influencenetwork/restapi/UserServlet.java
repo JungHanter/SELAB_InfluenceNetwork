@@ -38,10 +38,6 @@ import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import org.apache.commons.mail.DefaultAuthenticator;
-import org.apache.commons.mail.EmailException;
-import org.apache.commons.mail.HtmlEmail;
-
 @WebServlet(description = "signup", urlPatterns = { "/user" })
 public class UserServlet extends HttpServlet {
 
@@ -126,60 +122,51 @@ public class UserServlet extends HttpServlet {
             if(userDAO.saveUser(user) == 0) {
                 JSONObject userJson = new JSONObject();
 
-                final String senderEmail = "selab.ssu@gmail.com";
-                final String senderPassword = "lovejesus7";
+//                final String senderEmail = "selab.ssu@gmail.com";
+//                final String senderPassword = "lovejesus7";
 
-//                Properties props = new Properties();
-//                props.put("mail.smtp.auth", "true");
-//                props.put("mail.smtp.starttls.enable", "true");
-//                props.put("mail.smtp.host", "smtp.gmail.com");
-//                props.put("mail.smtp.ssl.trust", "smtp.gmail.com");
-//                props.put("mail.smtp.port", "587");
-//
-//                Session session = Session.getInstance(props,
-//                        new javax.mail.Authenticator() {
-//                            protected PasswordAuthentication getPasswordAuthentication() {
-//                                return new PasswordAuthentication(senderEmail, senderPassword);
-//                            }
-//                        });
-//                session.setDebug(true);
-//                try {
-//                    Message message = new MimeMessage(session);
-//                    message.setFrom(new InternetAddress(senderEmail));
-//                    message.setRecipients(
-//                            Message.RecipientType.TO,
-//                            InternetAddress.parse(email)
-//                    );
-//                    message.setSubject("Welcome to Influencenet");
+                final String senderEmail = "influencenet.net@gmail.com";
+                final String senderPassword = "slab0909";
+
+                Properties props = new Properties();
+                props.put("mail.smtp.auth", "true");
+                props.put("mail.smtp.starttls.enable", "true");
+                props.put("mail.smtp.host", "smtp.gmail.com");
+                props.put("mail.smtp.ssl.trust", "smtp.gmail.com");
+                props.put("mail.smtp.port", "587");
+
+
+                Session session = Session.getInstance(props,
+                        new javax.mail.Authenticator() {
+                            protected PasswordAuthentication getPasswordAuthentication() {
+                                return new PasswordAuthentication(senderEmail, senderPassword);
+                            }
+                        });
+                session.setDebug(true);
+                try {
+                    Message message = new MimeMessage(session);
+                    message.setFrom(new InternetAddress(senderEmail));
+                    message.setRecipients(
+                            Message.RecipientType.TO,
+                            InternetAddress.parse(email)
+                    );
+                    message.setSubject("Welcome to Influence network");
+                    String content = "Thanks for signing up!<br>" +
+                            "Your account has been created, you can login after activating your account by entering the link below.<br>" +
+                            "Please Copy below link and paste to address field of web browser.<br><br>" +
+                            "<strong>influencenet.net/email_verification.jsp?email="+email+"&hash="+hash+"</strong>";
+                    content = content.replace(".","<span>.</span>");
+                    System.out.println("test : " + content);
 //                    message.setContent("Thanks for signing up!<br>" +
 //                                    "Your account has been created, you can login after activating your account by pressing the link below.<br>" +
-//                                    "<a target=\"_blank\" href=\"http://www.influencenet.net/email_verification.jsp?email="+email+"&hash="+hash+"\">Activate Your Account</a>",
+//                                    "<strong>influencenet.&#8203;net/email_verification.&#8203;jsp?email="+email+"&hash="+hash+"</strong>",
 //                            "text/html; charset=utf-8");
-//                    Transport.send(message);
-//                    System.out.println("Done");
-//                } catch (MessagingException e) {
-//                    throw new RuntimeException(e);
-//                }
-                try {
-                    HtmlEmail htmlEmail = new HtmlEmail();
-                    htmlEmail.setHostName("smtp.gmail.com");
-                    htmlEmail.setSmtpPort(587);
-                    htmlEmail.setAuthenticator(new DefaultAuthenticator(senderEmail, senderPassword));
-                    htmlEmail.setStartTLSEnabled(true);
-                    htmlEmail.setFrom(senderEmail);
-                    htmlEmail.setSubject("Welcome to Influence Network");
-                    htmlEmail.setHtmlMsg("Thanks for signing up!<br><br>" +
-                                    "Click the following link to activate your account.<br>" +
-                                    "<a href=\"https://www.influencenet.net/email_verification.jsp?email="+email+"&hash="+hash+"\">Activate Your Account</a><br><br>" +
-                                    "Account Administrator<br>Influence Network");
-
-                    htmlEmail.addTo(email);
-                    htmlEmail.send();
-                } catch (EmailException e) {
-                    result.put("result", "fail");
-                    result.put("message", "Senting Email is fail.");
+                    message.setContent(content, "text/html; charset=utf-8");
+                    Transport.send(message);
+                    System.out.println("Done");
+                } catch (MessagingException e) {
+                    throw new RuntimeException(e);
                 }
-
                 result.put("result", "success");
             } else {
                 result.put("result", "fail");
