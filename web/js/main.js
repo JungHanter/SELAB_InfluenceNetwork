@@ -716,7 +716,7 @@ $(document).ready(function() {
     networkGraph.isChanged = false;
     toggleAskCloseAndRefresh();
     $('.graph-area svg').on('dblclick', function (e) {
-        console.log(this);
+        // console.log(this);
         if(e.target == this)
             networkGraph.setZoom(true);
     });
