@@ -68,7 +68,6 @@ document.onload = (function(d3, saveAs, Blob, undefined){
             lastKeyDown: -1,
             shiftNodeDrag: false,
             selectedText: null,
-            isZoomed : false
         };
 
         // define arrow markers for graph links
@@ -225,7 +224,6 @@ document.onload = (function(d3, saveAs, Blob, undefined){
             thisGraph.nodes = [];
             thisGraph.edges = [];
             thisGraph.updateGraph();
-            thisGraph.state.isZoomed = false;
         }
     };
 
@@ -313,7 +311,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
 
 
 
-        console.log(parsedString);
+        // console.log(parsedString);
 
         // var tspan = el.append('tspan').text(title);
 
@@ -1171,24 +1169,13 @@ document.onload = (function(d3, saveAs, Blob, undefined){
     };
 
     GraphCreator.prototype.zoomed = function(){
-        if(this.state.isZoomed == false) {
-            // GraphCreator.dragSvg.scale(this.initialValues.scale);
-            // GraphCreator.dragSvg.translate(this.initialValues.position);
-                // d3.event.scale = this.initialValues.scale;
-                //
-                // d3.event.position = this.initialValues.position;
-            this.state.isZoomed = true;
-            // console.log("zoomed" + d3.event.scale);
-        }
-
-
         this.state.justScaleTransGraph = true;
         d3.select("." + this.consts.graphClass)
             .attr("transform", "translate(" + d3.event.translate + ") scale(" + d3.event.scale + ")");
 
     };
 
-    GraphCreator.prototype.setZoom = function() {
+    GraphCreator.prototype.setZoom = function(dbl) {
         var thisGraph = this;
 
         /* Set zoom object to auto scale*/
@@ -1215,6 +1202,11 @@ document.onload = (function(d3, saveAs, Blob, undefined){
             });
         svg.call(dragSvg).on("dblclick.zoom", null);
 
+        if(dbl == true) {
+            d3.select("." + this.consts.graphClass)
+                .attr("transform", "translate(" + [0, 0] + ") scale(" + 1 + ")");
+        }
+
         /* Set auto scale */
         var top = d3.select("." + this.consts.graphClass).node().getBoundingClientRect().top;
         var bottom =  d3.select("." + this.consts.graphClass).node().getBoundingClientRect().bottom;
@@ -1233,6 +1225,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                 scale = (($(window).height()/height >= ($(window).width()-240)/width)? ($(window).width()-240)/width : $(window).height()/height);
         }
         scale *= 0.5;
+
         this.state.justScaleTransGraph = true;
         // var translatedWidth = ($(window).width() - ($(window).width() * 0.5)) - ((left + right) * scale /2);
         // var translatedHeight = $(window).height() - $(window).width() * 0.3 - ((top + bottom) * scale /2);

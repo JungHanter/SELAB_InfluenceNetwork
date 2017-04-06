@@ -715,6 +715,17 @@ $(document).ready(function() {
 
     networkGraph.isChanged = false;
     toggleAskCloseAndRefresh();
+    $('.graph-area svg').on('dblclick', function (e) {
+        console.log(this);
+        if(e.target == this)
+            networkGraph.setZoom(true);
+    });
+    // $('.graph-area .conceptG').on('click', function () {
+    //     console.log("node");
+    // });
+    // $('.graph-area .edgeG').on('click', function () {
+    //     console.log("edge");
+    // });
 
 });
 
@@ -3343,7 +3354,7 @@ function loadGraph(graphData) {
         var edge = networkGraph.createEdge(sourceNode, targetNode, influence, edgeType);
     }
     updateEdgeList();
-    networkGraph.setZoom();
+    networkGraph.setZoom(false);
     networkGraph.updateGraph();
     // networkGraph.d3.event.translate = [384.47928640784977, 190.0129346818016];
     // networkGraph.d3.event.scale = 0.4774208154204951;
