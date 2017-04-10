@@ -1224,14 +1224,14 @@ document.onload = (function(d3, saveAs, Blob, undefined){
             else
                 scale = (($(window).height()/height >= ($(window).width()-240)/width)? ($(window).width()-240)/width : $(window).height()/height);
         }
-        scale *= 0.5;
+        scale *= 0.8;
 
         this.state.justScaleTransGraph = true;
         // var translatedWidth = ($(window).width() - ($(window).width() * 0.5)) - ((left + right) * scale /2);
         // var translatedHeight = $(window).height() - $(window).width() * 0.3 - ((top + bottom) * scale /2);
         var translatedWidth = (($(window).width()-240) * 0.5) - ((left + right) * 0.5 * scale);
         var translatedHeight = ($(window).height() * 0.5) - ((top + bottom) * 0.5 * scale);
-        var offset = ($(window).width()-240) * 0.05;
+        var offset = ($(window).width()-240) * 0.1;
         translatedWidth += offset;
 
         d3.select("." + this.consts.graphClass)

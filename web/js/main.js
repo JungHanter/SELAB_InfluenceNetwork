@@ -715,18 +715,13 @@ $(document).ready(function() {
 
     networkGraph.isChanged = false;
     toggleAskCloseAndRefresh();
+
+    /* Double click auto scale */
     $('.graph-area svg').on('dblclick', function (e) {
         // console.log(this);
         if(e.target == this)
             networkGraph.setZoom(true);
     });
-    // $('.graph-area .conceptG').on('click', function () {
-    //     console.log("node");
-    // });
-    // $('.graph-area .edgeG').on('click', function () {
-    //     console.log("edge");
-    // });
-
 });
 
 var selectedNodeTypeElem = null;
@@ -2693,6 +2688,10 @@ function initControllers() {
         e.preventDefault();
         signin();
     });
+    $('#editInfoForm').on('submit', function (e) {
+       e.preventDefault();
+       editInfo();
+    });
     $('#menuSignout').click(function() {
         if (networkGraph.isChanged == true) {
             openConfirmModal2("The Graph has been changed.", "Sign-out Confirm", function () {
@@ -2704,7 +2703,21 @@ function initControllers() {
         } else
             signout();
     });
-
+    $('#menuEditInfo').click(function () {
+        $('#editInfoInputEmail').val(user.email);
+        $('#editInfoInputPw').val('');
+        $('#editInfoInputPwConfirm').val('');
+        $('#editInfoInputName').val(user.user_name);
+        $('#editInfoModal').modal('show');
+    });
+    $('#menuForgot').click(function () {
+        $('#findPasswordInputEmail').val('');
+        $('#findPasswordModal').modal('show');
+    });
+    $('#findPasswordForm').on('submit', function (e) {
+        e.preventDefault();
+        findPassword();
+    });
     $('#menuSignup').click(function(e) {
         $('#inputEmail').val('');
         $('#inputPw').val('');
@@ -2866,6 +2879,78 @@ function signup() {
                 openAlertModal(xhr.statusText, 'Signup Failure');
             }
         })
+    }
+}
+
+function editInfo() {
+    var password = $('#editInfoInputPw').val();
+    var passwordConfirm = $('#editInfoInputPwConfirm').val();
+    var name = $('#editInfoInputName').val();
+    console.log(password + '/' + passwordConfirm);
+    console.log(typeof password);
+    if(password == "" && name == "") {
+        openAlertModal("Please enter information", "Edit Failure");
+    } else if (password != "" && password.length < 4) {
+        openAlertModal("The minimum length of password is 4.", "Edit Failure");
+        return;
+    } else if ((password != "" || passwordConfirm != "") && password != passwordConfirm) {
+        openAlertModal("Password Confirm is different.", "Edit Failure");
+    } else {
+        $('#editInfoModal').modal('hide');
+        $.LoadingOverlay('show');
+        $.ajax("/user", {
+            method: 'POST',
+            dataType: 'json',
+            data: JSON.stringify({
+                action: 'editinfo',
+                email: user.email,
+                password: password,
+                user_name: name
+            }), success: function(res) {
+                $.LoadingOverlay('hide');
+                if (res['result'] == 'success') {
+                    openAlertModal("Your Information is edited.", "Alert");
+                    if(name != "") {
+                        user = res['user'];
+                        $('#menuUserWelcome').text("Welcome " + name + "!");
+                    }
+                } else {
+                    console.log(res);
+                    openAlertModal(res['message'], 'Edit Failure');
+                }
+            }, error: function(xhr, status, error) {
+                $.LoadingOverlay('hide');
+                console.log(xhr);
+                openAlertModal(xhr.statusText, 'Edit Failure');
+            }
+        })
+    }
+}
+
+function findPassword() {
+    var email = $('#findPasswordInputEmail').val();
+    var regExpEmail = /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
+    if (!regExpEmail.test(email)) {
+        openAlertModal("Alert", "Please enter correct email form like influence@influence.net");
+        return;
+    } else {
+        $('#findPasswordModal').modal('hide');
+        $.LoadingOverlay('show');
+        $.ajax("/user", {
+            method: 'POST',
+            dataType: 'json',
+            data: JSON.stringify({
+                action: 'findpassword',
+                email: email
+            }), success: function(res) {
+                $.LoadingOverlay('hide');
+                openAlertModal('If you are registerd, new temporary password is sent to your email.', 'Alert');
+            }, error: function(xhr, status, error) {
+                $.LoadingOverlay('hide');
+                console.log(xhr);
+                openAlertModal(xhr.statusText, 'Some problem in server. Please try again later.');
+            }
+        });
     }
 }
 

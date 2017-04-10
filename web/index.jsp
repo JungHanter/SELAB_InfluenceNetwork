@@ -91,6 +91,7 @@
         <li class="dropdown">
           <a  id="menuUserWelcome" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Welcome John!</a>
           <ul class="dropdown-menu">
+            <li><a id="menuEditInfo" >Edit My Information</a></li>
             <li><a id="menuSignout" >Sign out</a></li>
           </ul>
         </li>
@@ -109,7 +110,7 @@
           <button id="btnSignin" class="btn btn-primary btn-block" type="submit">Sign in</button>
         </form>
         <div class="signin-more">
-          <a id="menuForgot">Forgot your ID/Password?</a>
+          <a id="menuForgot">Forgot your Password?</a>
           <a id="menuSignup" class="pull-right">Create new account?</a>
         </div>
       </div>
@@ -326,7 +327,94 @@
                 </div>
               </div>
             </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
+<div id="editInfoModal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Edit My Information</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-xs-12">
+            <form id="editInfoForm" class="form-editInfo"  name="editInfoForm" accept-charset="UTF-8" method="POST">
+              <div class="form-group">
+                <label for="inputEmail" >Email Address</label>
+                <input type="email" id="editInfoInputEmail" name="email" maxlength="100"
+                <%--class="form-control form-control-input valid"--%>
+                       class="form-control valid"
+                       placeholder="Email" required readonly="readonly">
+                <%--<button type="button" id="btnCheckEmail" class="btn btn-dark btn-block--%>
+                <%--form-control form-control-button">Check</button>--%>
+              </div>
+              <div class="form-group">
+                <label for="inputPw">Password</label>
+                <input type="password" id="editInfoInputPw" name="pw" maxlength="20" class="form-control invalid"
+                       placeholder="Password">
+              </div>
+              <div class="form-group">
+                <label for="inputPwConfirm">Password Confirm</label>
+                <input type="password" id="editInfoInputPwConfirm" maxlength="20" name="pwConfirm" class="form-control"
+                       placeholder="Password Confirm">
+              </div>
+              <div class="form-group">
+                <label for="inputName" >Name</label>
+                <input type="text" id="editInfoInputName" name="inputName" maxlength="40" class="form-control valid"
+                       placeholder="Name">
+              </div>
+              <div class="row">
+                <div class="col-xs-6">
+                  <button id="btnEditInfoCancel" data-dismiss="modal"
+                          class="btn btn-default btn-block" type="button">Cancel</button>
+                </div>
+                <div class="col-xs-6">
+                  <button id="btnEditInfo" class="btn btn-dark btn-block"
+                          type="submit">Apply</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="findPasswordModal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Find Your Password</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-xs-12">
+            <form id="findPasswordForm" class="form-findPassword"  name="findPasswordForm" accept-charset="UTF-8" method="POST">
+              <div class="form-group">
+                <label for="inputEmail" >Email Address</label>
+                <input type="email" id="findPasswordInputEmail" name="email" maxlength="100"
+                       class="form-control valid"
+                       placeholder="Email" required>
+              </div>
+              <div class="row">
+                <div class="col-xs-6">
+                  <button id="btnFindPasswordCancel" data-dismiss="modal"
+                          class="btn btn-default btn-block" type="button">Cancel</button>
+                </div>
+                <div class="col-xs-6">
+                  <button id="btnFindPassword" class="btn btn-dark btn-block"
+                          type="submit">Find</button>
+                </div>
+              </div>
+            </form>
           </div>
         </div>
       </div>
