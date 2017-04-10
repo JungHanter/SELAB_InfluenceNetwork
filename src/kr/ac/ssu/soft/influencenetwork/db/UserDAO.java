@@ -1,6 +1,8 @@
 package kr.ac.ssu.soft.influencenetwork.db;
 
 import kr.ac.ssu.soft.influencenetwork.User;
+import org.apache.commons.lang3.RandomStringUtils;
+
 import java.sql.*;
 
 public class UserDAO {
@@ -111,6 +113,67 @@ public class UserDAO {
         DBManager.closeConnection(conn, pstmt);
         return false;
     }
+
+    public String findPassword(String email) {
+        conn = DBManager.getConnection();
+        String sql = "SELECT * FROM user WHERE email = ?";
+        try {
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, email);
+            rs = pstmt.executeQuery();
+            if(rs != null && rs.next()) {
+                String newPassword = RandomStringUtils.randomAlphanumeric(4);
+                sql = "UPDATE user SET pw = ? WHERE email = ?";
+                pstmt = conn.prepareStatement(sql);
+                pstmt.setString(1, newPassword);
+                pstmt.setString(2, email);
+                pstmt.executeUpdate();
+                DBManager.closeConnection(conn, pstmt);
+                return newPassword;
+            }
+            DBManager.closeConnection(conn, pstmt);
+            return null;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println(e.getErrorCode() +" " + e.getMessage());
+            DBManager.closeConnection(conn, pstmt);
+            return null;
+        }
+    }
+
+    public boolean editUser(String email, String name, String pw) {
+        conn = DBManager.getConnection();
+        String sql;
+        if(name != null && pw != null)
+            sql = "UPDATE user SET name = ?, pw = ? WHERE email = ?";
+        else if(name != null)
+            sql = "UPDATE user SET name = ? WHERE email = ?";
+        else
+            sql = "UPDATE user SET pw = ? WHERE email = ?";
+        try {
+            pstmt = conn.prepareStatement(sql);
+            if(name != null && pw != null) {
+                pstmt.setString(1, name);
+                pstmt.setString(2, pw);
+                pstmt.setString(3, email);
+            } else if(name != null) {
+                pstmt.setString(1, name);
+                pstmt.setString(2, email);
+            } else {
+                pstmt.setString(1, pw);
+                pstmt.setString(2, email);
+            }
+            pstmt.executeUpdate();
+            DBManager.closeConnection(conn, pstmt);
+            return true;
+        } catch(SQLException e) {
+            e.printStackTrace();
+            System.out.println(e.getErrorCode() +" " + e.getMessage());
+            DBManager.closeConnection(conn, pstmt);
+            return false;
+        }
+    }
+
 
 //    public int updateUser(String email, String pw, String newPw, String name) {
 //        conn = DBManager.getConnection();

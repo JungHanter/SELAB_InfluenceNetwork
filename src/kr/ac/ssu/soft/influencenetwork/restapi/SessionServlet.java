@@ -103,7 +103,7 @@ public class SessionServlet extends HttpServlet {
             }
         } else {
             result.put("result", "fail");
-            result.put("message", "wrong id or pw");
+            result.put("message", "Invalid ID or Password.");
         }
         return result;
     }

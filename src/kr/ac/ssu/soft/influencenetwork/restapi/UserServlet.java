@@ -95,11 +95,28 @@ public class UserServlet extends HttpServlet {
             String password = jsonObject.get("password").toString();
             String name = jsonObject.get("user_name").toString();
             result = signup(email, password, name);
+        } else if(action.equals("findpassword")) {
+            String email = jsonObject.get("email").toString();
+            result = findPassword(email);
+        } else if(action.equals("editinfo")) {
+            String password = null;
+            String name = null;
+            String email = jsonObject.get("email").toString();
+            if(jsonObject.get("password").toString().equals("") == false)
+                password = jsonObject.get("password").toString();
+            if(jsonObject.get("user_name").toString().equals("") == false)
+                name = jsonObject.get("user_name").toString();
+
+            if(password == null && name == null) {
+                result.put("result", "fail");
+                result.put("message", "There is no changing");
+            } else {
+                result = editInfo(email, name, password);
+            }
         } else {
             result.put("result", "fail");
             result.put("message", "api form is wrong");
         }
-
         out.write(result.toJSONString());
         out.close();
     }
@@ -157,10 +174,6 @@ public class UserServlet extends HttpServlet {
                             "<strong>influencenet.net/email_verification.jsp?email="+email+"&hash="+hash+"</strong>";
                     content = content.replace(".","<span>.</span>");
                     System.out.println("test : " + content);
-//                    message.setContent("Thanks for signing up!<br>" +
-//                                    "Your account has been created, you can login after activating your account by pressing the link below.<br>" +
-//                                    "<strong>influencenet.&#8203;net/email_verification.&#8203;jsp?email="+email+"&hash="+hash+"</strong>",
-//                            "text/html; charset=utf-8");
                     message.setContent(content, "text/html; charset=utf-8");
                     Transport.send(message);
                     System.out.println("Done");
@@ -176,6 +189,83 @@ public class UserServlet extends HttpServlet {
             }
         } catch (HashGenerationException e) {
             e.printStackTrace();
+        }
+        return result;
+    }
+
+    public JSONObject editInfo(String email, String name, String password) {
+        JSONObject result = new JSONObject();
+
+        String regexEmail = "^[A-Za-z0-9+_.-]+@(.+)$";
+        Pattern pattern = Pattern.compile(regexEmail);
+        Matcher matcher = pattern.matcher(email);
+        if (matcher.matches() == false) {
+            result.put("result", "fail");
+            result.put("message", "Wrong email form");
+            return result;
+        }
+        if(userDAO.editUser(email, name, password)) {
+            if(name != null) {
+                JSONObject userJson = new JSONObject();
+                userJson.put("email", email);
+                userJson.put("user_name", name);
+                result.put("user", userJson);
+            }
+            result.put("result", "success");
+        } else {
+            result.put("result", "fail");
+//            result.put("message", "This email has already been registered.");
+        }
+        return result;
+    }
+
+    public JSONObject findPassword(String email) {
+        JSONObject result = new JSONObject();
+        String newPassword = userDAO.findPassword(email);
+        if(newPassword != null) {
+            result.put("result", "success");
+            final String senderEmail = "influencenet.net@gmail.com";
+            final String senderPassword = "slab0909";
+
+            Properties props = new Properties();
+            props.put("mail.smtp.auth", "true");
+            props.put("mail.smtp.starttls.enable", "true");
+            props.put("mail.smtp.host", "smtp.gmail.com");
+            props.put("mail.smtp.ssl.trust", "smtp.gmail.com");
+            props.put("mail.smtp.port", "587");
+
+            Session session = Session.getInstance(props,
+                    new javax.mail.Authenticator() {
+                        protected PasswordAuthentication getPasswordAuthentication() {
+                            return new PasswordAuthentication(senderEmail, senderPassword);
+                        }
+                    });
+            session.setDebug(true);
+            try {
+                Message message = new MimeMessage(session);
+                message.setFrom(new InternetAddress(senderEmail));
+                message.setRecipients(
+                        Message.RecipientType.TO,
+                        InternetAddress.parse(email)
+                );
+                message.setSubject("[Influence Network] Temporary Password");
+                String content = "Temporary Password!<br>" +
+                        "Your Password is changed to tomporary password.<br>" +
+                        "Below is your tomporary password consisted of 4 words. you can login by using this.<br><br>" +
+                        "<strong>[ "+ newPassword +" ]</strong>";
+                content = content.replace(".","<span>.</span>");
+                System.out.println("test : " + content);
+                message.setContent(content, "text/html; charset=utf-8");
+                Transport.send(message);
+                System.out.println("Done");
+            } catch (MessagingException e) {
+                result.put("result", "fail");
+                result.put("message", "Sending email is fail.");
+                throw new RuntimeException(e);
+            }
+        } else {
+            result.put("result", "fail");
+//            result.put("password", null);
         }
         return result;
     }
