@@ -1,6 +1,5 @@
 var user = null;
 var nowGraphInfo = null;
-var isCheckRemember = false;
 
 var typeColors = [
     'red', 'pink', 'purple', 'deep-purple', 'indigo', 'blue',
@@ -575,7 +574,7 @@ function editEdge() {
 
         if ((originalSourceId == changedSourceId && originalTargetId == changedTargetId
                 && originalType == changedType) || (originalSourceId == changedSourceId && originalTargetId == changedTargetId
-            && originalType == null)) {
+            && (originalType == null && isNaN(changedType)))) {
             //pass
         } else {
             var changedSource = networkGraph.getNodeById(changedSourceId),
@@ -643,6 +642,7 @@ $(function () {
     if ($.cookie('check_remember') == "true") {
         $('#checkRemember').attr("checked", true);
         $('#signinEmail').val($.cookie('email'));
+        $('#signinPassword').val($.cookie('password'));
     }
 });
 $(document).ready(function() {
@@ -656,6 +656,7 @@ $(document).ready(function() {
     if ($.cookie('check_remember') == true) { //Login window, check remember
         $('#checkRemember').attr("checked", true);
         $('#signinEmail').val($.cookie('email'));
+        $('#signinPassword').val($.cookie('password'));
     }
 
     setUnselected();
@@ -3026,9 +3027,11 @@ function signin() {
                 if($('#checkRemember').is(":checked") == true) {
                     $.cookie('check_remember', true);
                     $.cookie('email', email);
+                    $.cookie('password', password);
                 } else {
                     $.cookie('check_remember', null);
                     $.cookie('email', null);
+                    $.cookie('password', null);
                     $("#signinEmail").val("");
                     $("#signinPassword").val("");
                 }
@@ -3070,7 +3073,9 @@ function signout() {
         $('.content').hide();
         $('.main-menu > .dropdown > .dropdown-toggle').attr('disabled', true)
             .addClass('disabled');
-        window.onbeforeunload = null;
+
+        networkGraph.isChanged = false;
+        toggleAskCloseAndRefresh();
     };
 
     $.LoadingOverlay('show');
