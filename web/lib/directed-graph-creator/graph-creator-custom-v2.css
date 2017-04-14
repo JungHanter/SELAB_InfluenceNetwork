@@ -198,7 +198,6 @@ g.conceptG.type-color-blue-grey.selected:hover circle { fill: #78909C; }
 g.connect-node circle{
     fill: #BEFFFF;
 }
-
 path.link {
     fill: none;
     stroke: #333;

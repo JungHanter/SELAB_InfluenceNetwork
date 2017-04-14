@@ -519,6 +519,7 @@ function createEdge() {
         // $('#newEdgeDlgType').addClass('unselected').html("Select Type");
         $('#newEdgeDlgType').removeClass('unselected').html(edgeTypeToSubMenuHtml(null));
         $("#newEdgeModal .modal-content").draggable({
+            handle : ".modal-header",
             containment: "body",
             scroll: false
         });
@@ -760,6 +761,7 @@ function initUI() {
 
 function initManageNodeTypeUI() {
     $("#manageNodeTypeModal .modal-content").draggable({
+        handle : ".modal-header",
         containment: "body",
         scroll: false
     });
@@ -996,6 +998,7 @@ function nodeTypeManageListItemAddClick(elem) {
 
 function initManageEdgeTypeUI() {
     $("#manageEdgeTypeModal .modal-content").draggable({
+        handle : ".modal-header",
         containment: "body",
         scroll: false
     });
@@ -1252,6 +1255,7 @@ function edgeTypeManageListItemAddClick(elem) {
 
 function initManageConfidenceUI() {
     $("#manageConfidenceModal .modal-content").draggable({
+        handle : ".modal-header",
         containment: "body",
         scroll: false
     });
@@ -1457,6 +1461,7 @@ function deleteNodeTypeConfidence(typeid) {
 
 function initManageEdgeTypeViewUI() {
     $("#manageEdgeTypeViewModal .modal-content").draggable({
+        handle : ".modal-header",
         containment: "body",
         scroll: false
     });
@@ -1565,6 +1570,7 @@ function initManageEdgeTypeViewUI() {
 
 function initFindMaxInfluencePathUI() {
     $("#findMaxInfPathModal .modal-content").draggable({
+        handle : ".modal-header",
         containment: "body",
         scroll: false
     });
@@ -1615,7 +1621,8 @@ function initFindMaxInfluencePathUI() {
                                     if ($(this).find('input').is(":checked")) {
                                         var edgeTypeId = $(this).find('> .edgeTypeId').text();
                                         var edgeType = null;
-                                        if (edgeTypeId != 'Default') {
+                                        // if (edgeTypeId != 'Default') {
+                                        if (edgeTypeId != "null") {
                                             edgeTypeId = parseInt(edgeTypeId);
                                             edgeType = edgeTypes[edgeTypeId];
                                             edgeTypeNameList.push(edgeType.name);
@@ -1908,6 +1915,7 @@ function initFindMaxInfluencePathUI() {
 
 function initMaxInfluenceTableUI() {
     $("#findAllMaxInfModal .modal-content").draggable({
+        handle : ".modal-header",
         containment: "body",
         scroll: false
     });
@@ -2181,6 +2189,7 @@ function addCheckbox(id) {
 
 function initFindMostInfluenceNodeUI(type) {
     $('#findMost' + type + 'InfNodeModal' + " .modal-content").draggable({
+        handle : ".modal-header",
     containment: "body",
         scroll: false
 });

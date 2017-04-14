@@ -8,6 +8,9 @@ var global_consts = {
 var global_settings = {
     appendElSpec: "#graph"
 };
+// var colors = ['red', 'pink', 'purple', 'deep-purple', 'indigo', 'blue',
+// 'light-blue', 'cyan', 'teal', 'green', 'light-green', 'lime', 'yellow', 'amber', 'orange',
+// 'deep-orange', 'brown', 'grey', 'blue-grey'];
 
 var networkGraph = null;
 
@@ -73,6 +76,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         // define arrow markers for graph links
         var defs = svg.append('svg:defs');
         defs.append('svg:marker')
+            // .attr('style', 'fill : #ff0000;')
             .attr('id', 'end-arrow')
             .attr('viewBox', '-1 -5 10 10')
             .attr('refX', "44")
@@ -100,6 +104,12 @@ document.onload = (function(d3, saveAs, Blob, undefined){
             .append('svg:path')
             .attr('d', 'M0,-5L10,0L0,5');
 
+        function appendMarker(defs) {
+            colors.forEach(function (color) {
+                console.log(color);
+            });
+        }
+        appendMarker();
         // define arrow markers for leading arrow
         defs.append('svg:marker')
             .attr('id', 'mark-end-arrow')
@@ -1156,6 +1166,15 @@ document.onload = (function(d3, saveAs, Blob, undefined){
             if (d.type != undefined && d.type != null && /\S/.test(d.type)) {
                 if (d.type in thisGraph.edgeTypes) {
                     $(this).addClass(thisGraph.consts.typeColorHead + thisGraph.edgeTypes[d.type]['color']);
+                    // $(this).children("path").addClass("default-marker");
+
+                    /* edge head */
+                    // $(this).children(".link").css('marker-end', 'url("#end-arrow")');
+                    // $(this).children(".link").hover(function () {
+                    //     $(this).css('marker-end', 'url("#end-arrow-hover")');
+                    // }, function () {
+                    //     $(this).css('marker-end', 'url("#end-arrow")');
+                    // });
                 } else {    // if existed type is deleted
                     d.type = null;
                 }
