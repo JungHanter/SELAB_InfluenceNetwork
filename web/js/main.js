@@ -715,6 +715,9 @@ $(document).ready(function() {
 
     $('.menuMaxInfluenceTable').click(menuFindMaxInfluenceTable);
 
+    $('#closeGraph').click(menuCloseGraph);
+    $('#editGraphName').click(editGraphName);
+
     networkGraph.isChanged = false;
     toggleAskCloseAndRefresh();
 
@@ -3132,6 +3135,13 @@ function newGraph(graphName) {
     });
     networkGraph.isChanged = false;
     toggleAskCloseAndRefresh();
+}
+
+function editGraphName() {
+    $('#inputGraphName').val(nowGraphInfo.graphName);
+
+    $('#editGraphNameModal').modal();
+    $('#inputGraphName').focus();
 }
 
 function menuOpenGraph() {

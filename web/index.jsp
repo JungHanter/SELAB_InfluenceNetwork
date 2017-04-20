@@ -266,7 +266,20 @@
   </nav>
 
   <div class="graph-area">
-    <div class="graph-title"><span id="graphName">New Graph</span></div>
+    <div class="graph-title">
+      <span id="graphName">New Graph</span>
+      <div class="btn-group" role="group">
+        <a id="editGraphName" class="btn btn-dark btn-xs" aria-label="Edit Name">
+          <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+        </a>
+        <a id="deleteGraph" class="btn btn-dark btn-xs" aria-label="Delete Graph">
+          <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+        </a>
+        <a id="closeGraph" class="btn btn-dark btn-xs" aria-label="Close Graph">
+          <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+        </a>
+      </div>
+    </div>
     <div id="graph"></div>
   </div>
 
@@ -989,6 +1002,27 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-dark" data-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="editGraphNameModal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Edit Graph Name</h4>
+      </div>
+      <div class="modal-body">
+        <div>
+          <h5>Graph Name</h5>
+          <input type="text" id="inputGraphName" class="form-control">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="button" id="btnEditGraphName" class="btn btn-dark">Apply</button>
       </div>
     </div>
   </div>
