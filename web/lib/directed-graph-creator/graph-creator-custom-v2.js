@@ -104,12 +104,12 @@ document.onload = (function(d3, saveAs, Blob, undefined){
             .append('svg:path')
             .attr('d', 'M0,-5L10,0L0,5');
 
-        function appendMarker(defs) {
-            colors.forEach(function (color) {
-                console.log(color);
-            });
-        }
-        appendMarker();
+        // function appendMarker(defs) {
+        //     colors.forEach(function (color) {
+        //         console.log(color);
+        //     });
+        // }
+        // appendMarker();
         // define arrow markers for leading arrow
         defs.append('svg:marker')
             .attr('id', 'mark-end-arrow')
@@ -303,6 +303,8 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                             parsedString.pop();
                             break;
                         }
+
+                        
                         parsedString[i] = parsedString[i].substring(1 ,parsedString[i].length);
                     }
                     if(i==3 && parsedString.length > 4 ) {
@@ -1557,8 +1559,22 @@ document.onload = (function(d3, saveAs, Blob, undefined){
 
         var allPaths = paths.select("path");
         allPaths.each(function(d) {
-            if (isIncludeArray(edgeList, d))
+            if (isIncludeArray(edgeList, d)) {
+                console.log(d);
                 d3.select(this.parentNode).classed(consts.hightlightClass, true);
+                d3.select(this.parentNode).append("animate")  // Add blink animation to  new Edge
+                    .attr("id", "anim" + d.source.serverId + d.target.serverId + d.type)
+                    .attr("attributeType", "css")
+                    .attr("attributeName", "opacity")
+                    .attr("from", "1")
+                    .attr("to", "0")
+                    .attr("dur", "0.75s")
+                    .attr("begin", "0s")
+                    .attr("repeatCount", "indefinite");
+                setTimeout(function () {
+                    $('#anim' + d.source.serverId + d.target.serverId + d.type).remove();
+                }, 2250);
+            }
             else d3.select(this.parentNode).classed(consts.hightlightClass, false);
         });
 
@@ -1566,8 +1582,9 @@ document.onload = (function(d3, saveAs, Blob, undefined){
             var startNode = edgeList[0].source;
             var endNode = edgeList[edgeList.length - 1].target;
             circles.each(function (d) {
-                if (d == startNode || d == endNode)
+                if (d == startNode || d == endNode) {
                     d3.select(this).classed(consts.hightlightClass, true);
+                }
                 else d3.select(this).classed(consts.hightlightClass, false);
             });
         } else {
