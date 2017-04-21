@@ -112,13 +112,15 @@ public class InfluenceGraphDAO {
 		}
 	}
 
-	public int updateInfluenceGraph(InfluenceGraph influencegraph, String name) {
+	public int editInfluenceGraph(int graphId, String name) {
 		conn = DBManager.getConnection();
-		String sql = "UPDATE influencegraph SET name="+name;
+		String sql = "UPDATE influencegraph SET name=? WHERE id=?";
 		try {
-			stmt = conn.createStatement();
-			stmt.executeUpdate(sql);
-			DBManager.closeConnection(conn,stmt);
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, name);
+			pstmt.setInt(2, graphId);
+			pstmt.executeUpdate();
+			DBManager.closeConnection(conn, pstmt);
 			return SUCCESS;
 		} catch (SQLException e) {
 			e.printStackTrace();

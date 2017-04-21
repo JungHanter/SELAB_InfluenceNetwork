@@ -277,6 +277,24 @@ public class GraphServlet extends HttpServlet {
                 result.put("message", e.getMessage());
             }
         }
+        else if (action.equals("edit")) {
+            int graphId = Integer.parseInt(jsonObject.get("graph_id").toString());
+            String graphName = jsonObject.get("graph_name").toString();
+            try {
+                if (influenceGraphDAO.editInfluenceGraph(graphId, graphName) == 0) {
+                    result.put("result", "success");
+                    result.put("graph_id", graphId);
+                    result.put("graph_name", graphName);
+                } else {
+                    throw new Exception("fail to delete the graph");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                result = new JSONObject();
+                result.put("result", "fail");
+                result.put("message", e.getMessage());
+            }
+        }
         else if (action.equals("save")) {
             try {
                 JSONObject graph = (JSONObject)jsonObject.get("graph");
