@@ -716,7 +716,8 @@ $(document).ready(function() {
     $('.menuMaxInfluenceTable').click(menuFindMaxInfluenceTable);
 
     $('#closeGraph').click(menuCloseGraph);
-    $('#editGraphName').click(editGraphName);
+    $('#editGraphName').click(menuEditGraphName);
+    $('#deleteGraph').click(menuDeleteGraph);
 
     networkGraph.isChanged = false;
     toggleAskCloseAndRefresh();
@@ -2808,6 +2809,20 @@ function initControllers() {
         }
     });
 
+    $('#btnDeleteGraph').click(function () {
+        deleteGraph();
+        $('#deleteGraphModal').modal('hide');
+    });
+    $('#btnEditGraphName').click(function () {
+       var graphName = $('#inputGraphName').val();
+       if(nowGraphInfo.graphName == graphName) {
+           $('#editGraphNameModal').modal('hide');
+       } else {
+           $('#editGraphNameModal').modal('hide');
+           editGraphName(graphName);
+       }
+    });
+
     getSession('main');
 
     //for test
@@ -3137,11 +3152,64 @@ function newGraph(graphName) {
     toggleAskCloseAndRefresh();
 }
 
-function editGraphName() {
+function menuEditGraphName() {
     $('#inputGraphName').val(nowGraphInfo.graphName);
-
     $('#editGraphNameModal').modal();
-    $('#inputGraphName').focus();
+}
+function editGraphName(name) {
+    $.LoadingOverlay('show');
+    $.ajax("/graph", {
+        method: 'POST',
+        dataType: 'json',
+        data: JSON.stringify({
+            action: 'edit',
+            graph_id: nowGraphInfo.graphId,
+            graph_name: name
+        }),
+        success: function (res) {
+            $.LoadingOverlay('hide');
+            console.log(res);
+            if (res['result'] == 'success') {
+                $('#graphName').text(res['graph_name']);
+                nowGraphInfo = {graphId: res['graph_id'], graphName: res['graph_name']}
+            } else {
+                openAlertModal(res['message'], 'Edit Graph Name Failure');
+            }
+        }, error: function (xhr, status, error) {
+            $.LoadingOverlay('hide');
+            openAlertModal(xhr.statusText, 'Edit Graph Name Failure');
+        }
+    });
+}
+
+function menuDeleteGraph() {
+    $('#deleteGraphModal').modal();
+}
+function deleteGraph() {
+    $.LoadingOverlay('show');
+    $.ajax("/graph", {
+        method: 'POST',
+        dataType: 'json',
+        data: JSON.stringify({
+            action: 'delete',
+            graph_id: nowGraphInfo.graphId
+        }),
+        success: function (res) {
+            $.LoadingOverlay('hide');
+            console.log(res);
+            if (res['result'] == 'success') {
+                closeGraph();
+                showSnackBar("Deleted");
+            } else {
+                openAlertModal(res['message'], 'Delete Graph Failure');
+            }
+        }, error: function (xhr, status, error) {
+            $.LoadingOverlay('hide');
+            openAlertModal(xhr.statusText, 'Delete Graph Failure');
+        }
+    });
+    networkGraph.isChanged = false;
+    toggleAskCloseAndRefresh();
 }
 
 function menuOpenGraph() {
