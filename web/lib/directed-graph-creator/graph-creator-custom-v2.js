@@ -272,55 +272,49 @@ document.onload = (function(d3, saveAs, Blob, undefined){
 
 
         var parsedString = new Array();
-        if(title.length > 8) {
-            var start = 0, end = 8;
-            for (var i = 0; ; i++) {
-                if(start >= title.length)
-                    break;
-                parsedString[i] = title.substring(start,end);
-                start += 8;
-                end += 8;
-            }
-            if(parsedString.length <= 2) {
-                for (var i = 0; i < parsedString.length; i++) {
-                    while(true) {
-                        if(parsedString[i][0] != ' ')
-                            break;
-                        if(parsedString[i][0] == ' ' && parsedString[i].length == 1) {
-                            parsedString.pop();
-                            break;
-                        }
-                        parsedString[i] = parsedString[i].substring(1 ,parsedString[i].length);
-                    }
-                    var tspan = el.append('tspan').text(parsedString[i]).attr('x', 0).attr('y', i * 15);
-                }
-            } else {
-                for (var i = 0; i < parsedString.length; i++) {
-                    while(true) {
-                        if(parsedString[i][0] != ' ')
-                            break;
-                        if(parsedString[i][0] == ' ' && parsedString[i].length == 1) {
-                            parsedString.pop();
-                            break;
-                        }
 
-                        
-                        parsedString[i] = parsedString[i].substring(1 ,parsedString[i].length);
+        for (var i = 0; ; i++) {
+            if(title.length == 0)
+                break;
+            parsedString[i] = title.substring(0,8);
+            title = title.substr(8);
+            var spaceIndex = parsedString[i].search(" ");
+            if(spaceIndex != -1) {
+                if(spaceIndex == 0) {
+                    parsedString[i] = parsedString[i].substr(spaceIndex+1);
+                    while(true) { // Remove successive space
+                        spaceIndex = parsedString[i].search(" ");
+                        if(spaceIndex == 0)
+                            parsedString[i] = parsedString[i].substr(spaceIndex+1);
+                        else if(spaceIndex > 0) {
+                            title = parsedString[i].substr(spaceIndex+1) + title;
+                            parsedString[i] = parsedString[i].substr(0, spaceIndex);
+                            break;
+                        } else
+                            break;
                     }
-                    if(i==3 && parsedString.length > 4 ) {
-                        if(parsedString[i].length > 7)
-                            var tspan = el.append('tspan').text(parsedString[i].substring(0,6) + "...").attr('x', 0).attr('y', - 15 + (i * 15));
-                        else
-                            var tspan = el.append('tspan').text(parsedString[i]).attr('x', 0).attr('y', - 15 + (i * 15));
-                        break;
-                    }
-                    var tspan = el.append('tspan').text(parsedString[i]).attr('x', 0).attr('y', - 15 + (i * 15));
+                } else {
+                    title = parsedString[i].substr(spaceIndex+1) + title;
+                    parsedString[i] = parsedString[i].substr(0, spaceIndex);
                 }
+            }
+        }
+        if(parsedString.length <= 2) {
+            for (var i = 0; i < parsedString.length; i++) {
+                var tspan = el.append('tspan').text(parsedString[i]).attr('x', 0).attr('y', i * 15);
             }
         } else {
-            var tspan = el.append('tspan').text(title);
+            for (var i = 0; i < parsedString.length; i++) {
+                if(i==3 && parsedString.length > 4 ) {
+                    if(parsedString[i].length > 7 || parsedString.length > 4)
+                        var tspan = el.append('tspan').text(parsedString[i].substring(0,6) + "...").attr('x', 0).attr('y', - 15 + (i * 15));
+                    else
+                        var tspan = el.append('tspan').text(parsedString[i]).attr('x', 0).attr('y', - 15 + (i * 15));
+                    break;
+                }
+                var tspan = el.append('tspan').text(parsedString[i]).attr('x', 0).attr('y', - 15 + (i * 15));
+            }
         }
-
 
 
         // console.log(parsedString);
