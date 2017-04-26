@@ -26,6 +26,9 @@
           <ul class="dropdown-menu dropdown-menu-file">
             <li><a class="menuNew menuDefault" >New</a></li>
             <li><a class="menuOpen menuDefault" >Open</a></li>
+
+            <%--<li><a class="menuEditName" >Edit Name</a></li>--%>
+            <%--<li><a class="menuDelete" >Delete</a></li>--%>
             <li><a class="menuClose" >Close</a></li>
             <li role="separator" class="divider"></li>
             <li><a class="menuSave" >Save</a></li>
@@ -1151,7 +1154,6 @@
 </div>
 
 <div id="snackbar">Saved</div>
-
 
 <script src="lib/jquery/jquery-3.1.1.min.js"></script>
 <script src="lib/jquery-ui/jquery-ui.js"></script>
