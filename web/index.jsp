@@ -16,7 +16,7 @@
 </head>
 
 <body>
-<nav class="navbar navbar-dark menu-group">
+<nav class="navbar navbar-dark menu-group no-print">
   <div class="container-fluid top-menu top-menu-main">
     <div class="collapse navbar-collapse">
       <ul class="nav navbar-nav main-menu">
@@ -219,7 +219,7 @@
 
 
 <div class="content">
-  <nav class="side-menu">
+  <nav class="side-menu no-print">
     <div class="side-menu-container">
       <div class="side-menu-list side-menu-nodes">
         <div class="side-menu-list-header">
@@ -269,7 +269,7 @@
   </nav>
 
   <div class="graph-area">
-    <div class="graph-title">
+    <div class="graph-title no-print">
       <span id="graphName">New Graph</span>
       <div class="btn-group" role="group">
         <a id="editGraphName" class="btn btn-dark btn-xs" aria-label="Edit Name">
@@ -283,7 +283,7 @@
         </a>
       </div>
     </div>
-    <div id="graph"></div>
+    <div class="yes-print" id="graph"></div>
   </div>
 
   <div class="graph-close-overlay">
