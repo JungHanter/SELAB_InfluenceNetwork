@@ -1,5 +1,7 @@
 var user = null;
 var nowGraphInfo = null;
+var updateNodeType = false; // When node type is changed, this value set true.
+var updateEdgeType = false; // When edge type is changed, this value set true.
 
 var typeColors = [
     'red', 'pink', 'purple', 'deep-purple', 'indigo', 'blue',
@@ -196,7 +198,6 @@ function updateEdgeTypes() {
         + edgeTypeToSubMenuHtml(null) + "</a></li>");
 
     for (var tid in edgeTypes) {
-        console.log(tid);
         $('#subMenuEdgeTypeDropdown').append("<li><a>"
             + edgeTypeToSubMenuHtml(tid) + "</a></li>");
     }
@@ -639,7 +640,6 @@ function manageEdgeTypeView() {
     $('#manageEdgeTypeViewModal').modal();
 }
 $(function () {
-    console.log("d");
     if ($.cookie('check_remember') == "true") {
         $('#checkRemember').attr("checked", true);
         $('#signinEmail').val($.cookie('email'));
@@ -777,9 +777,14 @@ function initManageNodeTypeUI() {
 
     $('#manageNodeTypeModal').on('hide.bs.modal', function (e) {
         setUnselected(true);
-        updateNodeTypes();
+        if(updateNodeType==true) {
+            updateNodeTypes();
+            updateNodeType = false;
+        }
     });
     $('#manageNodeTypeModal').on('hidden.bs.modal', function (e) {
+        $('#btnEditNodeTypeName').attr('disabled', true);
+        $('#btnDeleteNodeType').attr('disabled', true);
         $('#manageNodeTypeColorList').css('visibility', 'hidden');
         $('#manageNodeTypeList > .list-group-item').each(function() {
             $(this).attr('class', 'list-group-item');
@@ -870,6 +875,8 @@ function initManageNodeTypeUI() {
                 }
             }).focus();
         document.execCommand('selectAll', false, null);
+
+        updateNodeType = true;
     });
 
     $('#btnEditNodeTypeName').click(function() {
@@ -896,6 +903,8 @@ function initManageNodeTypeUI() {
                     }
                 }).focus();
             document.execCommand('selectAll', false, null);
+
+            updateNodeType = true;
         }
     });
 
@@ -922,6 +931,8 @@ function initManageNodeTypeUI() {
                 $('#manageNodeTypeColorList').css('visibility', 'hidden');
 
                 deleteNodeTypeConfidence(typeid);
+
+                updateNodeType = true;
             }
         }
     });
@@ -1014,9 +1025,14 @@ function initManageEdgeTypeUI() {
 
     $('#manageEdgeTypeModal').on('hide.bs.modal', function (e) {
         setUnselected(true);
-        updateEdgeTypes();
+        if(updateEdgeType == true) {
+            updateEdgeTypes();
+            updateEdgeType = false;
+        }
     });
     $('#manageEdgeTypeModal').on('hidden.bs.modal', function (e) {
+        $('#btnEditEdgeTypeName').attr('disabled', true);
+        $('#btnDeleteEdgeType').attr('disabled', true);
         $('#manageEdgeTypeColorList').css('visibility', 'hidden');
         $('#manageEdgeTypeList > .list-group-item').each(function() {
             $(this).attr('class', 'list-group-item');
@@ -1109,6 +1125,8 @@ function initManageEdgeTypeUI() {
             }
         }).focus();
         document.execCommand('selectAll', false, null);
+
+        updateEdgeType = true;
     });
 
     $('#btnEditEdgeTypeName').click(function() {
@@ -1134,6 +1152,8 @@ function initManageEdgeTypeUI() {
                 }
             }).focus();
             document.execCommand('selectAll', false, null);
+
+            updateEdgeType = true;
         }
     });
 
@@ -1180,6 +1200,8 @@ function initManageEdgeTypeUI() {
                 $('#btnEditEdgeTypeName').attr('disabled', true);
                 $('#btnDeleteEdgeType').attr('disabled', true);
                 $('#manageEdgeTypeColorList').css('visibility', 'hidden');
+
+                updateEdgeType = true;
             }
         }
     });
@@ -1338,7 +1360,12 @@ function addNodeTypeConfidence(typeid) {
         appendedElem.find('> input').val(defaultConfidence).blur(function() {
             var sourceId = parseInt($(this).data('source')),
                 targetId = parseInt($(this).data('target'));
-            var confidence = parseFloat($(this).val());
+
+            var confidence = parseFloat($(this).val()).toFixed(2);
+            if(confidence==0)
+                confidence = 0;
+            $(this).val(confidence);
+
             if (isNaN(confidence) || !isFinite(confidence)) {
                 confidence = 0.5;
                 $(this).val(confidence);
@@ -1384,7 +1411,12 @@ function addNodeTypeConfidence(typeid) {
     appendedElem.find('> td > input').blur(function() {
         var sourceId = parseInt($(this).data('source')),
             targetId = parseInt($(this).data('target'));
-        var confidence = parseFloat($(this).val());
+
+        var confidence = parseFloat($(this).val()).toFixed(2);
+        if(confidence==0)
+            confidence = 0;
+        $(this).val(confidence);
+
         if (isNaN(confidence) || !isFinite(confidence)) {
             confidence = 0.5;
             $(this).val(confidence);
@@ -3140,7 +3172,10 @@ function newGraph(graphName) {
                 closeGraph();
                 setGraphUIEnable(true);
                 $('#graphName').text(graphName);
-                nowGraphInfo = {graphId: res['graph_id'], graphName: graphName}
+                nowGraphInfo = {graphId: res['graph_id'], graphName: graphName};
+
+                networkGraph.isChanged = false;
+                toggleAskCloseAndRefresh();
             } else {
                 openAlertModal(res['message'], 'Open Graph Failure');
             }
@@ -3149,8 +3184,7 @@ function newGraph(graphName) {
             openAlertModal(xhr.statusText, 'Open Graph Failure');
         }
     });
-    networkGraph.isChanged = false;
-    toggleAskCloseAndRefresh();
+
 }
 
 function menuEditGraphName() {
@@ -3295,7 +3329,6 @@ function openGraph(graphId) {
             graph_id: graphId
         },
         success: function (res) {
-            console.log(res);
             $.LoadingOverlay('hide');
             if (res['result'] == 'success') {
                 closeGraph();
@@ -3456,6 +3489,12 @@ function menuPrintGraph() {
 
 function menuAbout() {
     getSession();
+    html2canvas(document.body, {
+        onrendered: function(canvas) {
+            $('.side-menu').append(canvas);
+            console.log(canvas);
+        }
+    });
 }
 
 function loadGraph(graphData) {
@@ -3514,7 +3553,6 @@ function loadGraph(graphData) {
         var edgeType = {name: json['edge_type_name'],
             color: json['color'],
             serverId: json['edge_type_id']};
-        console.log(edgeType);
         edgeTypes[edgeTypeCnt] = edgeType;
         viewedEdgeTypes.push(edgeTypeCnt);
         edgeTypeServerIds[json['edge_type_id']] = edgeTypeCnt;

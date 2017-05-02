@@ -1159,6 +1159,7 @@
 <script src="lib/jquery-ui/jquery-ui.js"></script>
 <script src="js/jquery.cookie.js"></script>
 <script src="lib/jquery/plugin/loadingoverlay.min.js"></script>
+<script src="lib/html2canvas/html2canvas.js"></script>
 <script src="js/jquery_extends.js"></script>
 <script src="lib/bootstrap/js/bootstrap.min.js"></script>
 <script src="js/cust-ui.js"></script>
