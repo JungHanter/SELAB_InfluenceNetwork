@@ -2,6 +2,7 @@ var user = null;
 var nowGraphInfo = null;
 var updateNodeType = false; // When node type is changed, this value set true.
 var updateEdgeType = false; // When edge type is changed, this value set true.
+var memento = new Memento();
 
 var typeColors = [
     'red', 'pink', 'purple', 'deep-purple', 'indigo', 'blue',
@@ -41,6 +42,8 @@ nodeConfidences = {};
 edgeTypes = {};
 edgeTypeCnt = 0;
 viewedEdgeTypes = [networkGraph.EDGE_TYPE_DEFAULT];
+
+
 
 function updateNodeTypes() {
     // if(Object.keys(nodeTypes).length == 0) { // It is possible select node type only When node type exists.
@@ -459,10 +462,16 @@ function createNode() {
     networkGraph.selectNode(createdNode.id);
 }
 function editNode() {
+    var initialNode = {id : null, title : null, type : null, domainId : null};
+    initialNode['id'] = selectedNode.nodeData.id;
+
     if (selectedNode != null) {
         var originalType = selectedNode.nodeData.type;
-        if($('#subMenuNodeName').val() != '')
+        if($('#subMenuNodeName').val() != '') {
+            initialNode['title'] = selectedNode.nodeData.title;
             selectedNode.nodeData.title = $('#subMenuNodeName').val();
+        }
+        initialNode['type'] = selectedNode.nodeData.type;
         // selectedNode.nodeData.type = $('#subMenuNodeType .nodeTypeName').text();
         selectedNode.nodeData.type = parseInt($('#subMenuNodeType .nodeTypeId').text());
 
@@ -483,11 +492,13 @@ function editNode() {
             if(duplicated) {
                 openAlertModal("The domain ID is duplicated.", "Edit Node Failure")
             } else {
+                initialNode['domainId'] = selectedNode.nodeData.domainId;
                 selectedNode.nodeData.domainId = domainId;
             }
         }
         else selectedNode.nodeData.domainId = null;
 
+        memento.saveState({function_name : "editNode", data : initialNode});
         networkGraph.changeNodeTitle(selectedNode.d3Node, selectedNode.nodeData.title);
         if (originalType != selectedNode.nodeData.type) {
             networkGraph.updateNodeType(selectedNode.d3Node);
@@ -646,9 +657,70 @@ $(function () {
         $('#signinPassword').val($.cookie('password'));
     }
 });
+
+function Stack() {
+    this.stack = new Array();
+    this.pop = function () {
+        return this.stack.pop();
+    }
+    this.push = function (item) {
+        this.stack.push(item);
+    }
+}
+
+function Memento() {
+    this.states = new Stack();
+}
+Memento.prototype.saveState = function (item) {
+    this.states.push(item);
+}
+Memento.prototype.undo = function () {
+    if(this.states.stack.length > 0) {
+        var state = this.states.pop();
+        if(state.function_name == "createNode") {
+            networkGraph.nodes.splice(networkGraph.nodes.indexOf(state.data), 1);
+            networkGraph.updateGraph();
+            updateNodeList('deleted', state.data);
+        } else if(state.function_name == "deleteNode") {
+            networkGraph.nodes.push(state.data.node);
+            state.data.edge.forEach(function (element) {
+                networkGraph.edges.push(element);
+                updateEdgeList('created', element);
+            });
+            updateNodeList('created', state.data.node);
+            networkGraph.updateGraph();
+        } else if(state.function_name == "moveNode") {
+            for(var key in networkGraph.nodes) {
+                if(networkGraph.nodes[key].id == state.data.id) {
+                    networkGraph.nodes[key].x = state.data.x;
+                    networkGraph.nodes[key].y = state.data.y;
+                    networkGraph.updateGraph();
+                    break;
+                }
+            }
+        } else if(state.function_name == "editNode") {
+            for(var key in networkGraph.nodes) {
+                if(networkGraph.nodes[key].id == state.data.id) {
+                    setUnselected(true);
+                    networkGraph.nodes[key].title = state.data.title;
+                    networkGraph.nodes[key].type = state.data.type;
+                    networkGraph.nodes[key].domainId = state.data.domainId;
+                    networkGraph.updateGraph();
+                    var d3Node = networkGraph.circles.filter(function(cd) {
+                        return cd.id === state.data.id;
+                    });
+                    networkGraph.updateNodeType(d3Node);
+                    updateNodeList('updated', networkGraph.nodes[key]);
+                    break;
+                }
+            }
+        }
+    }
+}
+
 $(document).ready(function() {
 
-
+    $(document).bind('keydown', "Ctrl+z", function() {memento.undo()});
 
     // window.onbeforeunload = function(){
     //     return "Make sure to save your graph locally before leaving :-)";
@@ -2836,7 +2908,7 @@ function initControllers() {
         var graphName = $('#saveAsGraphName').val();
         if(/\S/.test(graphName)) {
             $('#saveAsGraphModal').modal('hide');
-            saveAs(graphName);
+            saveas(graphName);
         } else {
             openAlertModal("Graph name is empty!", "Save As Failure");
         }
@@ -3428,7 +3500,7 @@ function menuSaveAsGraph() {
     $('#saveAsGraphName').val('');
     $('#saveAsGraphModal').modal();
 }
-function saveAs(graphName) {
+function saveas(graphName) {
     $.LoadingOverlay('show');
     var graphJson = generateSaveGraphJson(true);
     console.log(graphJson);
@@ -3489,12 +3561,23 @@ function menuPrintGraph() {
 
 function menuAbout() {
     getSession();
-    html2canvas(document.body, {
-        onrendered: function(canvas) {
-            $('.side-menu').append(canvas);
-            console.log(canvas);
-        }
-    });
+    // html2canvas(document.body, {
+    //     onrendered: function(canvas) {
+    //         $('.side-menu').append(canvas);
+    //         console.log(canvas);
+    //     }
+    // });
+
+   setUnselected(true);
+    var node = document.getElementById('graph');
+
+    domtoimage.toBlob(node)
+        .then(function (blob) {
+            window.saveAs(blob, 'graph.png');
+        })
+        .catch(function (error) {
+            console.error('oops, something went wrong!', error);
+        });
 }
 
 function loadGraph(graphData) {

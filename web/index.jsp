@@ -1159,9 +1159,11 @@
 <script src="lib/jquery-ui/jquery-ui.js"></script>
 <script src="js/jquery.cookie.js"></script>
 <script src="lib/jquery/plugin/loadingoverlay.min.js"></script>
-<script src="lib/html2canvas/html2canvas.js"></script>
+<script src="lib/jquery-hotkeys/jquery.hotkeys.js"></script>
 <script src="js/jquery_extends.js"></script>
 <script src="lib/bootstrap/js/bootstrap.min.js"></script>
+<script src="lib/dom-to-image/dom-to-image.min.js"></script>
+<script src="lib/File-Saver/FileSaver.min.js"></script>
 <script src="js/cust-ui.js"></script>
 <%--<script src="lib/SnackBar/snackbar.js"></script>--%>
 <%--<script src="lib/d3/d3.min.js"></script>--%>

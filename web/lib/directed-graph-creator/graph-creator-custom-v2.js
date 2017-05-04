@@ -136,6 +136,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         thisGraph.paths = svgG.append("g").selectAll("g");
         thisGraph.circles = svgG.append("g").selectAll("g");
 
+        var initialNode = null;
         thisGraph.drag = d3.behavior.drag()
             .origin(function(d){
                 return {x: d.x, y: d.y};
@@ -143,9 +144,18 @@ document.onload = (function(d3, saveAs, Blob, undefined){
             .on("drag", function(args){
                 thisGraph.state.justDragged = true;
                 thisGraph.dragmove.call(thisGraph, args);
+                if(initialNode == null) {
+                    initialNode = {id:args.id, x:args.x, y: args.y};
+                    console.log(initialNode);
+                }
+
             })
             .on("dragend", function() {
                 // todo check if edge-mode is selected
+                if(initialNode != null) {
+                    memento.saveState({function_name : "moveNode", data : initialNode});
+                    initialNode = null;
+                }
             });
 
         // listen for key events
@@ -403,6 +413,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         toSplice.map(function(l) {
             thisGraph.edges.splice(thisGraph.edges.indexOf(l), 1);
         });
+        return toSplice;
     };
 
     GraphCreator.prototype.replaceSelectNode = function(d3Node, nodeData){
@@ -767,6 +778,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                 newNodeData = {id: thisGraph.idct++, title: global_consts.defaultTitle,
                                type: null, x: xycoords[0], y: xycoords[1]};
             thisGraph.nodes.push(newNodeData);
+            memento.saveState({function_name : "createNode", data : newNodeData});
             thisGraph.updateGraph();
             thisGraph.onNodeChanged('created', newNodeData);
             // make title of text immediately editable
@@ -807,7 +819,8 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                 if (selectedNode){
                     var deletedNode = state.selectedNode;
                     thisGraph.nodes.splice(thisGraph.nodes.indexOf(selectedNode), 1);
-                    thisGraph.spliceLinksForNode(selectedNode);
+                    var toSplice = thisGraph.spliceLinksForNode(selectedNode);
+                    memento.saveState({function_name : "deleteNode", data : {node : state.selectedNode, edge : toSplice}});
                     state.selectedNode = null;
                     thisGraph.updateGraph();
                     thisGraph.onNodeChanged('deleted', deletedNode);
@@ -1327,6 +1340,8 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         //     return cd.id === newNodeData.id;
         // });
         // thisGraph.replaceSelectNode(d3Node, newNodeData);
+
+        memento.saveState({function_name : "createNode", data : newNodeData});
         this.isChanged = true;
         toggleAskCloseAndRefresh();
         return newNodeData;
@@ -1593,7 +1608,8 @@ document.onload = (function(d3, saveAs, Blob, undefined){
             state = thisGraph.state;
         if (state.selectedNode) {
             thisGraph.nodes.splice(thisGraph.nodes.indexOf(state.selectedNode), 1);
-            thisGraph.spliceLinksForNode(state.selectedNode);
+            var toSplice = thisGraph.spliceLinksForNode(state.selectedNode);
+            memento.saveState({function_name : "deleteNode", data : {node : state.selectedNode, edge : toSplice}});
             state.selectedNode = null;
             thisGraph.updateGraph();
         }
