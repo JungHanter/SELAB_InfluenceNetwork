@@ -881,6 +881,7 @@ function initManageNodeTypeUI() {
         }
     });
     $('#manageNodeTypeModal').on('hidden.bs.modal', function (e) {
+        selectedNodeTypeElem = null;
         $('#btnEditNodeTypeName').attr('disabled', true);
         $('#btnDeleteNodeType').attr('disabled', true);
         $('#manageNodeTypeColorList').css('visibility', 'hidden');
@@ -1129,6 +1130,7 @@ function initManageEdgeTypeUI() {
         }
     });
     $('#manageEdgeTypeModal').on('hidden.bs.modal', function (e) {
+        selectedEdgeTypeElem = null;
         $('#btnEditEdgeTypeName').attr('disabled', true);
         $('#btnDeleteEdgeType').attr('disabled', true);
         $('#manageEdgeTypeColorList').css('visibility', 'hidden');
