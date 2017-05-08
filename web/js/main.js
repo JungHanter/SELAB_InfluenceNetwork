@@ -573,7 +573,11 @@ function createEdgeConfirm() {
     }
 }
 function editEdge() {
+    var initialEdge = {};
     if (selectedEdge != null) {
+        initialEdge.name = selectedEdge.edgeData.name;
+        initialEdge.type = selectedEdge.edgeData.type;
+
         var originalType = selectedEdge.edgeData.type;
         var originalSourceId = selectedEdge.edgeData.source.id,
             originalTargetId = selectedEdge.edgeData.target.id;
@@ -610,6 +614,7 @@ function editEdge() {
         if (originalType != selectedEdge.edgeData.type) {
             networkGraph.updateEdgeType(selectedEdge.d3PathG);
         }
+        memento.saveState({function_name : "editEdge", data : {edge : selectedEdge.edgeData, init : initialEdge}});
         networkGraph.updateGraph();
         updateEdgeList('updated', selectedEdge.edgeData);
         showSnackBar("Updated");
@@ -671,10 +676,13 @@ function Stack() {
 function Memento() {
     this.states = new Stack();
 }
+
 Memento.prototype.saveState = function (item) {
     this.states.push(item);
 }
+
 Memento.prototype.undo = function () {
+    console.log("undo");
     if(this.states.stack.length > 0) {
         var state = this.states.pop();
         if(state.function_name == "createNode") {
@@ -714,6 +722,23 @@ Memento.prototype.undo = function () {
                     break;
                 }
             }
+        } else if(state.function_name == "createEdge") {
+            networkGraph.edges.splice(networkGraph.edges.indexOf(state.data), 1);
+            updateEdgeList('deleted', state.data);
+            networkGraph.updateGraph();
+        } else if(state.function_name == "editEdge") {
+            setUnselected(true);
+            state.data.edge.name = state.data.init.name;
+            state.data.edge.type = state.data.init.type;
+            var d3PathG = networkGraph.paths.filter(function(d) {
+                return state.data.edge == d;
+            });
+            networkGraph.updateEdgeType(d3PathG);
+            networkGraph.updateGraph();
+        } else if(state.function_name == "deleteEdge") {
+            networkGraph.edges.push(state.data);
+            updateNodeList('created', state.data);
+            networkGraph.updateGraph();
         }
     }
 }
@@ -3654,7 +3679,7 @@ function loadGraph(graphData) {
         if ('edge_type_id' in json && json['edge_type_id'] != null) {
             edgeType = edgeTypeServerIds[json['edge_type_id']];
         }
-        var edge = networkGraph.createEdge(sourceNode, targetNode, influence, edgeType);
+        var edge = networkGraph.insertEdge(sourceNode, targetNode, influence, edgeType);
     }
     updateEdgeList();
     networkGraph.setZoom(false);

@@ -148,12 +148,18 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                     initialNode = {id:args.id, x:args.x, y: args.y};
                     console.log(initialNode);
                 }
-
             })
-            .on("dragend", function() {
+            .on("dragend", function(args) {
                 // todo check if edge-mode is selected
-                if(initialNode != null) {
+                console.log(initialNode);
+                console.log(args);
+
+                if(initialNode != null && Math.abs(initialNode.x - args.x) > 0.01 && Math.abs(initialNode.y - args.y) > 0.01) {
                     memento.saveState({function_name : "moveNode", data : initialNode});
+                    networkGraph.isChanged = true;
+                    toggleAskCloseAndRefresh();
+                    initialNode = null;
+                } else if (initialNode != null) { // 쉬프트를 통해 노드를 만들어도 드래그 처리되면서 메멘토에 삽입되는거 막기 위해 if - else 문 삽입
                     initialNode = null;
                 }
             });
@@ -828,6 +834,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                 } else if (selectedEdge){
                     var deletedEdge = state.selectedEdge;
                     thisGraph.edges.splice(thisGraph.edges.indexOf(selectedEdge), 1);
+                    memento.saveState({function_name : "deleteEdge", data : state.selectedEdge});
                     state.selectedEdge = null;
                     thisGraph.updateGraph();
                     thisGraph.onEdgeChanged('deleted', deletedEdge);
@@ -1368,6 +1375,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         });
         if (!filtRes[0].length) {
             thisGraph.edges.push(newEdge);
+            memento.saveState({function_name : "createEdge", data : newEdge});
             thisGraph.updateGraph();
             thisGraph.updateEdgeType(this.paths);
             thisGraph.updateGraph();
@@ -1382,6 +1390,39 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                 txtEdge.focus();
             }
 
+
+            this.isChanged = true;
+            toggleAskCloseAndRefresh();
+            return newEdge;
+        }
+        return null;
+    };
+
+    GraphCreator.prototype.insertEdge = function(sourceNode, targetNode, name, type, editable=false) {
+        var thisGraph = this;
+        var newEdge = {source: sourceNode, target: targetNode, name: name, type: type,
+            bilateral: false, ct: thisGraph.edgect};
+        thisGraph.edgect++;
+
+        var filtRes = thisGraph.paths.filter(function(d){
+            return d.source === newEdge.source && d.target === newEdge.target
+                && d.type == newEdge.type;
+        });
+        if (!filtRes[0].length) {
+            thisGraph.edges.push(newEdge);
+            thisGraph.updateGraph();
+            thisGraph.updateEdgeType(this.paths);
+            thisGraph.updateGraph();
+
+            if (editable) {
+                // make name of text immediately editable
+                var d3txt = thisGraph.changeTextOfEdge(thisGraph.paths.filter(function(dval) {
+                        return dval.source === newEdge.source && dval.target === newEdge.target;
+                    }), newEdge),
+                    txtEdge = d3txt.node();
+                thisGraph.selectElementContents(txtEdge);
+                txtEdge.focus();
+            }
 
             this.isChanged = true;
             toggleAskCloseAndRefresh();
@@ -1622,6 +1663,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
             state = thisGraph.state;
         if (state.selectedEdge) {
             thisGraph.edges.splice(thisGraph.edges.indexOf(state.selectedEdge), 1);
+            memento.saveState({function_name : "deleteEdge", data : state.selectedEdge});
             state.selectedEdge = null;
             thisGraph.updateGraph();
         }
