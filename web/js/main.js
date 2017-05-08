@@ -717,6 +717,7 @@ Memento.prototype.undo = function () {
                     var d3Node = networkGraph.circles.filter(function(cd) {
                         return cd.id === state.data.id;
                     });
+                    networkGraph.changeNodeTitle(d3Node, state.data.title);
                     networkGraph.updateNodeType(d3Node);
                     updateNodeList('updated', networkGraph.nodes[key]);
                     break;
