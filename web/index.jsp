@@ -277,6 +277,12 @@
         <a id="editGraphName" class="btn btn-dark btn-xs" aria-label="Edit Name">
           <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
         </a>
+        <a id="saveGraph" class="btn btn-dark btn-xs" aria-label="Save Graph">
+          <span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span>
+        </a>
+        <a id="printGraph" class="btn btn-dark btn-xs" aria-label="Print Graph">
+          <span class="glyphicon glyphicon-print" aria-hidden="true"></span>
+        </a>
         <a id="deleteGraph" class="btn btn-dark btn-xs" aria-label="Delete Graph">
           <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
         </a>

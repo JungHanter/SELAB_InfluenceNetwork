@@ -816,6 +816,8 @@ $(document).ready(function() {
     $('.menuMaxInfluenceTable').click(menuFindMaxInfluenceTable);
 
     $('#closeGraph').click(menuCloseGraph);
+    $('#saveGraph').click(menuSaveGraph);
+    $('#printGraph').click(menuPrintGraph);
     $('#editGraphName').click(menuEditGraphName);
     $('#deleteGraph').click(menuDeleteGraph);
 
