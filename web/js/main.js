@@ -682,7 +682,6 @@ Memento.prototype.saveState = function (item) {
 }
 
 Memento.prototype.undo = function () {
-    console.log("undo");
     if(this.states.stack.length > 0) {
         var state = this.states.pop();
         if(state.function_name == "createNode") {
@@ -789,6 +788,7 @@ $(document).ready(function() {
     $('#subMenuNodeEditBtn').click(editNode);
     $('#subMenuEdgeEditBtn').click(editEdge);
 
+    $('.menuUndo').click(function() {memento.undo()});
     $('.menuNewNode').click(createNode);
     $('.menuDeleteNode').click(deleteNode);
     $('.menuNewEdge').click(createEdge);
@@ -801,12 +801,13 @@ $(document).ready(function() {
 
     $('.menuNew').click(menuNewGraph);
     $('.menuOpen').click(menuOpenGraph);
-    // $('.menuEditName').click(menuEditGraphName);
+    $('.menuEditName').click(menuEditGraphName);
+    $('.menuDelete').click(menuDeleteGraph);
     $('.menuClose').click(menuCloseGraph);
     $('.menuSave').click(menuSaveGraph);
     $('.menuSaveAs').click(menuSaveAsGraph);
     $('.menuPrint').click(menuPrintGraph);
-    $('.menuAbout').click(menuAbout);
+    $('.menuSaveAsImage').click(menuSaveAsImage);
 
     $('.menuMaxInfluence').click(menuFindMaxInfluence);
     $('.menuMostSumInfluence').click(menuFindMostSumInfluence);
@@ -2616,20 +2617,21 @@ function infPathToast(node1Name, node2Name, infValue, edgeTypeName, edgeList, ed
 
     var infoHtml = "Max Influence Path &lt;" + node1Name
     + "&gt; ▶ &lt;" + node2Name + "&gt; <br/>";
-
-    infoHtml += "Confidence : ";
+;
+    infoHtml += "Options <br/>";
+    infoHtml += "- Confidence : ";
     if(isConfidence)
         infoHtml += "O <br/>";
     else
         infoHtml += "X <br/>";
 
-    infoHtml += "Average : ";
+    infoHtml += "- Average : ";
     if(isAverage)
         infoHtml += "O <br/>";
     else
         infoHtml += "X <br/>";
 
-    infoHtml += "Edge Type : ";
+    infoHtml += "- Edge Type : ";
     for (var i = 0; i < edgeTypeNameList.length; i++) {
         infoHtml += edgeTypeNameList[i];
         if(i != edgeTypeNameList.length-1)
@@ -2638,9 +2640,10 @@ function infPathToast(node1Name, node2Name, infValue, edgeTypeName, edgeList, ed
             infoHtml += "<br/>";
     }
 
-    infoHtml += "Max Influence Value: " + infValue
-    + "<br/>Path's edge type: " + edgeTypeName
-    + "<br/>" + "Path" + ": ";
+    infoHtml += "Results <br/>";
+    infoHtml += "- Max Influence Value: " + infValue
+    + "<br/>- Path's edge type: " + edgeTypeName
+    + "<br/>" + "- Path" + ": ";
 
     for (var i = 0; i < edgeList.length; i++) {
         if (i==0) {
@@ -2676,9 +2679,11 @@ function maxInfNodeToast(type, nodeList, edgeTypeNameList, isConfidence, isAvera
     //     padding : '10px'
     // });
 
-    var infoHtml = "The number of node : " + nodeList.length + "<br/>";
+    var infoHtml = "Most " + type + " Influence Node <br/>";
+    infoHtml += "Options <br/>";
+    infoHtml += "- The number of node : " + nodeList.length + "<br/>";
 
-    infoHtml += "Edge Type : ";
+    infoHtml += "- Edge Type : ";
     for (var i = 0; i < edgeTypeNameList.length; i++) {
         infoHtml += edgeTypeNameList[i];
         if(i != edgeTypeNameList.length-1)
@@ -2687,13 +2692,13 @@ function maxInfNodeToast(type, nodeList, edgeTypeNameList, isConfidence, isAvera
             infoHtml += "<br/>";
     }
 
-    infoHtml += "Confidence : ";
+    infoHtml += "- Confidence : ";
     if(isConfidence)
         infoHtml += "O <br/>";
     else
         infoHtml += "X <br/>";
 
-    infoHtml += "Average : ";
+    infoHtml += "- Average : ";
     if(isAverage)
         infoHtml += "O <br/>";
     else
@@ -2701,7 +2706,7 @@ function maxInfNodeToast(type, nodeList, edgeTypeNameList, isConfidence, isAvera
 
     console.log(edgeTypeNameList);
     console.log(nodeList);
-    infoHtml += "<br/>" + "Ranking" + "<br/>";
+    infoHtml += "Results <br/>";
     for (var i = 0; i < nodeList.length; i++) {
         infoHtml += i+1 + ". ";
         infoHtml += "node : " + nodeList[i].node.title + "&nbsp&nbsp value : " + nodeList[i][type.toLowerCase() + '_influence_value'];
@@ -3587,7 +3592,7 @@ function menuPrintGraph() {
     console.log("print");
 }
 
-function menuAbout() {
+function menuSaveAsImage() {
     getSession();
     // html2canvas(document.body, {
     //     onrendered: function(canvas) {

@@ -26,13 +26,13 @@
           <ul class="dropdown-menu dropdown-menu-file">
             <li><a class="menuNew menuDefault" >New</a></li>
             <li><a class="menuOpen menuDefault" >Open</a></li>
-
-            <%--<li><a class="menuEditName" >Edit Name</a></li>--%>
-            <%--<li><a class="menuDelete" >Delete</a></li>--%>
+            <li><a class="menuEditName" >Edit Name</a></li>
+            <li><a class="menuDelete" >Delete</a></li>
             <li><a class="menuClose" >Close</a></li>
             <li role="separator" class="divider"></li>
             <li><a class="menuSave" >Save</a></li>
             <li><a class="menuSaveAs" >Save-As</a></li>
+            <li><a class="menuSaveAsImage" >Save-As-Image</a></li>
             <li role="separator" class="divider"></li>
             <li><a class="menuPrint" >Print</a></li>
             <li role="separator" class="divider"></li>
@@ -51,6 +51,8 @@
             <li><a class="menuManageNodeType" >Manage Node Type</a></li>
             <li><a class="menuManageEdgeType" >Manage Edge Type</a></li>
             <li><a class="menuManageConfidence" >Manage Confidence</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a class="menuUndo" >Undo</a></li>
           </ul>
         </li>
         <li class="dropdown">
