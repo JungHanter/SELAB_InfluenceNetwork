@@ -732,7 +732,11 @@ public class InfluenceGraph {
         visited.add(source);
         ArrayList<Edge> edgeofSourceList = adjacencyList.get(source); // add exception handling that edge of source is null
         for(Edge e : edgeofSourceList) {
-            priorityQueue.add(new AbstractMap.SimpleEntry<Edge, Float>(e, e.getInfluenceValue()));
+            if(isConfidence) {
+                priorityQueue.add(new AbstractMap.SimpleEntry<Edge, Float>(e, e.getInfluenceValue() * getConfidenceValue(e.getOrigin().getNodeType(), e.getDestination().getNodeType())));
+            } else {
+                priorityQueue.add(new AbstractMap.SimpleEntry<Edge, Float>(e, e.getInfluenceValue()));
+            }
         }
 
         ArrayList<Edge> maxInfluenceEdgeList = new ArrayList<>();
