@@ -33,7 +33,7 @@
     top: 120px;
     right: 10px;
     left: auto;
-    z-index: 1000;
+    z-index: 999;
 }
 
 .toast.fixed-toast .toast-wrapper {
@@ -80,7 +80,7 @@
     bottom: 0px;
     right: 0;
     left: 0;
-    z-index: 2000;
+    z-index: 999;
     display: none;
 }
 
@@ -109,7 +109,7 @@
     bottom: 120px;
     right: 10px;
     left: auto;
-    z-index: 1900;
+    z-index: 999;
 }
 
 .toast2 .fixed-toast .toast-wrapper {
@@ -135,4 +135,32 @@
 .toast2 .table-bordered>tbody>tr>td, .table-bordered>tbody>tr>th, .table-bordered>tfoot>tr>td,
 .table-bordered>tfoot>tr>th, .table-bordered>thead>tr>td, .table-bordered>thead>tr>th {
     border: 1px solid #ccc;
+}
+
+/* help toast */
+
+.toast.fixed-toast2 {
+    top : 100px;
+    left: 255px;
+    right: auto;
+    z-index: 999;
+}
+
+.toast.fixed-toast2 .toast-wrapper {
+    width : 320px;
+    margin: 0;
+}
+
+.toast.fixed-toast2 .toast-wrapper .toast-alert {
+    text-align: left;
+}
+
+.toast.fixed-toast2 .toast-wrapper .toast-alert .toast-body {
+    min-width: 320px;
+    width: 100%;
+}
+
+.toast.fixed-toast2 .close{
+    color: #fff;
+    opacity: .5;
 }

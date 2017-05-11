@@ -83,11 +83,12 @@
         <li class="dropdown">
           <a  class="dropdown-toggle dropdown-default" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Help</a>
           <ul class="dropdown-menu">
-            <li><a >News</a></li>
-            <li><a >Events</a></li>
-            <li role="separator" class="divider"></li>
-            <li><a >Sites</a></li>
-            <li><a >Resources</a></li>
+            <li><a class="menuHowToUse">How To Use</a></li>
+            <%--<li><a >News</a></li>--%>
+            <%--<li><a >Events</a></li>--%>
+            <%--<li role="separator" class="divider"></li>--%>
+            <%--<li><a >Sites</a></li>--%>
+            <%--<li><a >Resources</a></li>--%>
           </ul>
         </li>
       </ul>
@@ -1156,6 +1157,25 @@
     <div class="toast-alert" role="document">
       <div class="toast-body">
         <div id="alertToastMsg">Saved</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="howtouseToast" class="toast fixed-toast2" role="alert">
+  <div class="toast-wrapper">
+    <div class="toast-alert" role="document">
+      <div class="toast-body">
+        <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <div id="howtouseinfo">
+          How To Use <br/><br/>
+          Create New Node : Shift + Click Graph area <br/>
+          Create New Edge : Shift + Drag from origin to destination node <br/>
+          Edit Node Name  : Shift + Click Node <br/>
+          Undo            : Ctrl + Z <br/>
+          Auto Scale      : Double Click Graph area <br/>
+          Zoom in, out    : Scroll up, down <br/>
+        </div>
       </div>
     </div>
   </div>

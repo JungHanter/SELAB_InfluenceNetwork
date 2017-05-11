@@ -8,9 +8,25 @@ var global_consts = {
 var global_settings = {
     appendElSpec: "#graph"
 };
-// var colors = ['red', 'pink', 'purple', 'deep-purple', 'indigo', 'blue',
-// 'light-blue', 'cyan', 'teal', 'green', 'light-green', 'lime', 'yellow', 'amber', 'orange',
-// 'deep-orange', 'brown', 'grey', 'blue-grey'];
+var colors = [{name : 'red', normal : '#f44336', hover : '#FF5252', highlight : '#D50000'},
+    {name : 'pink', normal : '#e91e63', hover : '#FF4081', highlight : '#C51162'},
+    {name : 'purple', normal : '#9c27b0', hover : '#E040FB', highlight : '#AA00FF'},
+    {name : 'deep-purple', normal : '#673ab7', hover : '#7C4DFF', highlight : '#6200EA'},
+    {name : 'indigo', normal : '#3f51b5', hover : '#536DFE', highlight : '#304FFE'},
+    {name : 'blue', normal : '#2196f3', hover : '#448AFF', highlight : '#2962FF'},
+    {name : 'light-blue', normal : '#03a9f4', hover : '#40C4FF', highlight : '#0091EA'},
+    {name : 'cyan', normal : '#00bcd4', hover : '#18FFFF', highlight : '#00838F'},
+    {name : 'teal', normal : '#009688', hover : '#64FFDA', highlight : '#00695C'},
+    {name : 'green', normal : '#4caf50', hover : '#69F0AE', highlight : '#2E7D32'},
+    {name : 'light-green', normal : '#8bc34a', hover : '#B2FF59', highlight : '#558B2F'},
+    {name : 'lime', normal : '#cddc39', hover : '#EEFF41', highlight : '#827717'},
+    {name : 'yellow', normal : '#ffeb3b', hover : '#FFFF00', highlight : '#F57F17'},
+    {name : 'amber', normal : '#ffc107', hover : '#FFD740', highlight : '#FF6F00'},
+    {name : 'orange', normal : '#ff9800', hover : '#FFAB40', highlight : '#E65100'},
+    {name : 'deep-orange', normal : '#ff5722', hover : '#FF6E40', highlight : '#DD2C00'},
+    {name : 'brown', normal : '#795548', hover : '#8D6E63', highlight : '#4E342E'},
+    {name : 'grey', normal : '#757575', hover : '#9E9E9E', highlight : '#424242'},
+    {name : 'blue-grey', normal : '#607d8b', hover : '#78909C', highlight : '#37474F'}];
 
 var networkGraph = null;
 
@@ -22,6 +38,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
     // define graphcreator object
     var GraphCreator = function(svg, nodes, edges, nodeTypes, edgeTypes){
         var isChanged = false;
+
         var zoom = null;
         var thisGraph = this;
         thisGraph.idct = 0;
@@ -104,12 +121,43 @@ document.onload = (function(d3, saveAs, Blob, undefined){
             .append('svg:path')
             .attr('d', 'M0,-5L10,0L0,5');
 
-        // function appendMarker(defs) {
-        //     colors.forEach(function (color) {
-        //         console.log(color);
-        //     });
-        // }
-        // appendMarker();
+        function appendMarker(defs) {
+            colors.forEach(function (color) {
+                // console.log(color);
+                defs.append('svg:marker')
+                    .attr('style', 'fill : ' + color.normal)
+                    .attr('id', 'end-arrow-' + color.name)
+                    .attr('viewBox', '-1 -5 10 10')
+                    .attr('refX', "44")
+                    .attr('markerWidth', 3.5)
+                    .attr('markerHeight', 3.5)
+                    .attr('orient', 'auto')
+                    .append('svg:path')
+                    .attr('d', 'M0,-5L10,0L0,5');
+                defs.append('svg:marker')
+                    .attr('style', 'fill : ' + color.hover)
+                    .attr('id', 'end-arrow-hover-' + color.name)
+                    .attr('viewBox', '-1 -5 10 10')
+                    .attr('refX', "32")
+                    .attr('markerWidth', 3.5)
+                    .attr('markerHeight', 3.5)
+                    .attr('orient', 'auto')
+                    .append('svg:path')
+                    .attr('d', 'M0,-5L10,0L0,5');
+                defs.append('svg:marker')
+                    .attr('style', 'fill : ' + color.highlight)
+                    .attr('id', 'end-arrow-highlight-' + color.name)
+                    .attr('viewBox', '-1 -5 10 10')
+                    .attr('refX', "26")
+                    .attr('markerWidth', 3.5)
+                    .attr('markerHeight', 3.5)
+                    .attr('orient', 'auto')
+                    .append('svg:path')
+                    .attr('d', 'M0,-5L10,0L0,5');
+            });
+        }
+        appendMarker(defs);
+
         // define arrow markers for leading arrow
         defs.append('svg:marker')
             .attr('id', 'mark-end-arrow')
@@ -151,8 +199,6 @@ document.onload = (function(d3, saveAs, Blob, undefined){
             })
             .on("dragend", function(args) {
                 // todo check if edge-mode is selected
-                console.log(initialNode);
-                console.log(args);
 
                 if(initialNode != null && Math.abs(initialNode.x - args.x) > 0.01 && Math.abs(initialNode.y - args.y) > 0.01) {
                     memento.saveState({function_name : "moveNode", data : initialNode});
@@ -197,7 +243,6 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                         d3.select('body').style("cursor", "auto");
                     });
         svg.call(dragSvg).on("dblclick.zoom", null);
-        console.log("dragSvg Initialized");
 
         // console.log(zoom);
         // dragSvg.scale(5);
@@ -746,6 +791,12 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                     var txtNode = d3txt.node();
                     thisGraph.selectElementContents(txtNode);
                     txtNode.focus();
+                    var initialNode = {id : null, title : null, type : null, domainId : null};
+                    initialNode['id'] = d.id;
+                    initialNode['title'] = d.title;
+                    initialNode['type'] = d.type;
+                    initialNode['domainId'] = d.domainId;
+                    memento.saveState({function_name : "editNode", data : initialNode});
                 } else{
                     if (state.selectedEdge){
                         thisGraph.removeSelectFromEdge();
@@ -1182,6 +1233,8 @@ document.onload = (function(d3, saveAs, Blob, undefined){
             if (d.type != undefined && d.type != null && /\S/.test(d.type)) {
                 if (d.type in thisGraph.edgeTypes) {
                     $(this).addClass(thisGraph.consts.typeColorHead + thisGraph.edgeTypes[d.type]['color']);
+                    // $(this).children(".link").css('marker-end', 'url(\"#end-arrow-' + thisGraph.edgeTypes[d.type]['color'] + '\")');
+
                     // $(this).children("path").addClass("default-marker");
 
                     /* edge head */
@@ -1490,7 +1543,6 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                 $('#anim' + sourceId + targetId + type).remove();
             }, 2250);
 
-            console.log(type);
 
             return true;
         } else {
@@ -1610,7 +1662,6 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         var allPaths = paths.select("path");
         allPaths.each(function(d) {
             if (isIncludeArray(edgeList, d)) {
-                console.log(d);
                 d3.select(this.parentNode).classed(consts.hightlightClass, true);
                 d3.select(this.parentNode).append("animate")  // Add blink animation to  new Edge
                     .attr("id", "anim" + d.source.serverId + d.target.serverId + d.type)
@@ -1687,7 +1738,6 @@ document.onload = (function(d3, saveAs, Blob, undefined){
 
     GraphCreator.prototype.resetTransform = function() {
         this.svgG.attr('transform', '');
-        console.log("resetTransform");
     };
 
     /**** MAIN ****/

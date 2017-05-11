@@ -709,6 +709,8 @@ Memento.prototype.undo = function () {
             for(var key in networkGraph.nodes) {
                 if(networkGraph.nodes[key].id == state.data.id) {
                     setUnselected(true);
+                    if(state.data.title == null)
+                        state.data.title = 'New Node';
                     networkGraph.nodes[key].title = state.data.title;
                     networkGraph.nodes[key].type = state.data.type;
                     networkGraph.nodes[key].domainId = state.data.domainId;
@@ -814,6 +816,16 @@ $(document).ready(function() {
     $('.menuMostAverageInfluence').click(menuFindMostAverageInfluence);
 
     $('.menuMaxInfluenceTable').click(menuFindMaxInfluenceTable);
+    $('.menuHowToUse').click(function () {
+        $('#howtouseToast').show();
+        $('#howtouseToast .toast-alert').draggable({
+            containment: "#graph",
+            scroll: false
+        });
+        $('#howtouseToast .close').click(function () {
+            $('#howtouseToast').hide();
+        });
+    });
 
     $('#closeGraph').click(menuCloseGraph);
     $('#saveGraph').click(menuSaveGraph);
@@ -3467,6 +3479,7 @@ function menuCloseGraph() {
 
 }
 function closeGraph() {
+    memento.states = new Stack();
     setUnselected(true);
     networkGraph.deleteGraph(true);
     networkGraph.resetTransform();
