@@ -233,13 +233,18 @@ path.link.hidden{
 
 path.link.selected {
     stroke-width: 6px;
-    marker-end: url("#end-arrow-hover");
+    marker-end: url("#end-arrow-selected");
     stroke: rgb(229, 172, 247);
 }
 g.edgeG.selected path.link {
     stroke-width: 6px;
-    marker-end: url("#end-arrow-hover");
+    marker-end: url("#end-arrow-selected");
     stroke: rgb(229, 172, 247);
+}
+g.edgeG.selected:hover path.link {
+    stroke-width: 6px;
+    marker-end: url("#end-arrow-selected-hover");
+    stroke: rgb(94, 196, 204);
 }
 g.edgeG.selected text {
     fill: rgb(229, 172, 247);
@@ -269,9 +274,12 @@ g.edgeG.type-color-red:hover path.link {
 }
 g.edgeG.type-color-red.selected path.link {
     stroke: #F44336;
-    marker-end: url("#end-arrow-hover-red");
+    marker-end: url("#end-arrow-selected-red");
 }
-g.edgeG.type-color-red.selected:hover path.link { stroke: #FF5252; }
+g.edgeG.type-color-red.selected:hover path.link {
+    stroke: #FF5252;
+    marker-end: url("#end-arrow-selected-hover-red");
+}
 g.edgeG.type-color-red:hover text,
 g.edgeG.type-color-red.selected text,
 g.edgeG.type-color-red.selected:hover text { fill: #B71C1C; }
@@ -291,9 +299,12 @@ g.edgeG.type-color-pink:hover path.link {
 }
 g.edgeG.type-color-pink.selected path.link {
     stroke: #e91e63;
-    marker-end: url("#end-arrow-hover-pink");
+    marker-end: url("#end-arrow-selected-pink");
 }
-g.edgeG.type-color-pink.selected:hover path.link { stroke: #FF4081; }
+g.edgeG.type-color-pink.selected:hover path.link {
+    stroke: #FF4081;
+    marker-end: url("#end-arrow-selected-hover-pink");
+}
 g.edgeG.type-color-pink:hover text,
 g.edgeG.type-color-pink.selected text,
 g.edgeG.type-color-pink.selected:hover text { fill: #880E4F; }
@@ -313,9 +324,12 @@ g.edgeG.type-color-purple:hover path.link {
 }
 g.edgeG.type-color-purple.selected path.link {
     stroke: #9c27b0;
-    marker-end: url("#end-arrow-hover-purple");
+    marker-end: url("#end-arrow-selected-purple");
 }
-g.edgeG.type-color-purple.selected:hover path.link { stroke: #E040FB; }
+g.edgeG.type-color-purple.selected:hover path.link {
+    stroke: #E040FB;
+    marker-end: url("#end-arrow-selected-hover-purple");
+}
 g.edgeG.type-color-purple:hover text,
 g.edgeG.type-color-purple.selected text,
 g.edgeG.type-color-purple.selected:hover text { fill: #4A148C; }
@@ -335,9 +349,12 @@ g.edgeG.type-color-deep-purple:hover path.link {
 }
 g.edgeG.type-color-deep-purple.selected path.link {
     stroke: #673ab7;
-    marker-end: url("#end-arrow-hover-deep-purple");
+    marker-end: url("#end-arrow-selected-deep-purple");
 }
-g.edgeG.type-color-deep-purple.selected:hover path.link { stroke: #7C4DFF; }
+g.edgeG.type-color-deep-purple.selected:hover path.link {
+    stroke: #7C4DFF;
+    marker-end: url("#end-arrow-selected-hover-deep-purple");
+}
 g.edgeG.type-color-deep-purple:hover text,
 g.edgeG.type-color-deep-purple.selected text,
 g.edgeG.type-color-deep-purple.selected:hover text { fill: #311B92; }
@@ -357,9 +374,12 @@ g.edgeG.type-color-indigo:hover path.link {
 }
 g.edgeG.type-color-indigo.selected path.link {
     stroke: #3f51b5;
-    marker-end: url("#end-arrow-hover-indigo");
+    marker-end: url("#end-arrow-selected-indigo");
 }
-g.edgeG.type-color-indigo.selected:hover path.link { stroke: #536DFE; }
+g.edgeG.type-color-indigo.selected:hover path.link {
+    stroke: #536DFE;
+    marker-end: url("#end-arrow-selected-hover-indigo");
+}
 g.edgeG.type-color-indigo:hover text,
 g.edgeG.type-color-indigo.selected text,
 g.edgeG.type-color-indigo.selected:hover text { fill: #1A237E; }
@@ -379,9 +399,12 @@ g.edgeG.type-color-blue:hover path.link {
 }
 g.edgeG.type-color-blue.selected path.link {
     stroke: #2196f3;
-    marker-end: url("#end-arrow-hover-blue");
+    marker-end: url("#end-arrow-selected-blue");
 }
-g.edgeG.type-color-blue.selected:hover path.link { stroke: #448AFF; }
+g.edgeG.type-color-blue.selected:hover path.link {
+    stroke: #448AFF;
+    marker-end: url("#end-arrow-selected-hover-blue");
+}
 g.edgeG.type-color-blue:hover text,
 g.edgeG.type-color-blue.selected text,
 g.edgeG.type-color-blue.selected:hover text { fill: #0D47A1; }
@@ -401,9 +424,12 @@ g.edgeG.type-color-light-blue:hover path.link {
 }
 g.edgeG.type-color-light-blue.selected path.link {
     stroke: #03a9f4;
-    marker-end: url("#end-arrow-hover-light-blue");
+    marker-end: url("#end-arrow-selected-light-blue");
 }
-g.edgeG.type-color-light-blue.selected:hover path.link { stroke: #40C4FF; }
+g.edgeG.type-color-light-blue.selected:hover path.link {
+    stroke: #40C4FF;
+    marker-end: url("#end-arrow-selected-hover-light-blue");
+}
 g.edgeG.type-color-light-blue:hover text,
 g.edgeG.type-color-light-blue.selected text,
 g.edgeG.type-color-light-blue.selected:hover text { fill: #01579B; }
@@ -423,9 +449,12 @@ g.edgeG.type-color-cyan:hover path.link {
 }
 g.edgeG.type-color-cyan.selected path.link {
     stroke: #00bcd4;
-    marker-end: url("#end-arrow-hover-cyan");
+    marker-end: url("#end-arrow-selected-cyan");
 }
-g.edgeG.type-color-cyan.selected:hover path.link { stroke: #18FFFF; }
+g.edgeG.type-color-cyan.selected:hover path.link {
+    stroke: #18FFFF;
+    marker-end: url("#end-arrow-selected-hover-cyan");
+}
 g.edgeG.type-color-cyan:hover text,
 g.edgeG.type-color-cyan.selected text,
 g.edgeG.type-color-cyan.selected:hover text { fill: #006064; }
@@ -445,9 +474,12 @@ g.edgeG.type-color-teal:hover path.link {
 }
 g.edgeG.type-color-teal.selected path.link {
     stroke: #009688;
-    marker-end: url("#end-arrow-hover-teal");
+    marker-end: url("#end-arrow-selected-teal");
 }
-g.edgeG.type-color-teal.selected:hover path.link { stroke: #64FFDA; }
+g.edgeG.type-color-teal.selected:hover path.link {
+    stroke: #64FFDA;
+    marker-end: url("#end-arrow-selected-hover-teal");
+}
 g.edgeG.type-color-teal:hover text,
 g.edgeG.type-color-teal.selected text,
 g.edgeG.type-color-teal.selected:hover text { fill: #004D40; }
@@ -467,9 +499,12 @@ g.edgeG.type-color-green:hover path.link {
 }
 g.edgeG.type-color-green.selected path.link {
     stroke: #4caf50;
-    marker-end: url("#end-arrow-hover-green");
+    marker-end: url("#end-arrow-selected-green");
 }
-g.edgeG.type-color-green.selected:hover path.link { stroke: #69F0AE; }
+g.edgeG.type-color-green.selected:hover path.link {
+    stroke: #69F0AE;
+    marker-end: url("#end-arrow-selected-hover-green");
+}
 g.edgeG.type-color-green:hover text,
 g.edgeG.type-color-green.selected text,
 g.edgeG.type-color-green.selected:hover text { fill: #1B5E20; }
@@ -489,9 +524,12 @@ g.edgeG.type-color-light-green:hover path.link {
 }
 g.edgeG.type-color-light-green.selected path.link {
     stroke: #8bc34a;
-    marker-end: url("#end-arrow-hover-light-green");
+    marker-end: url("#end-arrow-selected-light-green");
 }
-g.edgeG.type-color-light-green.selected:hover path.link { stroke: #B2FF59; }
+g.edgeG.type-color-light-green.selected:hover path.link {
+    stroke: #B2FF59;
+    marker-end: url("#end-arrow-selected-hover-light-green");
+}
 g.edgeG.type-color-light-green:hover path.link,
 g.edgeG.type-color-light-green.selected text,
 g.edgeG.type-color-light-green.selected:hover text { fill: #33691E; }
@@ -511,9 +549,12 @@ g.edgeG.type-color-lime:hover path.link {
 }
 g.edgeG.type-color-lime.selected path.link {
     stroke: #cddc39;
-    marker-end: url("#end-arrow-hover-lime");
+    marker-end: url("#end-arrow-selected-lime");
 }
-g.edgeG.type-color-lime.selected:hover path.link { stroke: #EEFF41; }
+g.edgeG.type-color-lime.selected:hover path.link {
+    stroke: #EEFF41;
+    marker-end: url("#end-arrow-selected-hover-lime");
+}
 g.edgeG.type-color-lime:hover text,
 g.edgeG.type-color-lime.selected text,
 g.edgeG.type-color-lime.selected:hover text { fill: #827717; }
@@ -533,9 +574,12 @@ g.edgeG.type-color-yellow:hover path.link {
 }
 g.edgeG.type-color-yellow.selected path.link {
     stroke: #ffeb3b;
-    marker-end: url("#end-arrow-hover-yellow");
+    marker-end: url("#end-arrow-selected-yellow");
 }
-g.edgeG.type-color-yellow.selected:hover path.link { stroke: #FFFF00; }
+g.edgeG.type-color-yellow.selected:hover path.link {
+    stroke: #FFFF00;
+    marker-end: url("#end-arrow-selected-hover-yellow");
+}
 g.edgeG.type-color-yellow:hover text,
 g.edgeG.type-color-yellow.selected text,
 g.edgeG.type-color-yellow.selected:hover text { fill: #F57F17; }
@@ -555,9 +599,12 @@ g.edgeG.type-color-amber:hover path.link {
 }
 g.edgeG.type-color-amber.selected path.link {
     stroke: #ffc107;
-    marker-end: url("#end-arrow-hover-amber");
+    marker-end: url("#end-arrow-selected-amber");
 }
-g.edgeG.type-color-amber.selected:hover path.link { stroke: #FFD740; }
+g.edgeG.type-color-amber.selected:hover path.link {
+    stroke: #FFD740;
+    marker-end: url("#end-arrow-selected-hover-amber");
+}
 g.edgeG.type-color-amber:hover text,
 g.edgeG.type-color-amber.selected text,
 g.edgeG.type-color-amber.selected:hover text { fill: #FF6F00; }
@@ -577,9 +624,12 @@ g.edgeG.type-color-orange:hover path.link {
 }
 g.edgeG.type-color-orange.selected path.link {
     stroke: #ff9800;
-    marker-end: url("#end-arrow-hover-orange");
+    marker-end: url("#end-arrow-selected-orange");
 }
-g.edgeG.type-color-orange.selected:hover path.link { stroke: #FFAB40; }
+g.edgeG.type-color-orange.selected:hover path.link {
+    stroke: #FFAB40;
+    marker-end: url("#end-arrow-selected-hover-orange");
+}
 g.edgeG.type-color-orange:hover text,
 g.edgeG.type-color-orange.selected text,
 g.edgeG.type-color-orange.selected:hover text { fill: #E65100; }
@@ -599,9 +649,12 @@ g.edgeG.type-color-deep-orange:hover path.link {
 }
 g.edgeG.type-color-deep-orange.selected path.link {
     stroke: #ff5722;
-    marker-end: url("#end-arrow-hover-deep-orange");
+    marker-end: url("#end-arrow-selected-deep-orange");
 }
-g.edgeG.type-color-deep-orange.selected:hover path.link { stroke: #FF6E40; }
+g.edgeG.type-color-deep-orange.selected:hover path.link {
+    stroke: #FF6E40;
+    marker-end: url("#end-arrow-selected-hover-deep-orange");
+}
 g.edgeG.type-color-deep-orange:hover text,
 g.edgeG.type-color-deep-orange.selected text,
 g.edgeG.type-color-deep-orange.selected:hover text { fill: #BF360C; }
@@ -621,9 +674,12 @@ g.edgeG.type-color-brown:hover path.link {
 }
 g.edgeG.type-color-brown.selected path.link {
     stroke: #795548;
-    marker-end: url("#end-arrow-hover-brown");
+    marker-end: url("#end-arrow-selected-brown");
 }
-g.edgeG.type-color-brown.selected:hover path.link { stroke: #8D6E63; }
+g.edgeG.type-color-brown.selected:hover path.link {
+    stroke: #8D6E63;
+    marker-end: url("#end-arrow-selected-hover-brown");
+}
 g.edgeG.type-color-brown:hover text,
 g.edgeG.type-color-brown.selected text,
 g.edgeG.type-color-brown.selected:hover text { fill: #3E2723; }
@@ -643,9 +699,12 @@ g.edgeG.type-color-grey:hover path.link {
 }
 g.edgeG.type-color-grey.selected path.link {
     stroke: #757575;
-    marker-end: url("#end-arrow-hover-grey");
+    marker-end: url("#end-arrow-selected-grey");
 }
-g.edgeG.type-color-grey.selected:hover path.link { stroke: #9E9E9E; }
+g.edgeG.type-color-grey.selected:hover path.link {
+    stroke: #9E9E9E;
+    marker-end: url("#end-arrow-selected-hover-grey");
+}
 g.edgeG.type-color-grey:hover text,
 g.edgeG.type-color-grey.selected text,
 g.edgeG.type-color-grey.selected:hover text { fill: #616161; }
@@ -665,9 +724,12 @@ g.edgeG.type-color-blue-grey:hover path.link {
 }
 g.edgeG.type-color-blue-grey.selected path.link {
     stroke: #607d8b;
-    marker-end: url("#end-arrow-hover-blue-grey");
+    marker-end: url("#end-arrow-selected-blue-grey");
 }
-g.edgeG.type-color-blue-grey.selected:hover path.link { stroke: #78909C; }
+g.edgeG.type-color-blue-grey.selected:hover path.link {
+    stroke: #78909C;
+    marker-end: url("#end-arrow-selected-hover-blue-grey");
+}
 g.edgeG.type-color-blue-grey:hover text,
 g.edgeG.type-color-blue-grey.selected text,
 g.edgeG.type-color-blue-grey.selected:hover text { fill: #263238; }
