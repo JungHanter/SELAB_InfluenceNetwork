@@ -236,11 +236,11 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                 thisGraph.dragmove.call(thisGraph, args);
                 if(initialNode == null) {
                     initialNode = {id:args.id, x:args.x, y: args.y};
-                    console.log(initialNode);
                 }
             })
             .on("dragend", function(args) {
                 // todo check if edge-mode is selected
+                thisGraph.state.justDragged = false;
 
                 if(initialNode != null && Math.abs(initialNode.x - args.x) > 0.01 && Math.abs(initialNode.y - args.y) > 0.01) {
                     memento.saveState({function_name : "moveNode", data : initialNode});
@@ -510,6 +510,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
     };
 
     GraphCreator.prototype.replaceSelectNode = function(d3Node, nodeData){
+        console.log(d3Node);
         var thisGraph = this;
         d3Node.classed(this.consts.selectedClass, true);
         if (thisGraph.state.selectedNode){
@@ -740,6 +741,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         if (state.justDragged) {
             // dragged, not clicked
             state.justDragged = false;
+
         } else {
             // clicked, not dragged
             if (d3.event.shiftKey) {
@@ -821,10 +823,21 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                 thisGraph.onEdgeChanged('created', newEdge);
             }
         } else {
+            console.log("selectNode");
             // we're in the same node
             if (state.justDragged) {
                 // dragged, not clicked
                 state.justDragged = false;
+                if (state.selectedEdge){
+                    thisGraph.removeSelectFromEdge();
+                }
+                var prevNode = state.selectedNode;
+
+                if (!prevNode || prevNode.id !== d.id){
+                    thisGraph.replaceSelectNode(d3node, d);
+                } else{
+                    // thisGraph.removeSelectFromNode();
+                }
             } else{
                 // clicked, not dragged
                 if (d3.event.shiftKey){
