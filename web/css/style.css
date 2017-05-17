@@ -566,16 +566,8 @@ body {
     text-align: center;
 }
 
-#maxInfluenceTable .table {
-    color : black;
-    width: auto;
-}
-#maxInfluenceTable .fixedTable-body .table.table-bordered {
-    background-color: white;
-}
-
-#maxInfluenceTable .table tr td,
-#maxInfluenceTable .table tr th {
+#maxInfTable .table tr td,
+#maxInfTable .table tr th {
     min-width: 70px;
     max-width: 70px;
     width: 70px;
@@ -592,7 +584,7 @@ body {
     white-space: nowrap;
 }
 
-#maxInfluenceTable .fixedTable-header {
+#maxInfTable .fixedTable-header {
     width: auto;
     height: 28px;
     margin-left: 71px;
@@ -600,7 +592,7 @@ body {
     /*border-bottom: 1px solid #CCC;*/
 }
 
-#maxInfluenceTable .fixedTable-sidebar {
+#maxInfTable .fixedTable-sidebar {
     width: 71px;
     /*height: 310px;*/
     float: left;
@@ -608,15 +600,21 @@ body {
     /*border-right: 1px solid #CCC;*/
 }
 
-#maxInfluenceTable .fixedTable-body {
+#maxInfTable .fixedTable-body {
     overflow: initial;
-    width: calc(100% - 120px);
+    width: calc(100% - 71px);/* -71px is sidebar width */
     /*height: 310px;*/
     float: left;
 }
 
 #maxInfTableFixedInfo {
     margin-top: 30px;
+}
+
+.alertify.ajs-resizable:not(.ajs-maximized) .ajs-dialog {
+    border: 1px solid #DDD;
+    box-shadow: none;
+    border-radius: 5px;
 }
 
 /*signin form*/

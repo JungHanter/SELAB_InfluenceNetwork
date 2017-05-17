@@ -818,7 +818,7 @@ $(document).ready(function() {
                 }
             };
         });
-        alertify.minimalDialog("Minimal button-less dialog.");
+        alertify.minimalDialog("Minimal button-less dialog.").set({'closableByDimmer': false});
     });
 
     $('.menuMaxInfluence').click(menuFindMaxInfluence);
@@ -2747,65 +2747,61 @@ function maxInfNodeToast(type, nodeList, edgeTypeNameList, isConfidence, isAvera
 }
 
 function allMaxInfToast(maxInfluenceList, nodeSet) {
-    // var data = '<div style="overflow: scroll" id="maxInfluenceTable"><header class="fixedTable-header"><table class="table table-bordered"><thead><tr><th class="type-color-bg type-color-text type-color-red">A</th> <th class="type-color-bg type-color-text type-color-blue">B</th> </tr> </thead> </table> </header> <aside class="fixedTable-sidebar"> <table class="table table-bordered"> <tbody> <tr> <th class="type-color-bg type-color-text type-color-red">A</th> </tr> <tr> <th class="type-color-bg type-color-text type-color-blue">B</th> </tr> </tbody> </table> </aside> <div class="fixedTable-body"> <table class="table table-bordered"> <tbody> <tr> <td class="td-empty"></td> <td class="td-input"><input type="number" step=0.01 min=0 max=1 /></td> </tr> <tr> <td class="td-input"><input type="number" step=0.01 min=0 max=1 /></td> <td class="td-empty"></td> </tr> </tbody> </table> </div> </div>';
-    //
-    // $.dialogbox({
-    //     type:'default',
-    //     title:'MaxInfluenceTable',
-    //     content: data,
-    //     width : 1000,
-    //     height : 500,
-    //     top : '53%',
-    //     left : '28%'
-    // });
+    window.showAlert = function () {
+        alertify.alert('<div id="maxInfTable" style=" width:100%; height:90%; margin-top: 30px;"> <header class="fixedTable-header"> <table class="table table-bordered"> <thead> <tr> <th class="type-color-bg type-color-text type-color-red">A</th> <th class="type-color-bg type-color-text type-color-blue">B</th> </tr> </thead> </table> </header> <aside class="fixedTable-sidebar"> <table class="table table-bordered"> <tbody> <tr> <th class="type-color-bg type-color-text type-color-red">A</th> </tr> <tr> <th class="type-color-bg type-color-text type-color-blue">B</th> </tr> </tbody> </table> </aside> <div class="fixedTable-body"> <table class="table table-bordered"> <tbody> <tr> <td class="td-empty"></td> <td class="td-input"><input type="number" step=0.01 min=0 max=1 /></td> </tr> <tr> <td class="td-input"><input type="number" step=0.01 min=0 max=1 /></td> <td class="td-empty"></td> </tr> </tbody> </table> </div> </div>');
+        $('#maxInfTable .fixedTable-header thead tr').empty();
+        $('#maxInfTable .fixedTable-sidebar tbody').empty();
+        $('#maxInfTable .fixedTable-body tbody').empty();
 
-    $('#maxInfluenceTable .fixedTable-header thead tr').empty();
-    $('#maxInfluenceTable .fixedTable-sidebar tbody').empty();
-    $('#maxInfluenceTable .fixedTable-body tbody').empty();
+        nodeSet.sort(function (a,b) {
+            return a.node_name.toLowerCase() < b.node_name.toLowerCase() ? -1
+                : a.node_name.toLowerCase() > b.node_name.toLowerCase() ? 1 : 0;
+        });
 
-    nodeSet.sort(function (a,b) {
-        return a.node_name.toLowerCase() < b.node_name.toLowerCase() ? -1
-            : a.node_name.toLowerCase() > b.node_name.toLowerCase() ? 1 : 0;
-    });
+        for (var n1 in nodeSet) {
+            $('#maxInfTable .fixedTable-header thead tr').append(
+                "<th class='type-color-bg type-color-text type-color-blue-grey'>" + nodeSet[n1].node_name + "</th>"
+            );
 
-    for (var n1 in nodeSet) {
-        $('#maxInfluenceTable .fixedTable-header thead tr').append(
-            "<th class='type-color-bg type-color-text type-color-blue-grey'>" + nodeSet[n1].node_name + "</th>"
-        );
+            $('#maxInfTable .fixedTable-sidebar tbody').append(
+                "<tr><th class='type-color-bg type-color-text type-color-blue-grey'>" + nodeSet[n1].node_name + "</th></tr>"
+            );
+        }
 
-        $('#maxInfluenceTable .fixedTable-sidebar tbody').append(
-            "<tr><th class='type-color-bg type-color-text type-color-blue-grey'>" + nodeSet[n1].node_name + "</th></tr>"
-        );
-    }
-
-    for (var n1 in nodeSet) {
-        $('#maxInfluenceTable .fixedTable-body tbody').append("<tr>");
-        for(var n2 in nodeSet) {
-            $('#maxInfluenceTable .fixedTable-body tbody tr').each(function (index) {
-                if (n1 == index) {
-                    var value = null;
-                    for (var i in maxInfluenceList) {
-                        if ((maxInfluenceList[i].origin_id == nodeSet[n1].node_id)
-                            && (maxInfluenceList[i].destination_id == nodeSet[n2].node_id)) {
-                            value = maxInfluenceList[i].influence_value.toFixed(3);
-                            break;
+        for (var n1 in nodeSet) {
+            $('#maxInfTable .fixedTable-body tbody').append("<tr>");
+            for(var n2 in nodeSet) {
+                $('#maxInfTable .fixedTable-body tbody tr').each(function (index) {
+                    if (n1 == index) {
+                        var value = null;
+                        for (var i in maxInfluenceList) {
+                            if ((maxInfluenceList[i].origin_id == nodeSet[n1].node_id)
+                                && (maxInfluenceList[i].destination_id == nodeSet[n2].node_id)) {
+                                value = maxInfluenceList[i].influence_value.toFixed(3);
+                                break;
+                            }
                         }
-                    }
-                    if(value != null)
-                        $(this).append("<td id=\"r"+ n1 + "c" + n2 +"\">" + value + "</td>");
-                    else
-                        $(this).append("<td id=\"r"+ n1 + "c" + n2 +"\" class=\"td-empty\"></td>");
+                        if(value != null)
+                            $(this).append("<td id=\"r"+ n1 + "c" + n2 +"\">" + value + "</td>");
+                        else
+                            $(this).append("<td id=\"r"+ n1 + "c" + n2 +"\" class=\"td-empty\"></td>");
 
-                }
-            });
+                    }
+                });
+            }
         }
     }
-    // $('#maxInfTableFixedToast').show();
-    $('#maxInfluenceTable').show();
-    $('#maxInfluenceTable .toast-alert').draggable({
-        containment: "#graph",
-        scroll: false
+
+    alertify.alert().setting({
+        modal : false,
+        basic:true,
+        maximizable:true,
+        resizable:true,
+        padding:false,
+        pinnable : false,
+        frameless : false
     });
+    window.showAlert();
 }
 
 function openAlertModal(msg, title) {

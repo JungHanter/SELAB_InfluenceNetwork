@@ -1103,57 +1103,6 @@
   </div>
 </div>
 
-<div id="maxInfluenceTable" class="toast fixed-toast" role="alert">
-  <div class="toast-wrapper">
-    <div class="toast-alert" role="document">
-      <div class="toast-body">
-        <div>
-          <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <button type="button" class="maximize" style="margin-right: 10px;"><span aria-hidden="true">□</span></button>
-        </div>
-        <div style="overflow: auto; width:100%; height:90%; margin-top: 30px;">
-          <header class="fixedTable-header">
-            <table class="table table-bordered">
-              <thead>
-              <tr>
-                <th class="type-color-bg type-color-text type-color-red">A</th>
-                <th class="type-color-bg type-color-text type-color-blue">B</th>
-              </tr>
-              </thead>
-            </table>
-          </header>
-          <aside class="fixedTable-sidebar">
-            <table class="table table-bordered">
-              <tbody>
-              <tr>
-                <th class="type-color-bg type-color-text type-color-red">A</th>
-              </tr>
-              <tr>
-                <th class="type-color-bg type-color-text type-color-blue">B</th>
-              </tr>
-              </tbody>
-            </table>
-          </aside>
-          <div class="fixedTable-body">
-            <table class="table table-bordered">
-              <tbody>
-              <tr>
-                <td class="td-empty"></td>
-                <td class="td-input"><input type="number" step=0.01 min=0 max=1 /></td>
-              </tr>
-              <tr>
-                <td class="td-input"><input type="number" step=0.01 min=0 max=1 /></td>
-                <td class="td-empty"></td>
-              </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
 <div id="alertToast" class="toast" role="alert">
   <div class="toast-wrapper">
     <div class="toast-alert" role="document">
