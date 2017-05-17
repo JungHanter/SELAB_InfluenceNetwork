@@ -835,8 +835,6 @@ document.onload = (function(d3, saveAs, Blob, undefined){
 
                 if (!prevNode || prevNode.id !== d.id){
                     thisGraph.replaceSelectNode(d3node, d);
-                } else{
-                    // thisGraph.removeSelectFromNode();
                 }
             } else{
                 // clicked, not dragged

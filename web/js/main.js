@@ -241,7 +241,7 @@ function updateEdgeList(event, updatedData) {
             var edgeInfoHtml = "<li><a data-type='" + edgeType + "' data-ct='" + edgeData.ct
                 + "'><span class='edge-source' data-nodeid='"
                 + edgeData.source.id + "'>" + edgeData.source.title + "</span>"
-                + "<span class='edge-pointer'>-></span>"
+                + "<span class='edge-pointer'>▶</span>"
                 + "<span class='edge-target' data-nodeid='" + edgeData.target.id
                 + "'>" + edgeData.target.title + "</span></a></li>";
             $('#sideMenuEdgeList').append(edgeInfoHtml);
@@ -810,6 +810,16 @@ $(document).ready(function() {
     $('.menuSaveAs').click(menuSaveAsGraph);
     $('.menuPrint').click(menuPrintGraph);
     $('.menuSaveAsImage').click(menuSaveAsImage);
+    $('.menuAbout').click(function () {
+        alertify.minimalDialog || alertify.dialog('minimalDialog',function(){
+            return {
+                main:function(content){
+                    this.setContent(content);
+                }
+            };
+        });
+        alertify.minimalDialog("Minimal button-less dialog.");
+    });
 
     $('.menuMaxInfluence').click(menuFindMaxInfluence);
     $('.menuMostSumInfluence').click(menuFindMostSumInfluence);
@@ -2073,6 +2083,7 @@ function initMaxInfluenceTableUI() {
     });
 
     $('#btnFindAllMaxInfConfirm').click(function() {
+
         if(getCheckedBoxNumber($('#findAllMaxInfModal .checkbox_div')) == 0) { // checked box is none.
             openAlertModal("Please select edgetype more than 1.");
         } else if(networkGraph.isChanged) {
@@ -2807,6 +2818,7 @@ function openAlertModal(msg, title) {
 }
 
 function openConfirmModal(msg, title, callback) {
+    
     $('#confirmModalTitle').text(title);
     $('#confirmModalMsg').text(msg);
     $('#btnConfirmModal').unbind('click').off('click').click(callback);
@@ -2829,12 +2841,13 @@ function initControllers() {
     var welcomeOverlayHeight = $(window).height() - global_consts.graphSvgStartY;
     var welcomeTextMarginTop = welcomeOverlayHeight / 2 - 40;
     $('.welcome-overlay').css('height', welcomeOverlayHeight);
-    $('.welcome-overlay > h2').css('margin-top', welcomeTextMarginTop);
+    // $('.welcome-overlay > h2').css('margin-top', welcomeTextMarginTop);
+    $('#welcometo').css('margin-top', welcomeTextMarginTop);
     $( window ).resize(function() {
         var welcomeOverlayHeight = $(window).height() - global_consts.graphSvgStartY;
         var welcomeTextMarginTop = welcomeOverlayHeight / 2 - 40;
         $('.welcome-overlay').css('height', welcomeOverlayHeight);
-        $('.welcome-overlay > h2').css('margin-top', welcomeTextMarginTop);
+        $('#welcometo').css('margin-top', welcomeTextMarginTop);
     });
 
     var graphOverlayHeight = $(window).height() - global_consts.graphSvgStartY + 31;

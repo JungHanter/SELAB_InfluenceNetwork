@@ -13,6 +13,7 @@
   <link rel="stylesheet" type="text/css" href="css/cust-ui.css">
   <link rel="stylesheet" type="text/css" href="css/style.css">
   <link rel="stylesheet" type="text/css" href="lib/Tiny-Multipurpose-Dialog-Popup-Plugin-With-jQuery-dialogbox-js/css/dialogbox.css">
+  <link rel="stylesheet" type="text/css" href="lib/alertifyjs/css/alertify.css">
 </head>
 
 <body>
@@ -301,7 +302,8 @@
 </div>
 
 <div class="welcome-overlay">
-  <h2>Welcome to Influence Network Analytics Service!</h2>
+  <h2 id="welcometo">Welcome to</h2>
+  <h2 id="inas">Influence Network Analytics Service!</h2>
 </div>
 
 
@@ -1199,6 +1201,7 @@
 <%--<script src="lib/directed-graph-creator/graph-creator-custom.js"></script>--%>
 <script src="lib/directed-graph-creator/graph-creator-custom-v2.js"></script>
 <script src="lib/Tiny-Multipurpose-Dialog-Popup-Plugin-With-jQuery-dialogbox-js/js/dialogbox.js"></script>
+<script src="lib/alertifyjs/alertify.min.js"></script>
 <script src="js/main.js"></script>
 
 
