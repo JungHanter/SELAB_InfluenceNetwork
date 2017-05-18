@@ -14,6 +14,8 @@
   <link rel="stylesheet" type="text/css" href="css/style.css">
   <link rel="stylesheet" type="text/css" href="lib/Tiny-Multipurpose-Dialog-Popup-Plugin-With-jQuery-dialogbox-js/css/dialogbox.css">
   <link rel="stylesheet" type="text/css" href="lib/alertifyjs/css/alertify.css">
+
+  <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Ubuntu">
 </head>
 
 <body>
@@ -276,21 +278,21 @@
     <div class="graph-title no-print">
       <span id="graphName">New Graph</span>
       <div class="btn-group" role="group">
-        <a id="editGraphName" class="btn btn-dark btn-xs" aria-label="Edit Name">
-          <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
-        </a>
-        <a id="saveGraph" class="btn btn-dark btn-xs" aria-label="Save Graph">
+        <%--<a id="editGraphName" class="btn btn-dark btn-xs" aria-label="Edit Name">--%>
+          <%--<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>--%>
+        <%--</a>--%>
+        <a id="saveGraph" data-toggle="tooltip" title="Save" class="btn btn-dark btn-xs" aria-label="Save Graph">
           <span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span>
         </a>
-        <a id="printGraph" class="btn btn-dark btn-xs" aria-label="Print Graph">
+        <a id="printGraph" data-toggle="tooltip" title="Print" class="btn btn-dark btn-xs" aria-label="Print Graph">
           <span class="glyphicon glyphicon-print" aria-hidden="true"></span>
         </a>
-        <a id="deleteGraph" class="btn btn-dark btn-xs" aria-label="Delete Graph">
-          <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-        </a>
-        <a id="closeGraph" class="btn btn-dark btn-xs" aria-label="Close Graph">
-          <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-        </a>
+        <%--<a id="deleteGraph" class="btn btn-dark btn-xs" aria-label="Delete Graph">--%>
+          <%--<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>--%>
+        <%--</a>--%>
+        <%--<a id="closeGraph" class="btn btn-dark btn-xs" aria-label="Close Graph">--%>
+          <%--<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>--%>
+        <%--</a>--%>
       </div>
     </div>
     <div class="yes-print" id="graph"></div>

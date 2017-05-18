@@ -2748,31 +2748,29 @@ function maxInfNodeToast(type, nodeList, edgeTypeNameList, isConfidence, isAvera
 
 function allMaxInfToast(maxInfluenceList, nodeSet) {
     window.showAlert = function () {
-        alertify.alert('<div id="maxInfTable" style=" width:100%; height:90%; margin-top: 30px;"> <header class="fixedTable-header"> <table class="table table-bordered"> <thead> <tr> <th class="type-color-bg type-color-text type-color-red">A</th> <th class="type-color-bg type-color-text type-color-blue">B</th> </tr> </thead> </table> </header> <aside class="fixedTable-sidebar"> <table class="table table-bordered"> <tbody> <tr> <th class="type-color-bg type-color-text type-color-red">A</th> </tr> <tr> <th class="type-color-bg type-color-text type-color-blue">B</th> </tr> </tbody> </table> </aside> <div class="fixedTable-body"> <table class="table table-bordered"> <tbody> <tr> <td class="td-empty"></td> <td class="td-input"><input type="number" step=0.01 min=0 max=1 /></td> </tr> <tr> <td class="td-input"><input type="number" step=0.01 min=0 max=1 /></td> <td class="td-empty"></td> </tr> </tbody> </table> </div> </div>');
-        $('#maxInfTable .fixedTable-header thead tr').empty();
-        $('#maxInfTable .fixedTable-sidebar tbody').empty();
+        alertify.alert('<div id="maxInfTable" style=" width:100%; height:90%; margin-top: 30px;"><div class="fixedTable-body"> <table class="table table-bordered"> <tbody> <tr> <td class="td-empty"></td> <td class="td-input"><input type="number" step=0.01 min=0 max=1 /></td> </tr> <tr> <td class="td-input"><input type="number" step=0.01 min=0 max=1 /></td> <td class="td-empty"></td> </tr> </tbody> </table> </div> </div>');
         $('#maxInfTable .fixedTable-body tbody').empty();
 
         nodeSet.sort(function (a,b) {
             return a.node_name.toLowerCase() < b.node_name.toLowerCase() ? -1
                 : a.node_name.toLowerCase() > b.node_name.toLowerCase() ? 1 : 0;
         });
-
+        $('#maxInfTable .fixedTable-body tbody').append("<tr>");
+        $('#maxInfTable .fixedTable-body tbody tr').append("<th class='type-color-bg type-color-text type-color-blue-grey'></th>");
         for (var n1 in nodeSet) {
-            $('#maxInfTable .fixedTable-header thead tr').append(
+            $('#maxInfTable .fixedTable-body tbody tr').append(
                 "<th class='type-color-bg type-color-text type-color-blue-grey'>" + nodeSet[n1].node_name + "</th>"
             );
-
-            $('#maxInfTable .fixedTable-sidebar tbody').append(
-                "<tr><th class='type-color-bg type-color-text type-color-blue-grey'>" + nodeSet[n1].node_name + "</th></tr>"
-            );
         }
+        $('#maxInfTable .fixedTable-body tbody').append("</tr>");
 
         for (var n1 in nodeSet) {
             $('#maxInfTable .fixedTable-body tbody').append("<tr>");
+
             for(var n2 in nodeSet) {
                 $('#maxInfTable .fixedTable-body tbody tr').each(function (index) {
-                    if (n1 == index) {
+
+                    if (index != 0 && n1 == index-1) {
                         var value = null;
                         for (var i in maxInfluenceList) {
                             if ((maxInfluenceList[i].origin_id == nodeSet[n1].node_id)
@@ -2780,6 +2778,9 @@ function allMaxInfToast(maxInfluenceList, nodeSet) {
                                 value = maxInfluenceList[i].influence_value.toFixed(3);
                                 break;
                             }
+                        }
+                        if(n2 == 0) {
+                            $(this).append("<th class='type-color-bg type-color-text type-color-blue-grey'>" + nodeSet[n1].node_name + "</th>");
                         }
                         if(value != null)
                             $(this).append("<td id=\"r"+ n1 + "c" + n2 +"\">" + value + "</td>");
@@ -2789,6 +2790,7 @@ function allMaxInfToast(maxInfluenceList, nodeSet) {
                     }
                 });
             }
+            $('#maxInfTable .fixedTable-body tbody').append("</tr>");
         }
     }
 
@@ -2813,6 +2815,16 @@ function openAlertModal(msg, title) {
     $('#alertModal').modal();
 }
 
+function openModal(msg, title, buttonName, callback) {
+
+    $('#confirmModalMsg').text(msg);
+    $('#confirmModalTitle').text(title);
+    $('#btnConfirmModal').text(buttonName);
+
+    $('#btnConfirmModal').unbind('click').off('click').click(callback);
+    $('#confirmModal').modal();
+}
+
 function openConfirmModal(msg, title, callback) {
     
     $('#confirmModalTitle').text(title);
@@ -2835,13 +2847,13 @@ function openConfirmModal2(msg, title, callback) {
 
 function initControllers() {
     var welcomeOverlayHeight = $(window).height() - global_consts.graphSvgStartY;
-    var welcomeTextMarginTop = welcomeOverlayHeight / 2 - 40;
+    var welcomeTextMarginTop = welcomeOverlayHeight / 2 - 50;
     $('.welcome-overlay').css('height', welcomeOverlayHeight);
     // $('.welcome-overlay > h2').css('margin-top', welcomeTextMarginTop);
     $('#welcometo').css('margin-top', welcomeTextMarginTop);
     $( window ).resize(function() {
         var welcomeOverlayHeight = $(window).height() - global_consts.graphSvgStartY;
-        var welcomeTextMarginTop = welcomeOverlayHeight / 2 - 40;
+        var welcomeTextMarginTop = welcomeOverlayHeight / 2 - 50;
         $('.welcome-overlay').css('height', welcomeOverlayHeight);
         $('#welcometo').css('margin-top', welcomeTextMarginTop);
     });
@@ -3299,7 +3311,7 @@ function newGraph(graphName) {
             if (res['result'] == 'success') {
                 closeGraph();
                 setGraphUIEnable(true);
-                $('#graphName').text(graphName);
+                $('#graphName').text('\''+graphName + '\'');
                 nowGraphInfo = {graphId: res['graph_id'], graphName: graphName};
 
                 networkGraph.isChanged = false;
@@ -3333,7 +3345,7 @@ function editGraphName(name) {
             $.LoadingOverlay('hide');
             console.log(res);
             if (res['result'] == 'success') {
-                $('#graphName').text(res['graph_name']);
+                $('#graphName').text('\''+res['graph_name']+ '\'');
                 nowGraphInfo = {graphId: res['graph_id'], graphName: res['graph_name']}
             } else {
                 openAlertModal(res['message'], 'Edit Graph Name Failure');
@@ -3461,7 +3473,7 @@ function openGraph(graphId) {
             if (res['result'] == 'success') {
                 closeGraph();
                 setGraphUIEnable(true);
-                $('#graphName').text(res['graph_name']);
+                $('#graphName').text('\''+res['graph_name']+ '\'');
                 nowGraphInfo = {graphId: graphId, graphName: res['graph_name']};
 
                 loadGraph(res);

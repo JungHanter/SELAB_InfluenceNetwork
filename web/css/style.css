@@ -19,9 +19,11 @@ body {
 #top-left-title {
     display: inline-block !important;
     float: left;
-    margin: 8px 25px 0px 5px;
+    margin: 6px 25px 0px 5px;
     color: #ff5823;
     font-weight: 900;
+    font-family: "Ubuntu";
+    font-size : 17px;
 }
 .menu-group{
     margin-bottom: 0px !important;
@@ -291,6 +293,10 @@ body {
     width : 63px;
 }
 
+#graphName {
+    color : #3399FF;
+}
+
 .graph-title {
     width: 100%;
     height: 31px;
@@ -299,6 +305,11 @@ body {
     color: white;
     background-color: #616161;
     border-bottom: 1px solid #212121;
+
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 .graph-title>span {
     display: inline-block;
@@ -353,8 +364,9 @@ body {
 }
 #inas {
     margin-left: 140px;
-    color: #ff5823
+    color: #ff5823;
 }
+
 
 #subMenuNodeType, #subMenuEdgeType {
     overflow-x: hidden;
@@ -581,30 +593,23 @@ body {
     text-overflow-ellipsis: true;
     text-overflow-mode: ellipsis;
     text-overflow: ellipsis;
-    white-space: nowrap;
+    /*white-space: nowrap;*/
 }
 
-#maxInfTable .fixedTable-header {
-    width: auto;
-    height: 28px;
-    margin-left: 71px;
-    overflow: initial;
-    /*border-bottom: 1px solid #CCC;*/
+#maxInfTable .fixedTable-body tr td, #maxInfTable .fixedTable-body tr th{
+    word-break:break-all;
+    vertical-align: middle;
 }
 
-#maxInfTable .fixedTable-sidebar {
-    width: 71px;
-    /*height: 310px;*/
-    float: left;
-    overflow: initial;
-    /*border-right: 1px solid #CCC;*/
+#maxInfTable .table{
+    height: 100%;
 }
 
 #maxInfTable .fixedTable-body {
     overflow: initial;
-    width: calc(100% - 71px);/* -71px is sidebar width */
+    width: 100%;/* -71px is sidebar width */
     /*height: 310px;*/
-    float: left;
+    height: 100%;
 }
 
 #maxInfTableFixedInfo {

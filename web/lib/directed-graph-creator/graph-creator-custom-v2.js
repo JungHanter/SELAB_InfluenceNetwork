@@ -510,7 +510,6 @@ document.onload = (function(d3, saveAs, Blob, undefined){
     };
 
     GraphCreator.prototype.replaceSelectNode = function(d3Node, nodeData){
-        console.log(d3Node);
         var thisGraph = this;
         d3Node.classed(this.consts.selectedClass, true);
         if (thisGraph.state.selectedNode){
@@ -928,13 +927,31 @@ document.onload = (function(d3, saveAs, Blob, undefined){
                 d3.event.preventDefault();
                 if (selectedNode){
                     var deletedNode = state.selectedNode;
-                    thisGraph.nodes.splice(thisGraph.nodes.indexOf(selectedNode), 1);
-                    var toSplice = thisGraph.spliceLinksForNode(selectedNode);
-                    memento.saveState({function_name : "deleteNode", data : {node : state.selectedNode, edge : toSplice}});
-                    state.selectedNode = null;
-                    thisGraph.updateGraph();
-                    thisGraph.onNodeChanged('deleted', deletedNode);
-
+                    var connectedEdges = thisGraph.edges.filter(function(l) {
+                        return (l.source === state.selectedNode || l.target === state.selectedNode);
+                    });
+                    if (connectedEdges.length != 0) {
+                        // var node = state.selectedNode;
+                        openModal("The selected node has relationships. Do you really want to delete?", "Warning", "Delete", function () {
+                            thisGraph.nodes.splice(thisGraph.nodes.indexOf(deletedNode), 1);
+                            var toSplice = thisGraph.spliceLinksForNode(deletedNode);
+                            memento.saveState({function_name : "deleteNode", data : {node : deletedNode, edge : toSplice}});
+                            state.selectedNode = null;
+                            thisGraph.updateGraph();
+                            this.isChanged = true;
+                            toggleAskCloseAndRefresh();
+                            thisGraph.onNodeChanged('deleted', deletedNode);
+                        });
+                    } else {
+                        thisGraph.nodes.splice(thisGraph.nodes.indexOf(state.selectedNode), 1);
+                        var toSplice = thisGraph.spliceLinksForNode(state.selectedNode);
+                        memento.saveState({function_name : "deleteNode", data : {node : state.selectedNode, edge : toSplice}});
+                        state.selectedNode = null;
+                        thisGraph.updateGraph();
+                        this.isChanged = true;
+                        toggleAskCloseAndRefresh();
+                        thisGraph.onNodeChanged('deleted', deletedNode);
+                    }
                 } else if (selectedEdge){
                     var deletedEdge = state.selectedEdge;
                     thisGraph.edges.splice(thisGraph.edges.indexOf(selectedEdge), 1);
@@ -1752,14 +1769,30 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         var thisGraph = this,
             state = thisGraph.state;
         if (state.selectedNode) {
-            thisGraph.nodes.splice(thisGraph.nodes.indexOf(state.selectedNode), 1);
-            var toSplice = thisGraph.spliceLinksForNode(state.selectedNode);
-            memento.saveState({function_name : "deleteNode", data : {node : state.selectedNode, edge : toSplice}});
-            state.selectedNode = null;
-            thisGraph.updateGraph();
+            var connectedEdges = thisGraph.edges.filter(function(l) {
+                    return (l.source === state.selectedNode || l.target === state.selectedNode);
+                });
+            if (connectedEdges.length != 0) {
+                var node = state.selectedNode;
+                openModal("The selected node has relationships. Do you really want to delete?", "Warning", "Delete", function () {
+                    thisGraph.nodes.splice(thisGraph.nodes.indexOf(node), 1);
+                    var toSplice = thisGraph.spliceLinksForNode(node);
+                    memento.saveState({function_name : "deleteNode", data : {node : node, edge : toSplice}});
+                    state.selectedNode = null;
+                    thisGraph.updateGraph();
+                    this.isChanged = true;
+                    toggleAskCloseAndRefresh();
+                });
+            } else {
+                thisGraph.nodes.splice(thisGraph.nodes.indexOf(state.selectedNode), 1);
+                var toSplice = thisGraph.spliceLinksForNode(state.selectedNode);
+                memento.saveState({function_name : "deleteNode", data : {node : state.selectedNode, edge : toSplice}});
+                state.selectedNode = null;
+                thisGraph.updateGraph();
+                this.isChanged = true;
+                toggleAskCloseAndRefresh();
+            }
         }
-        this.isChanged = true;
-        toggleAskCloseAndRefresh();
     };
 
     GraphCreator.prototype.deleteEdge = function() {
