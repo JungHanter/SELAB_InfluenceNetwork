@@ -852,6 +852,7 @@ $(document).ready(function() {
         if(e.target == this)
             networkGraph.setZoom(true);
     });
+
 });
 
 var selectedNodeTypeElem = null;
@@ -1746,8 +1747,8 @@ function initFindMaxInfluencePathUI() {
             openAlertModal("Please select edgetype more than 1.");
         } else if(networkGraph.isChanged) {
             console.log("isChanged");
-            openConfirmModal("Before finding max influence path, the graph must be saved. Do you wish to continue?",
-                "Save Confirm", function() {
+            openModal("Before finding max influence path, the graph must be saved. Do you wish to continue?",
+                "Save Confirm","Save", function() {
                     $('#findMaxInfPathModal').modal('hide');
                     $.LoadingOverlay('show');
                     var graphJson = generateSaveGraphJson();
@@ -2088,8 +2089,8 @@ function initMaxInfluenceTableUI() {
             openAlertModal("Please select edgetype more than 1.");
         } else if(networkGraph.isChanged) {
             console.log("isChanged");
-            openConfirmModal("Before finding max influence path, the graph must be saved. Do you wish to continue?",
-                "Save Confirm", function() {
+            openModal("Before finding max influence path, the graph must be saved. Do you wish to continue?",
+                "Save Confirm","Save", function() {
                     $.LoadingOverlay('show');
 
                     var graphJson = generateSaveGraphJson();
@@ -2363,8 +2364,8 @@ function initFindMostInfluenceNodeUI(type) {
         } else if(getCheckedBoxNumber($('#findMost' + type + 'InfNodeModal' + ' .checkbox_div')) == 0) { // checked box is none.
             openAlertModal("Please select edgetype more than 1.");
         } else if(networkGraph.isChanged) {
-            openConfirmModal("Before finding max influence path, the graph must be saved. Do you wish to continue?",
-                "Save Confirm", function() {
+            openModal("Before finding max influence path, the graph must be saved. Do you wish to continue?",
+                "Save Confirm","Save", function() {
                     $.LoadingOverlay('show');
                     var graphJson = generateSaveGraphJson();
                     console.log(graphJson);
@@ -2746,31 +2747,49 @@ function maxInfNodeToast(type, nodeList, edgeTypeNameList, isConfidence, isAvera
     });
 }
 
+
+
 function allMaxInfToast(maxInfluenceList, nodeSet) {
     window.showAlert = function () {
-        alertify.alert('<div id="maxInfTable" style=" width:100%; height:90%; margin-top: 30px;"><div class="fixedTable-body"> <table class="table table-bordered"> <tbody> <tr> <td class="td-empty"></td> <td class="td-input"><input type="number" step=0.01 min=0 max=1 /></td> </tr> <tr> <td class="td-input"><input type="number" step=0.01 min=0 max=1 /></td> <td class="td-empty"></td> </tr> </tbody> </table> </div> </div>');
+        alertify.alert('<div id="maxInfTable"><header class="fixedTable-header"><table class="table table-bordered"><thead><tr></tr></thead></table></header><aside class="fixedTable-sidebar"><table class="table table-bordered"><tbody></tbody></table></aside><div class="fixedTable-body"> <table class="table table-bordered"><tbody></tbody> </table> </div> </div>');
+        $('#maxInfTable .fixedTable-header thead').empty();
+        $('#maxInfTable .fixedTable-sidebar tbody').empty();
         $('#maxInfTable .fixedTable-body tbody').empty();
+
+        var fixedTable, a;
+
+        fixedTable = function(el) {
+            var $body, $header, $sidebar;
+            $body = $(el).find('.fixedTable-body');
+            $sidebar = $(el).find('.fixedTable-sidebar table');
+            $header = $(el).find('.fixedTable-header table');
+            return $($body).scroll(function() {
+                $($sidebar).css('margin-top', -$($body).scrollTop());
+                return $($header).css('margin-left', -$($body).scrollLeft());
+            });
+        };
+
+        a = new fixedTable($('#maxInfTable'));
 
         nodeSet.sort(function (a,b) {
             return a.node_name.toLowerCase() < b.node_name.toLowerCase() ? -1
                 : a.node_name.toLowerCase() > b.node_name.toLowerCase() ? 1 : 0;
         });
-        $('#maxInfTable .fixedTable-body tbody').append("<tr>");
-        $('#maxInfTable .fixedTable-body tbody tr').append("<th class='type-color-bg type-color-text type-color-blue-grey'></th>");
+        $('#maxInfTable .fixedTable-header thead').append("<tr>");
         for (var n1 in nodeSet) {
-            $('#maxInfTable .fixedTable-body tbody tr').append(
-                "<th class='type-color-bg type-color-text type-color-blue-grey'>" + nodeSet[n1].node_name + "</th>"
+            $('#maxInfTable .fixedTable-header thead tr').append(
+                "<th class='type-color-bg type-color-text type-color-blue-grey' data-toggle='tooltip' title='"+ nodeSet[n1].node_name +"'>" + nodeSet[n1].node_name + "</th>"
             );
+            $('#maxInfTable .fixedTable-sidebar tbody').append("<tr><td class='type-color-bg type-color-text type-color-blue-grey' data-toggle='tooltip' title='"+ nodeSet[n1].node_name +"'>" + nodeSet[n1].node_name + "</td></tr>");
         }
-        $('#maxInfTable .fixedTable-body tbody').append("</tr>");
 
         for (var n1 in nodeSet) {
             $('#maxInfTable .fixedTable-body tbody').append("<tr>");
-
             for(var n2 in nodeSet) {
+
                 $('#maxInfTable .fixedTable-body tbody tr').each(function (index) {
 
-                    if (index != 0 && n1 == index-1) {
+                    if (n1 == index) {
                         var value = null;
                         for (var i in maxInfluenceList) {
                             if ((maxInfluenceList[i].origin_id == nodeSet[n1].node_id)
@@ -2778,9 +2797,6 @@ function allMaxInfToast(maxInfluenceList, nodeSet) {
                                 value = maxInfluenceList[i].influence_value.toFixed(3);
                                 break;
                             }
-                        }
-                        if(n2 == 0) {
-                            $(this).append("<th class='type-color-bg type-color-text type-color-blue-grey'>" + nodeSet[n1].node_name + "</th>");
                         }
                         if(value != null)
                             $(this).append("<td id=\"r"+ n1 + "c" + n2 +"\">" + value + "</td>");

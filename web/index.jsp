@@ -55,7 +55,7 @@
             <li><a class="menuManageEdgeType" >Manage Edge Type</a></li>
             <li><a class="menuManageConfidence" >Manage Confidence</a></li>
             <li role="separator" class="divider"></li>
-            <li><a class="menuUndo" >Undo</a></li>
+            <li><a class="menuUndo" >Undo[Ctrl + Z]</a></li>
           </ul>
         </li>
         <li class="dropdown">

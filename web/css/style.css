@@ -578,42 +578,102 @@ body {
     text-align: center;
 }
 
+/*#maxInfTable .table tr td,*/
+/*#maxInfTable .table tr th {*/
+    /*min-width: 70px;*/
+    /*max-width: 70px;*/
+    /*width: 70px;*/
+    /*min-height: 27px;*/
+    /*max-height: 27px;*/
+    /*height: 27px;*/
+    /*padding: 3px;*/
+    /*text-align: center;*/
+
+    /*overflow-x: hidden;*/
+    /*text-overflow-ellipsis: true;*/
+    /*text-overflow-mode: ellipsis;*/
+    /*text-overflow: ellipsis;*/
+    /*white-space: nowrap;*/
+/*}*/
+
+/*#maxInfTable .fixedTable-body tr td, #maxInfTable .fixedTable-body tr th{*/
+    /*word-break:break-all;*/
+    /*vertical-align: middle;*/
+/*}*/
+
+/*#maxInfTable .table{*/
+    /*height: 100%;*/
+/*}*/
+
+/*#maxInfTable .fixedTable-body {*/
+    /*overflow: initial;*/
+    /*width: 100%;!* -71px is sidebar width *!*/
+    /*!*height: 310px;*!*/
+    /*height: 100%;*/
+/*}*/
+#maxInfTable{
+    width : 100%;
+    height : calc(100% - 50px);
+    margin-left: 5px;
+}
+
 #maxInfTable .table tr td,
 #maxInfTable .table tr th {
-    min-width: 70px;
-    max-width: 70px;
-    width: 70px;
-    min-height: 27px;
-    max-height: 27px;
-    height: 27px;
-    padding: 3px;
+    min-width: 110px;
+    max-width: 110px;
+    width: 110px;
+    min-height: 20px;
+    max-height: 20px;
+    height: 20px;
+    padding: 4px;
     text-align: center;
-
     overflow-x: hidden;
     text-overflow-ellipsis: true;
     text-overflow-mode: ellipsis;
     text-overflow: ellipsis;
-    /*white-space: nowrap;*/
-}
-
-#maxInfTable .fixedTable-body tr td, #maxInfTable .fixedTable-body tr th{
-    word-break:break-all;
+    white-space: nowrap;
+    font-weight: bold;
     vertical-align: middle;
-}
 
-#maxInfTable .table{
+}
+#maxInfTable .fixedTable-header {
+    width: calc(100%- 111px);
+    height: 30px;
+    margin-left: 110px;
+    margin-right: 10px;
+    overflow: hidden;
+}
+#maxInfTable .fixedTable-sidebar {
+    width: 110px;
     height: 100%;
+    float: left;
+    overflow: hidden;
 }
-
 #maxInfTable .fixedTable-body {
-    overflow: initial;
-    width: 100%;/* -71px is sidebar width */
-    /*height: 310px;*/
+    overflow: auto;
+    width: calc(100%- 110px);
     height: 100%;
+    float: left;
+}
+@media screen and (max-width: 767px) {
+    .fixedTable-body {
+        width: auto !important;
+        float: none;
+    }
+}
+@media screen and (max-width: 767px) {
+    .fixedTable-header {
+        width: inherit !important;
+    }
 }
 
-#maxInfTableFixedInfo {
-    margin-top: 30px;
+.tooltip-inner {
+    max-width: none;
+    white-space: nowrap;
+}
+
+.ajs-content {
+    overflow: hidden !important;
 }
 
 .alertify.ajs-resizable:not(.ajs-maximized) .ajs-dialog {
