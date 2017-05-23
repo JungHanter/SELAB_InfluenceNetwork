@@ -675,10 +675,17 @@ function Stack() {
 
 function Memento() {
     this.states = new Stack();
+    this.redoStates = new Stack();
 }
 
-Memento.prototype.saveState = function (item) {
+Memento.prototype.saveState = function (item, redo = true) {
     this.states.push(item);
+    if(redo == true)
+        this.redoStates = new Stack();
+}
+
+Memento.prototype.saveRedoState = function (item) {
+    this.redoStates.push(item);
 }
 
 Memento.prototype.undo = function () {
@@ -688,6 +695,7 @@ Memento.prototype.undo = function () {
             networkGraph.nodes.splice(networkGraph.nodes.indexOf(state.data), 1);
             networkGraph.updateGraph();
             updateNodeList('deleted', state.data);
+            memento.saveRedoState({function_name : "deleteNode", data : state.data});
         } else if(state.function_name == "deleteNode") {
             networkGraph.nodes.push(state.data.node);
             state.data.edge.forEach(function (element) {
@@ -696,9 +704,13 @@ Memento.prototype.undo = function () {
             });
             updateNodeList('created', state.data.node);
             networkGraph.updateGraph();
+            memento.saveRedoState({function_name : "createNode", data : {node : state.data.node, edge : state.data.edge}});
         } else if(state.function_name == "moveNode") {
+            var initialNode = null;
             for(var key in networkGraph.nodes) {
                 if(networkGraph.nodes[key].id == state.data.id) {
+                    initialNode = {id:networkGraph.nodes[key].id, x:networkGraph.nodes[key].x, y: networkGraph.nodes[key].y};
+                    memento.saveRedoState({function_name : "moveNode", data : initialNode});
                     networkGraph.nodes[key].x = state.data.x;
                     networkGraph.nodes[key].y = state.data.y;
                     networkGraph.updateGraph();
@@ -706,8 +718,15 @@ Memento.prototype.undo = function () {
                 }
             }
         } else if(state.function_name == "editNode") {
+            var initialNode = {id : null, title : null, type : null, domainId : null};
             for(var key in networkGraph.nodes) {
                 if(networkGraph.nodes[key].id == state.data.id) {
+                    initialNode['id'] = networkGraph.nodes[key].id;
+                    initialNode['title'] = networkGraph.nodes[key].title;
+                    initialNode['type'] = networkGraph.nodes[key].type;
+                    initialNode['domainId'] = networkGraph.nodes[key].domainId;
+                    memento.saveRedoState({function_name : "editNode", data : initialNode});
+
                     setUnselected(true);
                     if(state.data.title == null)
                         state.data.title = 'New Node';
@@ -728,7 +747,12 @@ Memento.prototype.undo = function () {
             networkGraph.edges.splice(networkGraph.edges.indexOf(state.data), 1);
             updateEdgeList('deleted', state.data);
             networkGraph.updateGraph();
+            memento.saveRedoState({function_name : "deleteEdge", data : state.data});
         } else if(state.function_name == "editEdge") {
+            var initialEdge = {};
+            initialEdge.name = state.data.edge.name;
+            initialEdge.type = state.data.edge.type;
+
             setUnselected(true);
             state.data.edge.name = state.data.init.name;
             state.data.edge.type = state.data.init.type;
@@ -737,10 +761,96 @@ Memento.prototype.undo = function () {
             });
             networkGraph.updateEdgeType(d3PathG);
             networkGraph.updateGraph();
+            memento.saveRedoState({function_name : "editEdge", data : {edge : state.data.edge, init : initialEdge}});
         } else if(state.function_name == "deleteEdge") {
             networkGraph.edges.push(state.data);
             updateNodeList('created', state.data);
             networkGraph.updateGraph();
+            memento.saveRedoState({function_name : "createEdge", data : state.data});
+        }
+    }
+}
+
+Memento.prototype.redo = function () {
+    if(this.redoStates.stack.length > 0) {
+        var state = this.redoStates.pop();
+        if(state.function_name == "createNode") {
+            networkGraph.nodes.splice(networkGraph.nodes.indexOf(state.data.node), 1);
+            networkGraph.spliceLinksForNode(state.data.node);
+            networkGraph.updateGraph();
+            updateNodeList('deleted', state.data.node);
+            state.data.edge.forEach(function (element) {
+                updateEdgeList('deleted', element);
+            });
+            memento.saveState({function_name : "deleteNode", data : {node : state.data.node, edge : state.data.edge}}, false);
+        } else if(state.function_name == "deleteNode") {
+            networkGraph.nodes.push(state.data);
+            updateNodeList('created', state.data);
+            networkGraph.updateGraph();
+            memento.saveState({function_name : "createNode", data : state.data}, false);
+        } else if(state.function_name == "moveNode") {
+            var initialNode = null;
+            for(var key in networkGraph.nodes) {
+                if(networkGraph.nodes[key].id == state.data.id) {
+                    initialNode = {id:networkGraph.nodes[key].id, x:networkGraph.nodes[key].x, y: networkGraph.nodes[key].y};
+                    networkGraph.nodes[key].x = state.data.x;
+                    networkGraph.nodes[key].y = state.data.y;
+                    networkGraph.updateGraph();
+                    break;
+                }
+            }
+            memento.saveState({function_name : "moveNode", data : initialNode}, false);
+        } else if(state.function_name == "editNode") {
+            var initialNode = {id : null, title : null, type : null, domainId : null};
+            for(var key in networkGraph.nodes) {
+                if(networkGraph.nodes[key].id == state.data.id) {
+                    initialNode['id'] = networkGraph.nodes[key].id;
+                    initialNode['title'] = networkGraph.nodes[key].title;
+                    initialNode['type'] = networkGraph.nodes[key].type;
+                    initialNode['domainId'] = networkGraph.nodes[key].domainId;
+                    memento.saveState({function_name : "editNode", data : initialNode}, false);
+
+                    setUnselected(true);
+                    if(state.data.title == null)
+                        state.data.title = 'New Node';
+                    networkGraph.nodes[key].title = state.data.title;
+                    networkGraph.nodes[key].type = state.data.type;
+                    networkGraph.nodes[key].domainId = state.data.domainId;
+                    networkGraph.updateGraph();
+                    var d3Node = networkGraph.circles.filter(function(cd) {
+                        return cd.id === state.data.id;
+                    });
+                    networkGraph.changeNodeTitle(d3Node, state.data.title);
+                    networkGraph.updateNodeType(d3Node);
+                    updateNodeList('updated', networkGraph.nodes[key]);
+                    break;
+                }
+            }
+        } else if(state.function_name == "createEdge") {
+            networkGraph.edges.splice(networkGraph.edges.indexOf(state.data), 1);
+            updateEdgeList('deleted', state.data);
+            networkGraph.updateGraph();
+            memento.saveState({function_name : "deleteEdge", data : state.data}, false);
+        } else if(state.function_name == "editEdge") {
+            var initialEdge = {};
+            initialEdge.name = state.data.edge.name;
+            initialEdge.type = state.data.edge.type;
+
+            setUnselected(true);
+            state.data.edge.name = state.data.init.name;
+            state.data.edge.type = state.data.init.type;
+            var d3PathG = networkGraph.paths.filter(function(d) {
+
+                return state.data.edge == d;
+            });
+            networkGraph.updateEdgeType(d3PathG);
+            networkGraph.updateGraph();
+            memento.saveState({function_name : "editEdge", data : {edge : state.data.edge, init : initialEdge}}, false);
+        } else if(state.function_name == "deleteEdge") {
+            networkGraph.edges.push(state.data);
+            updateNodeList('created', state.data);
+            networkGraph.updateGraph();
+            memento.saveState({function_name : "createEdge", data : state.data}, false);
         }
     }
 }
@@ -748,6 +858,7 @@ Memento.prototype.undo = function () {
 $(document).ready(function() {
 
     $(document).bind('keydown', "Ctrl+z", function() {memento.undo()});
+    $(document).bind('keydown', "Ctrl+Shift+z", function() {memento.redo()});
 
     // window.onbeforeunload = function(){
     //     return "Make sure to save your graph locally before leaving :-)";
