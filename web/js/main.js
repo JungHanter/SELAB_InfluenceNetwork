@@ -678,14 +678,20 @@ function Memento() {
     this.redoStates = new Stack();
 }
 
-Memento.prototype.saveState = function (item, redo = true) {
+Memento.prototype.saveState = function (item, redo) {
+    if(redo == undefined) {
+        redo = true;
+    }
     this.states.push(item);
     if(memento.states.stack.length > 0) {
         $('.menuUndo').attr('disabled', false);
         $('.menuUndo').removeClass('disabled');
     }
-    if(redo == true)
+    if(redo == true) {
         this.redoStates = new Stack();
+        $('.menuRedo').attr('disabled', true);
+        $('.menuRedo').addClass('disabled');
+    }
 }
 
 Memento.prototype.saveRedoState = function (item) {
@@ -3890,7 +3896,7 @@ function loadGraph(graphData) {
     toggleAskCloseAndRefresh();
 }
 
-function generateSaveGraphJson(saveAs=false) {
+function generateSaveGraphJson(saveAs) {
     if (saveAs == undefined || saveAs == null) saveAs=false;
     var graphData = {};
     if (!saveAs) {

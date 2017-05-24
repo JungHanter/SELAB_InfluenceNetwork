@@ -1437,7 +1437,8 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         toggleAskCloseAndRefresh();
     }
 
-    GraphCreator.prototype.createNode = function(updating=true) {
+    GraphCreator.prototype.createNode = function(updating) {
+        if(updating == undefined || updating == null) updating = true;
         var thisGraph = this;
 
         var gGraph = thisGraph.svg.select("g.graph");
@@ -1486,7 +1487,8 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         return newNodeData;
     };
 
-    GraphCreator.prototype.createEdge = function(sourceNode, targetNode, name, type, editable=false) {
+    GraphCreator.prototype.createEdge = function(sourceNode, targetNode, name, type, editable) {
+        if(editable == undefined) editable = false;
         var thisGraph = this;
         var newEdge = {source: sourceNode, target: targetNode, name: name, type: type,
             bilateral: false, ct: thisGraph.edgect};
@@ -1521,7 +1523,8 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         return null;
     };
 
-    GraphCreator.prototype.insertEdge = function(sourceNode, targetNode, name, type, editable=false) {
+    GraphCreator.prototype.insertEdge = function(sourceNode, targetNode, name, type, editable) {
+        if(editable == undefined || editable == null) editable = false;
         var thisGraph = this;
         var newEdge = {source: sourceNode, target: targetNode, name: name, type: type,
             bilateral: false, ct: thisGraph.edgect};
@@ -1688,7 +1691,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         return edgeList;
     };
 
-    GraphCreator.prototype.setEdgeViewMode = function(mode, selectedList=null) {
+    GraphCreator.prototype.setEdgeViewMode = function(mode, selectedList) {
         if(selectedList == undefined || selectedList == null)
             selectedList = [];
 
@@ -1882,6 +1885,7 @@ function isIncludeArray (arr, data) {
     for (var i = 0; i < arr.length; i++) {
         if (arr[i] == data) return true;
     }
+
     return false;
 }
 /** When browser closed, **/
