@@ -680,12 +680,20 @@ function Memento() {
 
 Memento.prototype.saveState = function (item, redo = true) {
     this.states.push(item);
+    if(memento.states.stack.length > 0) {
+        $('.menuUndo').attr('disabled', false);
+        $('.menuUndo').removeClass('disabled');
+    }
     if(redo == true)
         this.redoStates = new Stack();
 }
 
 Memento.prototype.saveRedoState = function (item) {
     this.redoStates.push(item);
+    if(memento.redoStates.stack.length > 0) {
+        $('.menuRedo').attr('disabled', false);
+        $('.menuRedo').removeClass('disabled');
+    }
 }
 
 Memento.prototype.undo = function () {
@@ -768,6 +776,10 @@ Memento.prototype.undo = function () {
             networkGraph.updateGraph();
             memento.saveRedoState({function_name : "createEdge", data : state.data});
         }
+    }
+    if(this.states.stack.length == 0) {
+        $('.menuUndo').attr('disabled', true);
+        $('.menuUndo').addClass('disabled');
     }
 }
 
@@ -853,12 +865,27 @@ Memento.prototype.redo = function () {
             memento.saveState({function_name : "createEdge", data : state.data}, false);
         }
     }
+    if(this.redoStates.stack.length == 0) {
+        $('.menuRedo').attr('disabled', true);
+        $('.menuRedo').addClass('disabled');
+    }
 }
 
 $(document).ready(function() {
 
-    $(document).bind('keydown', "Ctrl+z", function() {memento.undo()});
-    $(document).bind('keydown', "Ctrl+Shift+z", function() {memento.redo()});
+    // $('.menuDeleteNode').removeClass('disabled');
+    // $('.menuDeleteEdge').attr('disabled', true);
+    $('.menuUndo').addClass('disabled');
+    $('.menuRedo').addClass('disabled');
+    $('.menuUndo').attr('disabled', true);
+    $('.menuRedo').attr('disabled', true);
+
+    $(document).bind('keydown', "Ctrl+z", function() {
+        memento.undo();
+    });
+    $(document).bind('keydown', "Ctrl+Shift+z", function() {
+        memento.redo();
+    });
 
     // window.onbeforeunload = function(){
     //     return "Make sure to save your graph locally before leaving :-)";
@@ -902,6 +929,7 @@ $(document).ready(function() {
     $('#subMenuEdgeEditBtn').click(editEdge);
 
     $('.menuUndo').click(function() {memento.undo()});
+    $('.menuRedo').click(function() {memento.redo()});
     $('.menuNewNode').click(createNode);
     $('.menuDeleteNode').click(deleteNode);
     $('.menuNewEdge').click(createEdge);

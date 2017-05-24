@@ -1884,7 +1884,7 @@ function isIncludeArray (arr, data) {
     }
     return false;
 }
-
+/** When browser closed, **/
 function toggleAskCloseAndRefresh() {
     if(networkGraph.isChanged == false) {
         window.onbeforeunload = null;

@@ -55,7 +55,8 @@
             <li><a class="menuManageEdgeType" >Manage Edge Type</a></li>
             <li><a class="menuManageConfidence" >Manage Confidence</a></li>
             <li role="separator" class="divider"></li>
-            <li><a class="menuUndo" ><span>Undo</span><span style="margin-left: 60px; font-size: 10px;">Ctrl + Z</span></a></li>
+            <li><a class="menuUndo" ><span>Undo</span><span style="margin-left: 93px; font-size: 10px;">Ctrl + Z</span></a></li>
+            <li><a class="menuRedo" ><span>Redo</span><span style="margin-left: 60px; font-size: 10px;">Ctrl + Shift + Z</span></a></li>
           </ul>
         </li>
         <li class="dropdown">
