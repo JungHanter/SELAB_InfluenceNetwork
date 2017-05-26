@@ -427,19 +427,38 @@ document.onload = (function(d3, saveAs, Blob, undefined){
     };
 
     GraphCreator.prototype.insertEdgeName = function (gEl, d) {
+        // console.log(d);
         var thisGraph = this;
-        var innerHTML = gEl[0][0]['innerHTML'];
+        // var innerHTML = gEl[0][0]['innerHTML'];
+        // var innerHTML = gEl[0][0]['childNodes'][0]['attributes'][1]['nodeValue'];
 
-        var attributesD = innerHTML.split("\"")[3];
+        // var attributesD = innerHTML.split("\"")[3];
+        // var parsedD = attributesD.split("L");
+
+        var isIE = /*@cc_on!@*/false || !!document.documentMode;
+        var isEdge = !isIE && !!window.StyleMedia;
+
+        var attributesD = gEl[0][0]['childNodes'][0]['attributes'][1]['nodeValue'];
         var parsedD = attributesD.split("L");
-        var parsedM = parsedD[0].split(",");
-        var parsedL = parsedD[1].split(",");
-        parsedM[0] = parsedM[0].slice(1);
-        // console.log(gEl[0][0]);
-        // console.log(parsedM);
-        // console.log(parsedL);
+        var parsedM, parsedL;
+        if(isIE == false && isEdge == false) {
+            parsedM = parsedD[0].split(",");
+            parsedL = parsedD[1].split(",");
+            parsedM[0] = parsedM[0].slice(1);
+        } else {
+            parsedM = parsedD[0].split(" ");
+            parsedL = parsedD[1].split(" ");
+            parsedM.shift();
+            parsedL.shift();
+        }
+
+
         var vx = Number(parsedM[0]) - Number(parsedL[0]), vy = Number(parsedM[1]) - Number(parsedL[1]);
         var tx = (Number(parsedM[0]) + Number(parsedL[0]))/2, ty = (Number(parsedM[1]) + Number(parsedL[1]))/2;
+        // console.log(gEl);
+        // console.log(gEl[0][0]['childNodes'][0]['attributes'][1]['nodeValue']);
+        // var vx = d.source.x - d.target.x, vy = d.source.y - d.target.y;
+        // var tx = (d.source.x + d.target.x) / 2, ty = (d.source.y + d.target.y) / 2;
 
 
         //set edge name position

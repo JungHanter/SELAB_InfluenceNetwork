@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="lib/Tiny-Multipurpose-Dialog-Popup-Plugin-With-jQuery-dialogbox-js/css/dialogbox.css">
   <link rel="stylesheet" type="text/css" href="lib/alertifyjs/css/alertify.css">
 
-  <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Ubuntu">
+  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Ubuntu">
 </head>
 
 <body>
