@@ -942,7 +942,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         case consts.BACKSPACE_KEY:
         case consts.DELETE_KEY:
             var focusedTag = $(document.activeElement).prop('tagName');
-            if (focusedTag == 'BODY' || focusedTag == 'SVG' || focusedTag == 'G') {
+            if (focusedTag == 'BODY' || focusedTag == 'SVG' || focusedTag == 'G' || focusedTag == 'svg' || focusedTag == 'g') {
                 d3.event.preventDefault();
                 if (selectedNode){
                     var deletedNode = state.selectedNode;
